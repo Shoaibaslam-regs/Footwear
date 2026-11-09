@@ -1,0 +1,396 @@
+const IMG = "https://lh3.googleusercontent.com/aida-public/";
+
+
+export const navLinks = [
+  { label: "Shop", href: "/collections", activePrefixes: ["/collections", "/products"] },
+  { label: "Collections", href: "/#collection" },
+  { label: "New Arrivals", href: "/#new-arrivals" },
+  { label: "Wedding Atelier", href: "/#appointment" },
+  { label: "Maison ÉLORA", href: "/#craft" },
+];
+
+/** Client concierge WhatsApp (Pakistan, 0314 842 8115). */
+export const whatsappNumber = "923148428115";
+export const whatsappUrl = `https://wa.me/${whatsappNumber}`;
+
+export const profileImage =
+  "https://lh3.googleusercontent.com/aida/ALJJyrAvfDUitme7hNnLwUuG22DSacOi6zNfrbAu58SG6b4Js7n-SwJFkxef1feq28vnSvg6S5MyZWVBO85it_qeS-PCLHKfLjsWi7GK7pf8mGLjCcWnD53i-2eNHK4Rto9pWmPEutACbXGCWegN6X4WF6fGqXXSVvXzc5CM66D8ssT3rX49byZYDIzWNgV7Q_IgqH--WrdoOH9apoFpzbedsHIxuaE-khJ1HyTteG8ngld4";
+
+export const heroImage =
+  IMG +
+  "AB6AXuCqFsZ6lySdyCTJlLxyQ6N-engD_vuD51yh_IRgWfK-iRekA_XUIm4_vhnBvI6j2z7IWMXWsXDqgNDFCF7wG5CoFzbkmdtoOQTIrnuXKvUPsP0LlZRw08DUhw8Tq8IqSY80njg5kypbcgKPYyzTPKZt9P2hYoRG7fhNJ1i_fJPygDSlM-1ijNT6S1U4zRSRIfcR_KNAz-6yPIL6lFR71s6BOPBdfvFliqeZvq9OtCI";
+
+/** Homepage hero slideshow (first slide is the LCP image, loaded with priority). */
+export const heroSlides = () => [
+  {
+    image: heroImage,
+    alt: "Sculpted Italian stiletto heels in deep espresso patent leather with a champagne gold heel on a Venetian marble ledge",
+    position: "center",
+  },
+  ...[0, 4, 1].map((i) => ({ image: categories[i].image, alt: categories[i].alt, position: "center" })),
+  { image: campaignImage, alt: "ÉLORA campaign editorial", position: "center 30%" },
+];
+
+export type Category = {
+  href: string;
+  eyebrow: string;
+  title: string;
+  subtitle: string;
+  image: string;
+  alt: string;
+  span: "lg:col-span-7" | "lg:col-span-5" | "lg:col-span-4";
+  /** Tile height from tablet up (phones use compact tiles). */
+  height: "md:h-[460px]" | "md:h-[380px]";
+  large: boolean;
+};
+
+export const categories: Category[] = [
+  {
+    href: "/collections",
+    eyebrow: "Signature Silhouette",
+    title: "Sculptural Heels",
+    subtitle: "Stilettos, Slingbacks, and Geometric Block Heels",
+    image:
+      IMG +
+      "AB6AXuCMKwzghoYrROl6T1d1mVE-eaWaWfUtSE8fuDo4vpwFoqJy7DJHSqL-NS4Zn6E4kcwvzjdb5-iHRhZkivxu65QjWLzGdCu9mIWCi667RdD3M9lsr5t5eDji5foRqj5fI62aLrp9zmrjVEbq3Bfg3KrkjkFmIRut5jy-_85aqesKIHH0PFREl6G1WVPzy2Dc3HdKhkN4M9fKRlymSRo4uzXeV-HQmRy20V3bPal88eQ",
+    alt: "Woman wearing Élora sculptural metallic stiletto heels in a Milan art gallery",
+    span: "lg:col-span-7",
+    height: "md:h-[460px]",
+    large: true,
+  },
+  {
+    href: "/collections",
+    eyebrow: "Warm Season Atelier",
+    title: "Artisan Sandals",
+    subtitle: "Strappy Silhouettes & Metallic Slides",
+    image:
+      IMG +
+      "AB6AXuAVx5L_stNtH-bN_LyOEW4KiM4ILiV7M3pWorWywRu8ObkkUrbiK79W8WSbVKmjgzI1AV9_W7m7Xyck9Nh-kkMvafh4DHohEl3GjF0AI9iF7NFcfY9uuBjPSE5N4PfmsioCoNQvArggE5nqC1uJpcRKESJ7yyktUA7JsM9lDbg2hZEQbXUaq4SmN1heGXsKCtOslPl4a_3Ydr_7TZlWYGgPxsiX3cCRlHClsL19nSQ",
+    alt: "Gold strappy nappa leather sandals on a sunlit stone step by Lake Como",
+    span: "lg:col-span-5",
+    height: "md:h-[460px]",
+    large: true,
+  },
+  {
+    href: "/collections",
+    eyebrow: "Effortless Ease",
+    title: "Refined Flats",
+    subtitle: "Ballet Mules & Pointed Loafers",
+    image:
+      IMG +
+      "AB6AXuAHtupL94PZ5fY-oa4CsRlO6597mDHLXQPhTvTqM1s1XUzgdTdbYOl2e-5l07XJExX-cqm3b83OA1QtZBf8VnqTzvrW1tGLmxD-kZy-wtohPB4e45VIBYCEdYKGBykODVQ8zUUGmGCaiU7IlfsesDA2p4lX7JD1SMBOICMYuRHJ3kF43FuZZi9MdEUjJ4j_40WDXH5hZSNvLRD4TXmoZ548RHK-UVxCOEAqbrngt2o",
+    alt: "Pointed toe black calfskin ballerina mules on folded silk crepe",
+    span: "lg:col-span-4",
+    height: "md:h-[380px]",
+    large: false,
+  },
+  {
+    href: "/collections",
+    eyebrow: "Casual Haute",
+    title: "Elevated Sneakers",
+    subtitle: "Leather Tennis & Shearling Slip-ons",
+    image:
+      IMG +
+      "AB6AXuDQHApOVLLpstknqg8v0i67NzEDLb_jy94YUVfIDHl0a0uy16QCg5KqzoEQdlwmjLOY-vi1KxPbRQBWzFp898bqFgo9D3NMt6GiJW1WSk2CntY9TdHrN2a3xZNydrGABjlAMf_eIEOaLFSFEKkf5WO9frAovrKgoPWkwXxgmkonyM2y4sRTPNlGqekA9raNiJs-Jnsf5X2Fd1__2l_o2jPD_jVxiCCOLfgRWWSuY6g",
+    alt: "Cream white leather court sneakers on a travertine pedestal",
+    span: "lg:col-span-4",
+    height: "md:h-[380px]",
+    large: false,
+  },
+  {
+    href: "/collections",
+    eyebrow: "Couture Ceremonies",
+    title: "The Bridal Suite",
+    subtitle: "Ivory Satin & Pearl-Embellished",
+    image:
+      IMG +
+      "AB6AXuDSaCZUj9wTXit4kOtpGIjFMaLw9yq5WkoIj-aCJZeKek4KXdMtZGG-sLGJDMp-JZct4-OiU83I7bZ6CxNNGlwKIff-ntB6uRpbGKeBpH_RJiZEiqTrH3pMqhz4luSlSimGXT0rP2GVKDPhJWOF4sCmhMDecxgAEuOsQndSrzM58CjmdVN-rBzvbeWF0MlOVS0Jhqtv1gdANj-lBB-mhIgl04RVVcF0yFEfoFXi0is",
+    alt: "Ivory Duchess satin platform heels with a freshwater pearl ankle chain",
+    span: "lg:col-span-4",
+    height: "md:h-[380px]",
+    large: false,
+  },
+];
+
+export type Product = {
+  name: string;
+  href?: string;
+  shortName: string;
+  badge: string;
+  badgeClass: string;
+  spec: string;
+  price: number;
+  compareAt?: number;
+  discountPercent?: number;
+  material: string;
+  image: string;
+  alt: string;
+  swatches: { color: string; title: string }[];
+  moreColors: string;
+};
+
+export const newArrivals: Product[] = [
+  {
+    name: "The Aurelia Stiletto",
+    href: "/products/aurelia-stiletto",
+    shortName: "Aurelia Stiletto",
+    badge: "New In",
+    badgeClass: "bg-primary text-on-primary",
+    spec: "95mm Florentine Heel",
+    price: 151_200,
+    material: "Cashmere Rose & Espresso Nappa",
+    image:
+      IMG +
+      "AB6AXuByA2YLIcicJEiarS4jzQr7w-s0JzSxRKLaN0gF_IVu7c4kz_4r4QKQsxdA7gGKsadWnMGgJSszsKTV9BXJyUNodRfoe3iLlsKt3TLxDHN1l_ZlAZEhFApMlYdmfUq0wTrx2fbeCsCMAjCMRiDQxPaYKsN4sXklnII0WE3FUliIJuyg_YRcXT0rAd0OJlJ3_7-jk9JCQ3dLcwE84nnJXs3We9DHLjad1sMJ1JfDzSU",
+    alt: "The Aurelia Stiletto 95mm in cashmere rose calf leather with espresso trim",
+    swatches: [
+      { color: "#D4A39D", title: "Cashmere Rose" },
+      { color: "#211B19", title: "Espresso" },
+      { color: "#D8C2A5", title: "Champagne Gold" },
+    ],
+    moreColors: "+2 colors",
+  },
+  {
+    name: "Seraphina Silk Knot Mule",
+    shortName: "Seraphina Mule",
+    badge: "Atelier Knot",
+    badgeClass: "bg-secondary text-on-secondary",
+    spec: "65mm Kitten Heel",
+    price: 128_800,
+    material: "Champagne Gold Silk Crepe",
+    image:
+      IMG +
+      "AB6AXuBmiDzl67Ae8jWoCc7Rnzv2zFyCUav0vtpAqwY1Eu2TQJVWz1ty-MN9Jx3J2UvoGuAzyqnQp4QTq_zbYDaJ3G5jf81GADymnPvfWTY5NdNT1LNah1KogbW7UVEFLEJ2EkiwtjSI_YmqsRWQ2loaTkFQXI4yBs9yI5Na_gmD7UDUJEKispZZwrlEjQNOEy13kBiBhm-GV18JSqK2mMcwtaW93hQFL5B9oK8sPpQGGWQ",
+    alt: "Seraphina Silk Knot Mule in champagne gold woven Italian silk satin",
+    swatches: [
+      { color: "#E5D2BA", title: "Champagne Gold" },
+      { color: "#030101", title: "Onyx Black" },
+      { color: "#F5EDE3", title: "Ivory Cream" },
+    ],
+    moreColors: "+1 color",
+  },
+  {
+    name: "Paloma Sculpted Slingback",
+    shortName: "Paloma Slingback",
+    badge: "Atelier Edition",
+    badgeClass: "bg-tertiary-container text-tertiary-fixed",
+    spec: "75mm Angled Heel",
+    price: 142_800,
+    material: "Tuscan Noir Gloss Patent",
+    image:
+      IMG +
+      "AB6AXuA30UJh4mYHQx4YY9s7tJ14ahyRa5H33lzUiDVyPqTpK2O4_KmLa-0qYiM7q4m_WRj4d7nMbqpjJbXB6ed28PFuWq2tYW9pNIesa09dkCiDhR-R_1q-GqbEx7D6ytDwWSnuMmCykw70fwDCCHpRJz4uXVC1pjx8WU_6_g2piio9A69RuIgOHRNB9T7qjH9uvfroB0WO91EdVVvvhTsq9JpgGCoIQ0EV4WyaauBeVpg",
+    alt: "Paloma Sculpted Point-Toe Slingback in Tuscan Noir patent leather",
+    swatches: [
+      { color: "#1b1c1a", title: "Tuscan Noir" },
+      { color: "#7B2E2E", title: "Barolo Red" },
+    ],
+    moreColors: "2 colors",
+  },
+  {
+    name: "Celeste Satin Ballerina",
+    shortName: "Celeste Ballerina",
+    badge: "Trending",
+    badgeClass: "bg-secondary-fixed text-on-secondary-fixed",
+    spec: "15mm Micro-Heel",
+    price: 117_600,
+    material: "Ivory Pearl & Grosgrain Ribbon",
+    image:
+      IMG +
+      "AB6AXuDsC1tA9hBFypHBRHjKhxKr8KsnDWwSGWsXJLk9RyANFw-dnfDJ3aSjlfG5xZl1b4YrUdjMuWUXr-bTPouB2NiLB2roYZgB-Sqvx8NuGUWcelAf0HGygDEhnkR3mKHQ1k0WIgfPqjXwtvGUHmy4g6PbZ0s5LaWm0dW0yvp585QpxXfxhMeuc_n3ObNq3ejOzSycwpZpv1-BLe0V1IahAGHHmhHfbqDH_5-OTiF6mDQ",
+    alt: "Celeste Satin Ribbon Ballerina in ivory pearl duchess satin",
+    swatches: [
+      { color: "#FAF5EE", title: "Ivory Pearl" },
+      { color: "#DBC6B6", title: "Nude Blush" },
+      { color: "#201A18", title: "Midnight Black" },
+    ],
+    moreColors: "+3 colors",
+  },
+];
+
+export type BestSeller = {
+  name: string;
+  shortName: string;
+  badge: string;
+  price: number;
+  compareAt?: number;
+  discountPercent?: number;
+  detail: string;
+  image: string;
+  alt: string;
+  defaultSize: number;
+  soldOut: number[];
+};
+
+export const sizes = [35, 36, 37, 38, 39, 40, 41];
+
+export const bestSellers: BestSeller[] = [
+  {
+    name: "Valeria Sculpted Mule",
+    shortName: "Valeria Mule",
+    badge: "#1 Best Seller",
+    price: 137_200,
+    detail: "Chocolate Tuscan Suede • 80mm",
+    image:
+      IMG +
+      "AB6AXuAo1YnU2UahAucT2hgEAl8xOwp6v1fE4ZE8ljwFEdaTD4QVLmANq-DA4xBzIaMinZaGhH3eNPxeHoLeMLkzwVaka5U7mthZPNN-0xna6v5TKYrhG_1VEIZcWoEcPfHRcL9Neq_wD_ulzfAp7cRNAYL-Tn0xqmhV41hiIugOEepJvmn4-m5qltEOCZ-rsiTzTNZbUYDBHYTcYQ4jfoNx27hhEisyMFg4aVxMd7iEB1U",
+    alt: "Valeria Architectural Mule in sculpted chocolate suede with brushed bronze heel",
+    defaultSize: 37,
+    soldOut: [41],
+  },
+  {
+    name: "Genevieve Ankle Pump",
+    shortName: "Genevieve Pump",
+    badge: "Restocked",
+    price: 156_800,
+    detail: "Noir Polished Calfskin • 100mm",
+    image:
+      IMG +
+      "AB6AXuDS7VFTtveMwWYy0Dp5Lu9hVZ6Zk1_vEk2nyi1pHIfggbElckc1qmseMxs3GXzBoQpZ-57wSRavsPeDf4O_M0qCvGKAv1kKH3KpTE_Bm2tHlWgqEaXJL-WDWkaep6z5IGIbdmeqJr0CB0K0oOHF_uy6QgTUBVGaoDeFOU09sCEG6f3IVG-il7E2wvfKjxiqOdnBlaiX03UvVQ_UGIMiFh2CJ65QNLWowdzrGdw-42U",
+    alt: "Genevieve Ankle-Strap Pump in black Italian boxcalf with thin gold ankle wrap",
+    defaultSize: 38,
+    soldOut: [],
+  },
+  {
+    name: "Lucia Crossover Slide",
+    shortName: "Lucia Slide",
+    badge: "Classic",
+    price: 106_400,
+    detail: "Cognac Vegetable Nappa • 10mm",
+    image:
+      IMG +
+      "AB6AXuDigb8J6EBAinPrgPurmp9HusS9VG-kASVHgkEulfUbvhOPX9YAeO5HCSi2WPClQqu0B3nq3fST-DTqGn7s8L5Rr2PHBPT7k3EXmkUkOSP_xIm89tl7e7aHTyYTZmJu37vM031rxN8ufDuW3lEXHC6rgBmrOWgOLsDT3RITlXznhKHvAMHRrG9lRpm-3Bat1uKQpgghWzvVMmhdvWzUY_j7le4UaQFIBVSFBGz0aco",
+    alt: "Lucia Crossover Flat Slide in warm cognac calf nappa leather",
+    defaultSize: 39,
+    soldOut: [],
+  },
+];
+
+export const craftPillars = [
+  {
+    icon: "hourglass_top",
+    eyebrow: "Precision Execution",
+    title: "60-Hour Craftsmanship",
+    text: "Each pair rests on custom cedar lasts for 48 hours to preserve memory shape, requiring 210 distinct manual touchpoints by master bottegai.",
+  },
+  {
+    icon: "pan_tool_alt",
+    eyebrow: "Sourced In Tuscany",
+    title: "Hand-Selected Nappa & Silk",
+    text: "Grade-A full-grain calfskins sourced from audited Italian tanneries, finished with natural vegetable oils for a glove-soft patina that matures over decades.",
+  },
+  {
+    icon: "accessibility_new",
+    eyebrow: "Architectural Relief",
+    title: "Ergonomic Memory Arch",
+    text: "A proprietary multi-density dual latex insert cradles the metatarsal and heel strike zones, absorbing 70% of ground impact with zero silhouette distortion.",
+  },
+];
+
+export const testimonials = [
+  {
+    quote:
+      "“Élora has achieved what few luxury maisons dare attempt: shoes with the sculptural daring of modern sculpture, yet supple enough to endure a 14-hour Fashion Week schedule.”",
+    author: "Vogue Runway",
+    source: "SS25 Global Collections Preview",
+    tag: "Milan",
+  },
+  {
+    quote:
+      "“The Aurelia 95mm feels almost gravity-defying. The balance geometry prevents foot fatigue in a way standard luxury pumps simply cannot match.”",
+    author: "Harper's BAZAAR",
+    source: "The Luxury Edit • Best of Footwear",
+    tag: "Paris",
+  },
+  {
+    quote:
+      "“Wore the Seraphina Silk Mule for my Lake Como wedding. Effortless elegance through eight continuous hours on stone steps. Truly transcendent.”",
+    author: "Contessa Beatrice D.",
+    source: "Verified Atelier Client • Como",
+    tag: "VIP Client",
+  },
+];
+
+export const socialTiles = [
+  {
+    image:
+      IMG +
+      "AB6AXuCK-hOOiop4B7_5L786bD9PzyLgW8JxKXgPCFBhgDK5nXOTJpIaq_sJJksjQSRhIkMJut7h3y3jg7FkRyrVq4lMtMLrjwoJtcEf7oAFh0yoOluOkbq8nyPcgI11gRxsJaO6bNh3qxeiGyHrKAii2zjdK5uvPyB6Q_MJKBhcSvPc28a9c8eIlNJa6MmOQ3VKAir0LJhn2-BAlwopQ319NC3gCkUW2POojdsmjuAToVE",
+    alt: "Woman in beige tailored trousers and Élora black stiletto mules at a Rome café",
+  },
+  {
+    image:
+      IMG +
+      "AB6AXuAmCpNZFCIT0tZutBjqf8i4h4aByQp9PKs4rMvpbwUOM9wD8VDvMxNAO8bAwNNGZm0x1LXahWU0lAQGxr-FAhVUNw9SoM8ASbF5E_OI2RJZTQwU2a5bEe7gpFMhm4oultUjoNvhDiKUacVlCOxVCzow8vKZ7BT0KIVrfRnmiVEayncaLrKFyRUjiw0-fcZbiiLleBwI7DdHaUcQu8MaKVehkPshrputGC401D9lqmU",
+    alt: "Artisan hands skiving fine Italian leather in a Florentine bottega",
+  },
+  {
+    image:
+      IMG +
+      "AB6AXuCryA3Ivun2dLD5IlRIedNGApJcnfZiMOttUMURDJ75Pbc1Ht74qw-fD1FSnpdUflCabMhPq_5Sr0qAGm9CLbFX_YwrFnBM8IekgdunV4fJwUsM-uZuQGr7ZI2S2HZgUlN9B9vueIoh98QLqL74XE0A6ILUNWYnbWlH6C6YwtTa0VQhKcoXLC1B8ob5gfP-IAnAozm1QMryM-Hs0Mg6nUhfOI_x7nMFLlb4S2-KKx8",
+    alt: "Architectural heels on concrete steps reflecting sunset in Milan",
+  },
+  {
+    image:
+      IMG +
+      "AB6AXuBg110S19NPzR6zqO3toNP68p8NGnSNUMTaHE7JjR_KSkm6SKTqClX2jBAleSAsO2jDx2GXC-Eqa2x_VXRS6FGaWz0XrA_2UqTqRCwGzPJFIBnopC99nEg4Dgwi-xQL5yE3iu7t3eZOwadiL3rxrgOQimwIXoOknJkIt6GXGF3-xnrPnpj0a1EJfT5060GU2Bm5rjjFiAp9Y7CHog99Gp0WBfq9bsa5KX_yo6xDEhc",
+    alt: "Champagne gold silk straps tied around an ankle on a terrace overlooking Florence",
+  },
+  {
+    image:
+      IMG +
+      "AB6AXuA5RDL2y3G9wehyhEkf6v0TsFc_6qaxL58Rd2UARf_mwd7oVl_p0NHWhqqkCuWujIA2ss6UHxwwRqy2Er_M8yIPODEFbu87cZMtOceqdaCjllilL7cdXOdkSmcLXV6OFDVnQVy8w9dweTwSDRRbWgnV_iF9xv6PYuVbcQfSgqjiiDbxsegFsmmfvjpuE30S6Gjiku4pl-rZkTuw_FZqabqpmAAWtv7JJr-srHADgYI",
+    alt: "Élora embossed ivory shoe box with golden logo and grosgrain ribbon on marble",
+  },
+];
+
+export const campaignImage =
+  IMG +
+  "AB6AXuDypOkfVSSuEssKWhAmcTZTGbMWaYLAiNbX1rHVqqT07pPT3lcDr0cuh6CFrtnTLQzSKyoxun1HKAr8YAx0y5qM-YxGU_B2VEe0jAMep6OZeqBvKyP2OfsvT9t3O4j0n56DZSeL8CA68vycuj-RrvvE1K7oIfmhGhdx6TAh957-smH_DbDMmfPvemKWicm57kKZ6vCNSbfBHEJCMPi5-eWNhH9g8Jikq4dnLm6oo1Q";
+
+/**
+ * Footer links. `href` is omitted where the page doesn't exist yet;
+ * those render as plain text instead of dead links.
+ * `sizeGuide: true` opens the size & fit modal.
+ */
+export type FooterLink = { label: string; href?: string; sizeGuide?: boolean };
+
+export const footerColumns: { title: string; links: FooterLink[] }[] = [
+  {
+    title: "Atelier & Brand",
+    links: [
+      { label: "Heritage", href: "/#craft" },
+      { label: "Sustainable Craft", href: "/#craft" },
+      { label: "The Florentine Workshops", href: "/#craft" },
+      { label: "Press & Publications" },
+    ],
+  },
+  {
+    title: "Collections",
+    links: [
+      { label: "Sculptural Heels", href: "/collections?category=heels" },
+      { label: "Artisan Sandals", href: "/collections?category=sandals" },
+      { label: "Flats & Loafers", href: "/collections?category=flats" },
+      { label: "Bridal & Evening", href: "/collections?category=bridal" },
+    ],
+  },
+  {
+    title: "Client Concierge",
+    links: [
+      { label: "Private Styling", href: "/#appointment" },
+      { label: "Shipping & Returns", href: "/policies/shipping-returns" },
+      { label: "Size & Fit Guide", sizeGuide: true },
+      { label: "Order Tracking", href: "/account" },
+      { label: "Contact Us (WhatsApp)", href: "https://wa.me/923148428115" },
+    ],
+  },
+  {
+    title: "Legal",
+    links: [
+      { label: "Terms of Service", href: "/policies/terms" },
+      { label: "Privacy Policy", href: "/policies/privacy" },
+      { label: "Cookie Settings" },
+      { label: "Accessibility" },
+    ],
+  },
+];
