@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+import Image from "next/image";
 import Link from "next/link";
 import { Suspense } from "react";
 import { requireAdmin } from "@/lib/auth/dal";
@@ -16,52 +17,76 @@ export const metadata: Metadata = {
 async function SignedInAs() {
   const user = await requireAdmin();
   return (
-    <div className="flex items-center gap-3">
-      <span className="muted hidden sm:inline">{user.email}</span>
+    <div className="flex items-center gap-5">
+      <span className="font-medium hidden sm:inline" title={user.email}>
+        {user.name.split(" ")[0]}
+      </span>
       <form action={logout}>
         <ConfirmButton
-          className="btn"
+          className="btn btn-text"
           confirm={{
-            title: "Sign out?",
-            message: "You will need to sign in again to manage the store.",
-            confirmLabel: "Sign out",
+            title: "Log out?",
+            message: "You will need to log in again to manage the store.",
+            confirmLabel: "Log out",
             icon: "logout",
             variant: "admin",
           }}
         >
-          Sign out
+          Log out
         </ConfirmButton>
       </form>
     </div>
   );
 }
 
-export default function AdminLayout({ children }: { children: React.ReactNode }) {
+export default function AdminLayout({
+  children,
+}: {
+  children: React.ReactNode;
+}) {
   return (
     <div className="admin">
-      <header className="bg-white border-b border-[var(--a-line)]">
-        <div className="max-w-6xl mx-auto px-4 h-14 flex items-center justify-between gap-4">
-          <div className="flex items-center gap-6">
-            <Link className="font-semibold" href="/admin">
-              ÉLORA Admin
+      <header className="a-topbar">
+        <div className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+          <div className="flex items-center gap-3 min-w-0">
+            <Link className="flex items-center gap-2 shrink-0" href="/admin">
+              <Image
+                alt=""
+                className="w-6 h-6 object-contain"
+                height={24}
+                src="/icon.png"
+                width={24}
+              />
+              <span className="a-brand">ÉLORA</span>
             </Link>
-            <Suspense fallback={<AdminNavFallback />}>
-              <AdminNav />
-            </Suspense>
-          </div>
-          <div className="flex items-center gap-3">
-            <Link className="link muted hidden sm:inline" href="/">
-              View store
+            <span aria-hidden="true" className="h-5 w-px bg-[var(--a-line)]" />
+            <span className="muted">Admin</span>
+            <Link
+              className="link muted hidden md:inline ml-3 text-xs"
+              href="/"
+              target="_blank"
+            >
+              View store ↗
             </Link>
-            <Suspense fallback={null}>
-              <SignedInAs />
-            </Suspense>
           </div>
+          <Suspense fallback={null}>
+            <SignedInAs />
+          </Suspense>
         </div>
       </header>
-      <main className="max-w-6xl mx-auto px-4 py-6">
-        <Suspense fallback={<p className="muted">Loading…</p>}>{children}</Suspense>
-      </main>
+
+      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 grid grid-cols-1 md:grid-cols-[200px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,1fr)] gap-4 md:gap-8">
+        <aside className="md:sticky md:top-6 md:self-start">
+          <Suspense fallback={<AdminNavFallback />}>
+            <AdminNav />
+          </Suspense>
+        </aside>
+        <main className="min-w-0">
+          <Suspense fallback={<p className="muted">Loading…</p>}>
+            {children}
+          </Suspense>
+        </main>
+      </div>
       <ActionToast />
     </div>
   );

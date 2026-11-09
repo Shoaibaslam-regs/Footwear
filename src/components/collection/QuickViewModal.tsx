@@ -34,24 +34,24 @@ const DRAG_RATIO = 0.8;
 const ANIM_MS = 250;
 
 const PRESETS = [
-  { label: "Profile (0°)", angle: 0 },
+  { label: "Side (0°)", angle: 0 },
   { label: "Front (90°)", angle: 90 },
-  { label: "Heel (180°)", angle: 180 },
-  { label: "Quarter (270°)", angle: 270 },
+  { label: "Back (180°)", angle: 180 },
+  { label: "Top (270°)", angle: 270 },
 ];
 
 const norm = (deg: number) => ((deg % 360) + 360) % 360;
 
 function perspectiveLabel(deg: number) {
   const d = norm(deg);
-  if (d >= 335 || d < 25) return "Side Profile (0°)";
-  if (d < 70) return "Three-Quarter Front (45°)";
-  if (d < 115) return "Direct Front Vamp (90°)";
-  if (d < 160) return "Arch Incline (135°)";
-  if (d < 205) return "Rear Heel Spine (180°)";
-  if (d < 250) return "Medial Profile (225°)";
-  if (d < 295) return "Top Down Arch (270°)";
-  return "Quarter Rear (315°)";
+  if (d >= 335 || d < 25) return "Side (0°)";
+  if (d < 70) return "Front Side (45°)";
+  if (d < 115) return "Front (90°)";
+  if (d < 160) return "Back Side (135°)";
+  if (d < 205) return "Back (180°)";
+  if (d < 250) return "Inner Side (225°)";
+  if (d < 295) return "Top (270°)";
+  return "Back Corner (315°)";
 }
 
 /** Simulated turntable transform for an angle. */
@@ -167,7 +167,7 @@ function QuickViewStudio({
   }, []);
 
   const toggleAutoRotate = () => {
-    showToast(autoRotate ? "Auto-rotation paused" : "Auto-rotation resumed");
+    showToast(autoRotate ? "Rotation stopped" : "Rotation started");
     setAutoRotate(!autoRotate);
   };
 
@@ -177,10 +177,10 @@ function QuickViewStudio({
     if (toStudio) {
       setHintHidden(false);
       setAutoRotate(true);
-      showToast("360° Interactive Studio Mode");
+      showToast("360° view");
     } else {
       setAutoRotate(false);
-      showToast("Still Editorial View");
+      showToast("Photo view");
     }
   };
 
@@ -210,7 +210,7 @@ function QuickViewStudio({
   };
 
   const addToBag = async () => {
-    if (!(await requireLogin("add pieces to your bag"))) return;
+    if (!(await requireLogin("add items to your bag"))) return;
     addItemToBag({
       id: pid,
       name: p.name,
@@ -225,7 +225,7 @@ function QuickViewStudio({
   };
 
   const toggleWishlist = async () => {
-    if (!(await requireLogin("save pieces to your wishlist"))) return;
+    if (!(await requireLogin("save items to your wishlist"))) return;
     const added = toggleSaved({
       id: pid,
       name: p.name,
@@ -236,7 +236,7 @@ function QuickViewStudio({
       detail: p.material,
     });
     setPopping(true);
-    showToast(added ? "Saved to Atelier Wishlist" : "Removed from Wishlist");
+    showToast(added ? "Added to Wishlist" : "Removed from Wishlist");
   };
 
   const t = turntable(angle);
@@ -298,7 +298,7 @@ function QuickViewStudio({
                   <span className="material-symbols-outlined text-[15px]">
                     360
                   </span>
-                  <span>360° Studio</span>
+                  <span>360° View</span>
                 </button>
                 <button
                   aria-pressed={!studio}
@@ -309,14 +309,14 @@ function QuickViewStudio({
                   <span className="material-symbols-outlined text-[15px]">
                     photo_camera
                   </span>
-                  <span>Still View</span>
+                  <span>Photo</span>
                 </button>
               </div>
 
               <div className="flex items-center gap-2">
                 <div className="px-2.5 py-1 bg-surface-container-lowest/90 backdrop-blur-md rounded-full border border-outline-variant/30 flex items-center gap-1 text-[11px] font-label-uppercase uppercase text-primary font-medium whitespace-nowrap">
                   <span className="text-secondary font-semibold">
-                    {studio ? perspectiveLabel(angle) : "Still View"}
+                    {studio ? perspectiveLabel(angle) : "Photo"}
                   </span>
                   <span className="text-outline-variant">•</span>
                   <span className="font-mono text-outline">
@@ -325,13 +325,13 @@ function QuickViewStudio({
                 </div>
                 <button
                   aria-label={
-                    autoRotate ? "Pause auto-rotate" : "Start auto-rotate"
+                    autoRotate ? "Stop rotating" : "Start rotating"
                   }
                   aria-pressed={autoRotate}
                   className="w-8 h-8 rounded-full bg-surface-container-lowest hover:bg-secondary-fixed text-primary flex items-center justify-center transition-all border border-outline-variant/30 cursor-pointer disabled:opacity-40"
                   disabled={!studio}
                   onClick={toggleAutoRotate}
-                  title="Auto-Rotate 360°"
+                  title="Rotate automatically"
                   type="button"
                 >
                   <span className="material-symbols-outlined text-[17px]">
@@ -381,7 +381,7 @@ function QuickViewStudio({
                 <span className="material-symbols-outlined text-[14px] text-secondary">
                   touch_app
                 </span>
-                <span>Drag horizontally to spin 360°</span>
+                <span>Drag left or right to turn the shoe</span>
               </div>
             </div>
 
@@ -393,7 +393,7 @@ function QuickViewStudio({
                     <span className="material-symbols-outlined text-[14px]">
                       rotate_right
                     </span>{" "}
-                    Turntable Angle Scrub
+                    Turn the shoe
                   </span>
                   <div className="flex items-center gap-3">
                     {PRESETS.map((pr) => (
@@ -410,7 +410,7 @@ function QuickViewStudio({
                 </div>
                 <div className="relative flex items-center">
                   <input
-                    aria-label="Turntable angle"
+                    aria-label="Shoe angle"
                     aria-valuetext={`${Math.round(angle)} degrees, ${perspectiveLabel(angle)}`}
                     className="w-full accent-primary cursor-pointer h-1.5 bg-surface-container rounded-lg"
                     max={360}
@@ -436,11 +436,11 @@ function QuickViewStudio({
                     />
                   </span>
                   <span className="text-[11px] font-label-uppercase uppercase text-outline">
-                    High-Resolution Atelier Still
+                    High-Quality Photo
                   </span>
                 </div>
                 <span className="text-xs text-secondary font-label-uppercase">
-                  Florence Atelier 2025
+                  Made in Florence, 2025
                 </span>
               </div>
             )}
@@ -453,7 +453,7 @@ function QuickViewStudio({
                 <div className="flex items-center justify-between text-outline text-[11px] font-label-uppercase uppercase tracking-wider mb-1 lg:pr-10">
                   <span>{p.spec}</span>
                   <span className="text-secondary font-medium">
-                    Bespoke Fitting
+                    Perfect Fit Promise
                   </span>
                 </div>
                 <h2
@@ -489,7 +489,7 @@ function QuickViewStudio({
                   <SalePrice price={p.price} compareAt={p.compareAt} discountPercent={p.discountPercent} />
                 </span>
                 <span className="font-label-uppercase text-xs text-outline uppercase tracking-wider">
-                  Duties &amp; Express Delivery Included
+                  Taxes &amp; Fast Delivery Included
                 </span>
               </div>
 
@@ -500,11 +500,11 @@ function QuickViewStudio({
                 </span>
                 <div className="text-xs">
                   <div className="font-label-uppercase uppercase font-semibold text-primary tracking-wider">
-                    Interactive 360° Studio Active
+                    360° View Is On
                   </div>
                   <div className="text-on-surface-variant text-[11px] leading-relaxed">
-                    Rotate or scrub above to inspect artisanal Florentine
-                    stitchwork, heel balance, and arch pitch.
+                    Turn the shoe above to see the hand stitching, heel and arch
+                    from every side.
                   </div>
                 </div>
               </div>
@@ -513,10 +513,10 @@ function QuickViewStudio({
               <div className="space-y-2 pt-1">
                 <div className="flex items-center justify-between">
                   <span className="font-label-uppercase text-xs font-semibold uppercase text-primary tracking-wider">
-                    Select EU Size
+                    Choose EU Size
                   </span>
                   <SizeGuideLink className="text-xs text-secondary hover:underline font-label-uppercase">
-                    Size Guide (True to Fit)
+                    Size Guide (Fits True to Size)
                   </SizeGuideLink>
                 </div>
                 <div
@@ -553,7 +553,7 @@ function QuickViewStudio({
                   <span className="material-symbols-outlined text-[18px]">
                     shopping_bag
                   </span>
-                  <span>Add to Shopping Bag</span>
+                  <span>Add to Bag</span>
                 </button>
                 <button
                   aria-label={

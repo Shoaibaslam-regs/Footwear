@@ -1,16 +1,24 @@
 /*
- * Admin panel: deliberately plain. System sans-serif, one weight scale,
- * neutral greys, no brand serif or decorative motion.
+ * Admin panel: clean dashboard layout (a top bar, a left sidebar, white cards).
+ * Colours come from the store's own theme tokens (globals.css @theme), so the
+ * admin always matches the website. System sans-serif; no decorative motion.
  */
 .admin {
-  --a-bg: #f7f7f7;
-  --a-panel: #ffffff;
-  --a-text: #1b1c1a;
-  --a-muted: #6b6b6b;
-  --a-line: #e3e3e3;
-  --a-accent: #1b1c1a;
+  --a-bg: var(--color-surface-container-low); /* ivory */
+  --a-panel: var(--color-surface-container-lowest); /* white */
+  --a-text: var(--color-on-surface); /* ink */
+  --a-muted: var(--color-on-surface-variant);
+  --a-line: var(--color-outline-variant); /* warm blush-grey */
+  --a-accent: var(--color-primary-container); /* espresso */
+  --a-accent-hover: var(--color-secondary); /* warm brown */
+  --a-accent-soft: var(--color-secondary-fixed); /* champagne */
+  --a-gold: var(--color-secondary);
   --a-danger: #b42318;
   --a-ok: #067647;
+  /* Charts: one validated series hue (passes chroma + contrast on white), hairline grid. */
+  --a-chart: #9c6a2a;
+  --a-grid: color-mix(in srgb, var(--color-outline-variant) 60%, transparent);
+  --a-axis: var(--color-outline);
   font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
   font-size: 14px;
   line-height: 1.5;
@@ -18,13 +26,29 @@
   background: var(--a-bg);
   min-height: 100vh;
 }
-.admin h1 { font-size: 22px; font-weight: 600; margin: 0; }
+.admin h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
 .admin h2 { font-size: 16px; font-weight: 600; margin: 0; }
 .admin .muted { color: var(--a-muted); }
+
+/* Layout */
+.admin .a-topbar { background: var(--a-panel); border-bottom: 1px solid var(--a-line); }
+.admin .a-brand { color: var(--a-accent); font-weight: 700; font-size: 17px; letter-spacing: 0.18em; }
+.admin .a-side-link {
+  display: block; padding: 8px 12px; border-radius: 8px; color: #4b5563; white-space: nowrap;
+  transition: background-color 0.15s, color 0.15s;
+}
+.admin .a-side-link:hover { color: var(--a-text); background: rgba(33, 27, 25, 0.04); }
+.admin .a-side-link[aria-current="page"] {
+  background: var(--a-panel); color: var(--a-accent); font-weight: 600;
+  box-shadow: inset 3px 0 0 var(--a-gold), 0 1px 2px rgba(33, 27, 25, 0.06), 0 1px 3px rgba(33, 27, 25, 0.08);
+}
+
+/* Cards & tables */
 .admin .panel {
   background: var(--a-panel);
   border: 1px solid var(--a-line);
-  border-radius: 8px;
+  border-radius: 12px;
+  box-shadow: 0 1px 2px rgba(33, 27, 25, 0.04);
 }
 .admin table { width: 100%; border-collapse: collapse; }
 .admin th {
@@ -40,27 +64,46 @@
 }
 .admin td { padding: 10px 12px; border-bottom: 1px solid var(--a-line); vertical-align: middle; }
 .admin tr:last-child td { border-bottom: 0; }
-.admin a.link { text-decoration: underline; text-underline-offset: 3px; }
+.admin a.link { color: var(--a-accent); text-decoration: underline; text-decoration-color: var(--a-gold); text-underline-offset: 3px; }
+.admin a.link.muted { color: var(--a-muted); }
+
+/* Buttons */
 .admin .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  height: 36px; padding: 0 14px; border-radius: 6px; font-weight: 500;
+  height: 36px; padding: 0 14px; border-radius: 8px; font-weight: 500;
   border: 1px solid var(--a-line); background: var(--a-panel); color: var(--a-text);
+  transition: background-color 0.15s, border-color 0.15s;
 }
-.admin .btn:hover { background: #f0f0f0; }
+.admin .btn:hover { background: var(--color-surface-container); }
 .admin .btn-primary { background: var(--a-accent); border-color: var(--a-accent); color: #fff; }
-.admin .btn-primary:hover { background: #333; }
+.admin .btn-primary:hover { background: var(--a-accent-hover); border-color: var(--a-accent-hover); }
 .admin .btn-danger { color: var(--a-danger); }
-.admin .btn:disabled { opacity: 0.6; }
+.admin .btn-sm { height: 32px; padding: 0 10px; font-size: 13px; }
+.admin .btn:disabled { opacity: 0.55; cursor: not-allowed; }
+.admin .btn-text { background: none; border: 0; padding: 0; height: auto; font-weight: 500; color: var(--a-text); }
+.admin .btn-text:hover { color: var(--a-gold); background: none; }
+
+/* Pills (filter tabs) */
+.admin .pill {
+  display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border-radius: 999px;
+  color: #4b5563; background: var(--a-panel); border: 1px solid transparent; white-space: nowrap;
+}
+.admin .pill:hover { color: var(--a-text); border-color: var(--a-line); }
+.admin .pill[aria-current="page"] { background: var(--a-accent); color: var(--a-accent-soft); }
+
+/* Forms */
 .admin .input, .admin select, .admin textarea {
-  width: 100%; height: 36px; padding: 0 10px; border: 1px solid var(--a-line);
-  border-radius: 6px; background: #fff; color: var(--a-text); font: inherit;
+  width: 100%; height: 38px; padding: 0 12px; border: 1px solid var(--a-line);
+  border-radius: 8px; background: var(--a-panel); color: var(--a-text); font: inherit;
 }
-.admin textarea { height: auto; padding: 8px 10px; }
-.admin .input:focus, .admin select:focus, .admin textarea:focus, .admin .btn:focus-visible {
-  outline: 2px solid var(--a-accent); outline-offset: 1px;
+.admin textarea { height: auto; padding: 10px 12px; }
+.admin .input:focus, .admin select:focus, .admin textarea:focus, .admin .btn:focus-visible, .admin .pill:focus-visible, .admin .a-side-link:focus-visible {
+  outline: 2px solid var(--a-gold); outline-offset: 1px;
 }
-.admin label.field { display: flex; flex-direction: column; gap: 4px; font-weight: 500; }
+.admin label.field { display: flex; flex-direction: column; gap: 6px; font-weight: 500; }
 .admin .error { color: var(--a-danger); font-size: 13px; font-weight: 400; }
+
+/* Tags & notices */
 .admin .tag {
   display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px;
   border: 1px solid var(--a-line); white-space: nowrap;
@@ -70,6 +113,13 @@
 .admin .tag-warn { color: #93370d; border-color: #fedf89; background: #fffaeb; }
 .admin .tag-info { color: #175cd3; border-color: #b2ddff; background: #eff8ff; }
 .admin .tag-bad { color: var(--a-danger); border-color: #fecdca; background: #fef3f2; }
-.admin .notice { padding: 8px 12px; border-radius: 6px; border: 1px solid var(--a-line); background: #fff; }
+.admin .notice { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--a-line); background: var(--a-panel); }
 .admin .notice-ok { border-color: #abefc6; background: #ecfdf3; color: var(--a-ok); }
 .admin .notice-bad { border-color: #fecdca; background: #fef3f2; color: var(--a-danger); }
+
+/* Empty state: dashed card */
+.admin .empty {
+  border: 1px dashed var(--color-outline); border-radius: 12px; padding: 48px 16px; text-align: center;
+  font-weight: 600; color: var(--a-text); background: rgba(255, 255, 255, 0.5);
+}
+.admin .empty .muted { font-weight: 400; display: block; margin-top: 4px; }

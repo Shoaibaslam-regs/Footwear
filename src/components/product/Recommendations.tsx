@@ -12,10 +12,10 @@ export default function Recommendations({ items }: { items: Listing[] }) {
         <div className="flex items-end justify-between">
           <div>
             <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              Curated Pairings
+              You May Also Like
             </span>
             <h2 className="font-headline-lg text-headline-lg text-primary font-normal">
-              Complete The Silhouette
+              Complete Your Look
             </h2>
           </div>
           <div className="hidden sm:flex items-center gap-space-xs">

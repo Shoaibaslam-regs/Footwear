@@ -18,9 +18,9 @@ export default async function NewArrivals() {
     >
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-md mb-space-lg">
-          <div>
+          <div data-reveal>
             <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              Curated Capsule
+              Just In
             </span>
             <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight mt-1">
               New Arrivals
@@ -53,7 +53,7 @@ export default async function NewArrivals() {
           </div>
         </div>
 
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-space-sm sm:gap-gutter">
+        <div data-reveal-stagger className="grid grid-cols-2 lg:grid-cols-4 gap-space-sm sm:gap-gutter">
           {newArrivals.map((p) => (
             <article
               key={p.name}
@@ -78,7 +78,7 @@ export default async function NewArrivals() {
                   }}
                 />
                 <Image
-                  className="w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
+                  className="img-fade w-full h-full object-cover transition-transform duration-700 group-hover:scale-105"
                   alt={p.alt}
                   src={p.image}
                   fill
@@ -108,7 +108,13 @@ export default async function NewArrivals() {
                   </span>
                 </div>
                 <h3 className="font-headline-sm text-body-lg sm:text-headline-sm leading-snug text-primary tracking-normal group-hover:text-secondary transition-colors">
-                  {p.href ? <Link href={p.href}>{p.name}</Link> : p.name}
+                  {p.href ? (
+                    <Link className="link-draw" href={p.href}>
+                      {p.name}
+                    </Link>
+                  ) : (
+                    p.name
+                  )}
                 </h3>
                 <p className="font-body-sm text-xs sm:text-body-sm text-on-surface-variant line-clamp-1 sm:line-clamp-none">
                   {p.material}

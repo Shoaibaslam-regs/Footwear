@@ -15,7 +15,7 @@ export default function QuickAddButton({
     <button
       className="w-full h-11 bg-primary-container hover:bg-secondary-fixed text-surface hover:text-on-secondary-fixed font-label-uppercase text-label-uppercase uppercase tracking-wider rounded-full transition-all flex items-center justify-center gap-1 shadow-md"
       onClick={async () => {
-        if (!(await requireLogin("add pieces to your bag"))) return;
+        if (!(await requireLogin("add items to your bag"))) return;
         addToBag({ ...product, size: DEFAULT_SIZE });
       }}
       type="button"

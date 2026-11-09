@@ -18,9 +18,3 @@ export default function Price({ amount }: { amount: number }) {
     </span>
   );
 }
-
-/** Hook form, for prices inside strings (labels, aria text). */
-export function useFormatPrice() {
-  const currency = useCurrency();
-  return (amount: number) => (currency === "PKR" ? "" : "≈ ") + formatPrice(amount, currency);
-}

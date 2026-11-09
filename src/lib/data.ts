@@ -5,16 +5,13 @@ export const navLinks = [
   { label: "Shop", href: "/collections", activePrefixes: ["/collections", "/products"] },
   { label: "Collections", href: "/#collection" },
   { label: "New Arrivals", href: "/#new-arrivals" },
-  { label: "Wedding Atelier", href: "/#appointment" },
-  { label: "Maison ÉLORA", href: "/#craft" },
+  { label: "Bridal", href: "/#appointment" },
+  { label: "Our Story", href: "/#craft" },
 ];
 
 /** Client concierge WhatsApp (Pakistan, 0314 842 8115). */
 export const whatsappNumber = "923148428115";
 export const whatsappUrl = `https://wa.me/${whatsappNumber}`;
-
-export const profileImage =
-  "https://lh3.googleusercontent.com/aida/ALJJyrAvfDUitme7hNnLwUuG22DSacOi6zNfrbAu58SG6b4Js7n-SwJFkxef1feq28vnSvg6S5MyZWVBO85it_qeS-PCLHKfLjsWi7GK7pf8mGLjCcWnD53i-2eNHK4Rto9pWmPEutACbXGCWegN6X4WF6fGqXXSVvXzc5CM66D8ssT3rX49byZYDIzWNgV7Q_IgqH--WrdoOH9apoFpzbedsHIxuaE-khJ1HyTteG8ngld4";
 
 export const heroImage =
   IMG +
@@ -47,9 +44,9 @@ export type Category = {
 export const categories: Category[] = [
   {
     href: "/collections",
-    eyebrow: "Signature Silhouette",
-    title: "Sculptural Heels",
-    subtitle: "Stilettos, Slingbacks, and Geometric Block Heels",
+    eyebrow: "Our Signature",
+    title: "Heels",
+    subtitle: "Stilettos, Slingbacks & Block Heels",
     image:
       IMG +
       "AB6AXuCMKwzghoYrROl6T1d1mVE-eaWaWfUtSE8fuDo4vpwFoqJy7DJHSqL-NS4Zn6E4kcwvzjdb5-iHRhZkivxu65QjWLzGdCu9mIWCi667RdD3M9lsr5t5eDji5foRqj5fI62aLrp9zmrjVEbq3Bfg3KrkjkFmIRut5jy-_85aqesKIHH0PFREl6G1WVPzy2Dc3HdKhkN4M9fKRlymSRo4uzXeV-HQmRy20V3bPal88eQ",
@@ -60,9 +57,9 @@ export const categories: Category[] = [
   },
   {
     href: "/collections",
-    eyebrow: "Warm Season Atelier",
-    title: "Artisan Sandals",
-    subtitle: "Strappy Silhouettes & Metallic Slides",
+    eyebrow: "For Summer",
+    title: "Sandals",
+    subtitle: "Strappy Sandals & Metallic Slides",
     image:
       IMG +
       "AB6AXuAVx5L_stNtH-bN_LyOEW4KiM4ILiV7M3pWorWywRu8ObkkUrbiK79W8WSbVKmjgzI1AV9_W7m7Xyck9Nh-kkMvafh4DHohEl3GjF0AI9iF7NFcfY9uuBjPSE5N4PfmsioCoNQvArggE5nqC1uJpcRKESJ7yyktUA7JsM9lDbg2hZEQbXUaq4SmN1heGXsKCtOslPl4a_3Ydr_7TZlWYGgPxsiX3cCRlHClsL19nSQ",
@@ -73,9 +70,9 @@ export const categories: Category[] = [
   },
   {
     href: "/collections",
-    eyebrow: "Effortless Ease",
-    title: "Refined Flats",
-    subtitle: "Ballet Mules & Pointed Loafers",
+    eyebrow: "Easy & Comfortable",
+    title: "Flats",
+    subtitle: "Ballet Flats, Mules & Pointed Loafers",
     image:
       IMG +
       "AB6AXuAHtupL94PZ5fY-oa4CsRlO6597mDHLXQPhTvTqM1s1XUzgdTdbYOl2e-5l07XJExX-cqm3b83OA1QtZBf8VnqTzvrW1tGLmxD-kZy-wtohPB4e45VIBYCEdYKGBykODVQ8zUUGmGCaiU7IlfsesDA2p4lX7JD1SMBOICMYuRHJ3kF43FuZZi9MdEUjJ4j_40WDXH5hZSNvLRD4TXmoZ548RHK-UVxCOEAqbrngt2o",
@@ -86,9 +83,9 @@ export const categories: Category[] = [
   },
   {
     href: "/collections",
-    eyebrow: "Casual Haute",
-    title: "Elevated Sneakers",
-    subtitle: "Leather Tennis & Shearling Slip-ons",
+    eyebrow: "Everyday Style",
+    title: "Sneakers",
+    subtitle: "Leather Sneakers & Fur-Lined Slip-ons",
     image:
       IMG +
       "AB6AXuDQHApOVLLpstknqg8v0i67NzEDLb_jy94YUVfIDHl0a0uy16QCg5KqzoEQdlwmjLOY-vi1KxPbRQBWzFp898bqFgo9D3NMt6GiJW1WSk2CntY9TdHrN2a3xZNydrGABjlAMf_eIEOaLFSFEKkf5WO9frAovrKgoPWkwXxgmkonyM2y4sRTPNlGqekA9raNiJs-Jnsf5X2Fd1__2l_o2jPD_jVxiCCOLfgRWWSuY6g",
@@ -99,9 +96,9 @@ export const categories: Category[] = [
   },
   {
     href: "/collections",
-    eyebrow: "Couture Ceremonies",
-    title: "The Bridal Suite",
-    subtitle: "Ivory Satin & Pearl-Embellished",
+    eyebrow: "For Weddings",
+    title: "Bridal Shoes",
+    subtitle: "Ivory Satin & Pearl Details",
     image:
       IMG +
       "AB6AXuDSaCZUj9wTXit4kOtpGIjFMaLw9yq5WkoIj-aCJZeKek4KXdMtZGG-sLGJDMp-JZct4-OiU83I7bZ6CxNNGlwKIff-ntB6uRpbGKeBpH_RJiZEiqTrH3pMqhz4luSlSimGXT0rP2GVKDPhJWOF4sCmhMDecxgAEuOsQndSrzM58CjmdVN-rBzvbeWF0MlOVS0Jhqtv1gdANj-lBB-mhIgl04RVVcF0yFEfoFXi0is",
@@ -172,7 +169,7 @@ export const newArrivals: Product[] = [
   {
     name: "Paloma Sculpted Slingback",
     shortName: "Paloma Slingback",
-    badge: "Atelier Edition",
+    badge: "Limited Edition",
     badgeClass: "bg-tertiary-container text-tertiary-fixed",
     spec: "75mm Angled Heel",
     price: 142_800,
@@ -269,45 +266,21 @@ export const bestSellers: BestSeller[] = [
 export const craftPillars = [
   {
     icon: "hourglass_top",
-    eyebrow: "Precision Execution",
-    title: "60-Hour Craftsmanship",
-    text: "Each pair rests on custom cedar lasts for 48 hours to preserve memory shape, requiring 210 distinct manual touchpoints by master bottegai.",
+    eyebrow: "Careful Work",
+    title: "60 Hours to Make Each Pair",
+    text: "Each pair rests on a custom wooden shoe mould for 48 hours so it keeps its shape. Our master shoemakers then finish it by hand in 210 steps.",
   },
   {
     icon: "pan_tool_alt",
-    eyebrow: "Sourced In Tuscany",
-    title: "Hand-Selected Nappa & Silk",
-    text: "Grade-A full-grain calfskins sourced from audited Italian tanneries, finished with natural vegetable oils for a glove-soft patina that matures over decades.",
+    eyebrow: "From Tuscany",
+    title: "Hand-Picked Leather & Silk",
+    text: "Top-quality full-grain leather from checked Italian tanneries, finished with natural plant oils. It feels soft from day one and looks better with age.",
   },
   {
     icon: "accessibility_new",
-    eyebrow: "Architectural Relief",
-    title: "Ergonomic Memory Arch",
-    text: "A proprietary multi-density dual latex insert cradles the metatarsal and heel strike zones, absorbing 70% of ground impact with zero silhouette distortion.",
-  },
-];
-
-export const testimonials = [
-  {
-    quote:
-      "“Élora has achieved what few luxury maisons dare attempt: shoes with the sculptural daring of modern sculpture, yet supple enough to endure a 14-hour Fashion Week schedule.”",
-    author: "Vogue Runway",
-    source: "SS25 Global Collections Preview",
-    tag: "Milan",
-  },
-  {
-    quote:
-      "“The Aurelia 95mm feels almost gravity-defying. The balance geometry prevents foot fatigue in a way standard luxury pumps simply cannot match.”",
-    author: "Harper's BAZAAR",
-    source: "The Luxury Edit • Best of Footwear",
-    tag: "Paris",
-  },
-  {
-    quote:
-      "“Wore the Seraphina Silk Mule for my Lake Como wedding. Effortless elegance through eight continuous hours on stone steps. Truly transcendent.”",
-    author: "Contessa Beatrice D.",
-    source: "Verified Atelier Client • Como",
-    tag: "VIP Client",
+    eyebrow: "All-Day Comfort",
+    title: "Memory Foam Arch Support",
+    text: "Our special two-layer foam insole supports the front of your foot and your heel. It absorbs 70% of the impact when you walk, without changing the shoe's shape.",
   },
 ];
 
@@ -357,37 +330,37 @@ export type FooterLink = { label: string; href?: string; sizeGuide?: boolean };
 
 export const footerColumns: { title: string; links: FooterLink[] }[] = [
   {
-    title: "Atelier & Brand",
+    title: "About ÉLORA",
     links: [
-      { label: "Heritage", href: "/#craft" },
-      { label: "Sustainable Craft", href: "/#craft" },
-      { label: "The Florentine Workshops", href: "/#craft" },
-      { label: "Press & Publications" },
+      { label: "Our Story", href: "/#craft" },
+      { label: "Eco-Friendly Making", href: "/#craft" },
+      { label: "Our Florence Workshops", href: "/#craft" },
+      { label: "In the News" },
     ],
   },
   {
     title: "Collections",
     links: [
-      { label: "Sculptural Heels", href: "/collections?category=heels" },
-      { label: "Artisan Sandals", href: "/collections?category=sandals" },
+      { label: "Heels", href: "/collections?category=heels" },
+      { label: "Sandals", href: "/collections?category=sandals" },
       { label: "Flats & Loafers", href: "/collections?category=flats" },
-      { label: "Bridal & Evening", href: "/collections?category=bridal" },
+      { label: "Bridal & Party", href: "/collections?category=bridal" },
     ],
   },
   {
-    title: "Client Concierge",
+    title: "Customer Help",
     links: [
-      { label: "Private Styling", href: "/#appointment" },
-      { label: "Shipping & Returns", href: "/policies/shipping-returns" },
+      { label: "Personal Styling", href: "/#appointment" },
+      { label: "Delivery & Returns", href: "/policies/shipping-returns" },
       { label: "Size & Fit Guide", sizeGuide: true },
-      { label: "Order Tracking", href: "/account" },
+      { label: "Track Your Order", href: "/account" },
       { label: "Contact Us (WhatsApp)", href: "https://wa.me/923148428115" },
     ],
   },
   {
     title: "Legal",
     links: [
-      { label: "Terms of Service", href: "/policies/terms" },
+      { label: "Terms & Conditions", href: "/policies/terms" },
       { label: "Privacy Policy", href: "/policies/privacy" },
       { label: "Cookie Settings" },
       { label: "Accessibility" },

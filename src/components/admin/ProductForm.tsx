@@ -23,7 +23,7 @@ export default function ProductForm({ product }: { product?: Listing }) {
     <form action={action} className="grid grid-cols-1 lg:grid-cols-[1fr_280px] gap-4" noValidate>
       {product && <input name="id" type="hidden" value={product.id} />}
 
-      <div className="panel p-4 flex flex-col gap-4">
+      <div className="panel p-4 flex flex-col gap-4 min-w-0">
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
           <label className="field">
             Name
@@ -31,7 +31,7 @@ export default function ProductForm({ product }: { product?: Listing }) {
             <Err list={e.name} />
           </label>
           <label className="field">
-            URL slug <span className="muted font-normal">(blank = from name)</span>
+            Web address (slug) <span className="muted font-normal">(leave blank to use the name)</span>
             <input className="input" defaultValue={product?.slug} name="slug" placeholder="aurelia-stiletto" />
             <Err list={e.slug} />
           </label>
@@ -71,7 +71,7 @@ export default function ProductForm({ product }: { product?: Listing }) {
             <Err list={e.otherSales} />
           </label>
           <label className="field">
-            Spec <span className="muted font-normal">(e.g. Sculptural Heel • 95mm)</span>
+            Spec <span className="muted font-normal">(e.g. Block Heel • 95mm)</span>
             <input className="input" defaultValue={product?.spec} name="spec" />
             <Err list={e.spec} />
           </label>
@@ -93,7 +93,7 @@ export default function ProductForm({ product }: { product?: Listing }) {
           <Err list={e.description} />
         </label>
 
-        <fieldset className="flex flex-col gap-2">
+        <fieldset className="flex flex-col gap-2 min-w-0">
           <legend className="font-medium mb-1">Sizes (EU)</legend>
           <div className="overflow-x-auto">
             <table className="w-auto">

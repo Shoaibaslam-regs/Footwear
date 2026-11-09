@@ -24,7 +24,7 @@ export default function ShoppingBag({ suggestions }: { suggestions: Suggestion[]
   const moveToWishlist = async (id: string) => {
     const item = items.find((i) => i.id === id);
     if (!item) return;
-    if (!(await requireLogin("save pieces to your wishlist"))) return;
+    if (!(await requireLogin("save items to your wishlist"))) return;
     toggleWishlist({
       id: lineProductId(id),
       name: item.name,
@@ -35,7 +35,7 @@ export default function ShoppingBag({ suggestions }: { suggestions: Suggestion[]
       detail: item.material,
     });
     removeFromBag(id);
-    showToast("Moved to Atelier Wishlist");
+    showToast("Moved to Wishlist");
   };
 
   return (
@@ -56,18 +56,18 @@ export default function ShoppingBag({ suggestions }: { suggestions: Suggestion[]
             </span>
             <span className="text-outline-variant select-none">/</span>
             <span className="text-outline hover:text-on-surface transition-colors cursor-default">
-              02. Shipping Concierge
+              02. Delivery Details
             </span>
             <span className="text-outline-variant select-none">/</span>
             <span className="text-outline hover:text-on-surface transition-colors cursor-default">
-              03. Secure Settlement
+              03. Payment
             </span>
           </nav>
 
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md pt-space-xs">
             <div>
               <span className="font-label-uppercase text-label-uppercase text-secondary tracking-[0.25em] uppercase">
-                Your Selection
+                My Bag
               </span>
               <h1 className="font-headline-lg text-headline-lg text-primary mt-1 tracking-tight">
                 Your Shopping Bag
@@ -86,13 +86,13 @@ export default function ShoppingBag({ suggestions }: { suggestions: Suggestion[]
               Your bag is empty
             </h2>
             <p className="font-body-md text-body-md text-on-surface-variant max-w-md">
-              Discover our latest silhouettes in the collection.
+              Have a look at our latest styles.
             </p>
             <Link
               className="px-8 py-4 rounded-full bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest shadow-xl"
               href="/collections"
             >
-              Explore Collection
+              Shop Now
             </Link>
           </div>
         ) : (

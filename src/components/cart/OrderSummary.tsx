@@ -19,7 +19,7 @@ export default function OrderSummary({
             Order Summary
           </h2>
           <span className="font-label-uppercase text-label-uppercase text-secondary font-semibold">
-            {pieces} {pieces === 1 ? "PIECE" : "PIECES"}
+            {pieces} {pieces === 1 ? "PAIR" : "PAIRS"}
           </span>
         </div>
 
@@ -101,17 +101,17 @@ export default function OrderSummary({
               support_agent
             </span>
             <span className="font-label-uppercase text-label-uppercase text-primary font-semibold tracking-wider">
-              Florence Client Concierge
+              Need Help?
             </span>
           </div>
           <p className="font-body-sm text-body-sm text-on-surface-variant">
-            Uncertain on sizing or pairing for an occasion? Our atelier stylists
-            are on hand in Florence.
+            Not sure about your size, or what to wear for an event? Our
+            stylists in Florence are here to help.
           </p>
           <div className="flex items-center gap-space-md pt-1">
             <a
               className="font-label-uppercase text-label-uppercase text-primary underline underline-offset-4 decoration-secondary hover:text-secondary transition-colors"
-              href={`${whatsappUrl}?text=${encodeURIComponent("Hello ÉLORA Concierge, I'd like help with sizing.")}`}
+              href={`${whatsappUrl}?text=${encodeURIComponent("Hello ÉLORA, I'd like help with sizing.")}`}
               rel="noopener noreferrer"
               target="_blank"
             >
@@ -122,7 +122,7 @@ export default function OrderSummary({
               className="font-label-uppercase text-label-uppercase text-primary underline underline-offset-4 decoration-secondary hover:text-secondary transition-colors"
               href="/#appointment"
             >
-              Book Virtual Fitting
+              Book a Video Fitting
             </Link>
           </div>
         </div>

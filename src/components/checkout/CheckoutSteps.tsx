@@ -25,17 +25,17 @@ export default function CheckoutSteps({
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm pb-space-md">
         <div>
           <span className="font-label-uppercase text-label-uppercase text-secondary tracking-[0.25em] uppercase">
-            Checkout Concierge
+            Checkout
           </span>
           <h1 className="font-headline-md text-headline-md text-primary font-normal tracking-tight mt-space-xs">
-            Bespoke Acquisition Process
+            Complete Your Order
           </h1>
         </div>
         <div className="flex items-center gap-space-xs text-on-surface-variant font-label-uppercase text-label-uppercase">
           <span className="material-symbols-outlined text-[16px] text-secondary">
             verified_user
           </span>
-          <span>Encrypted 256-Bit SSL Atelier Protection</span>
+          <span>Secure Checkout (256-bit SSL encryption)</span>
         </div>
       </div>
 
@@ -57,7 +57,7 @@ export default function CheckoutSteps({
               01. Contact
             </span>
             <span className="font-body-sm text-body-sm text-secondary">
-              VIP Verified
+              Verified
             </span>
           </div>
         </button>
@@ -70,7 +70,7 @@ export default function CheckoutSteps({
           <div className={bar(2)} />
           <div className="flex items-center justify-between text-on-surface w-full">
             <span className="font-label-uppercase text-label-uppercase uppercase tracking-wider text-primary font-semibold">
-              02. Shipping
+              02. Address
             </span>
             <span className="font-label-uppercase text-[10px] text-secondary bg-secondary-fixed/50 px-2 py-0.5 rounded-none uppercase">
               Active
@@ -100,7 +100,7 @@ export default function CheckoutSteps({
           <div className={bar(4)} />
           <div className="flex items-center justify-between text-on-surface-variant w-full">
             <span className="font-label-uppercase text-label-uppercase uppercase tracking-wider">
-              04. Secure Payment
+              04. Payment
             </span>
             <span className="font-body-sm text-body-sm text-outline">Final</span>
           </div>

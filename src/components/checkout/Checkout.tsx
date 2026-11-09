@@ -73,10 +73,10 @@ export default function Checkout({
             Your bag is empty
           </h1>
           <p className="font-body-md text-body-md text-on-surface-variant max-w-md">
-            Add a piece to your Shopping Bag before proceeding to secure checkout.
+            Add something to your bag before you check out.
           </p>
           <Link className={`${pill} bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed shadow-xl`} href="/collections">
-            Explore Collection
+            Shop Now
           </Link>
         </div>
       </div>
@@ -126,19 +126,19 @@ function OrderConfirmation({ order, signedIn }: { order: PlacedOrder; signedIn: 
           Order Received · #{order.number}
         </span>
         <h1 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight">
-          Grazie, {order.customer.name.split(" ")[0]}
+          Thank You, {order.customer.name.split(" ")[0]}
         </h1>
         <p className="font-body-md text-body-md text-on-surface-variant max-w-xl">
-          Our concierge will confirm your order shortly and send updates to {order.customer.email}.
+          Our team will confirm your order soon and send updates to {order.customer.email}.
           Payment: {paymentMethodLabel(order.payment.method)}. Delivery: {order.delivery.name}.
         </p>
       </div>
 
       <div className="bg-surface-container-lowest rounded-xl shadow-sm p-space-lg">
         <div className="flex items-baseline justify-between pb-space-sm border-b border-surface-container-high">
-          <h2 className="font-headline-sm text-headline-sm text-primary">Order Recap</h2>
+          <h2 className="font-headline-sm text-headline-sm text-primary">Order Details</h2>
           <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-widest">
-            {pieces} {pieces === 1 ? "Piece" : "Pieces"}
+            {pieces} {pieces === 1 ? "Pair" : "Pairs"}
           </span>
         </div>
         <ul>
@@ -171,7 +171,7 @@ function OrderConfirmation({ order, signedIn }: { order: PlacedOrder; signedIn: 
           )}
           <div className="flex justify-between">
             <span>Delivery</span>
-            <span>{order.shippingFee === 0 ? "Complimentary" : <Price amount={order.shippingFee} />}</span>
+            <span>{order.shippingFee === 0 ? "Free" : <Price amount={order.shippingFee} />}</span>
           </div>
         </div>
         <div className="pt-space-md mt-space-sm border-t-2 border-primary flex items-baseline justify-between">

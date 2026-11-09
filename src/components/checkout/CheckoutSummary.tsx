@@ -22,7 +22,7 @@ function saveForLater(item: CartItem) {
     detail: item.material,
   });
   removeFromBag(item.id);
-  showToast("Saved to Atelier Wishlist");
+  showToast("Added to Wishlist");
 }
 
 export default function CheckoutSummary({
@@ -50,7 +50,7 @@ export default function CheckoutSummary({
             Order Summary
           </h2>
           <span className="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">
-            {pieces} {pieces === 1 ? "Piece" : "Pieces"}
+            {pieces} {pieces === 1 ? "Pair" : "Pairs"}
           </span>
         </div>
 
@@ -75,10 +75,10 @@ export default function CheckoutSummary({
                   </span>
                 )}
               </div>
-              <div className="flex-1 flex flex-col justify-between">
+              <div className="flex-1 min-w-0 flex flex-col justify-between">
                 <div>
                   <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-headline-sm text-headline-sm text-primary leading-tight font-normal">
+                    <h3 className="font-headline-sm text-body-lg sm:text-headline-sm text-primary leading-tight font-normal min-w-0 break-words">
                       {item.href ? (
                         <Link className="hover:text-secondary transition-colors" href={item.href}>
                           {item.name}

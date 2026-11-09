@@ -4,7 +4,10 @@ import Link from "next/link";
 import { useCallback, useState } from "react";
 import { useBagCount, useWishlist } from "@/lib/store";
 import CurrencySwitch from "./CurrencySwitch";
-import SearchPanel from "./SearchPanel";
+import dynamic from "next/dynamic";
+
+// Loaded the first time someone opens search.
+const SearchPanel = dynamic(() => import("./SearchPanel"), { ssr: false });
 import type { SearchEntry } from "@/lib/search-data";
 
 const iconBtn =
@@ -20,6 +23,7 @@ export default function HeaderActions({
   const bagCount = useBagCount();
   const wishCount = useWishlist().length;
   const [searchOpen, setSearchOpen] = useState(false);
+  const [searchUsed, setSearchUsed] = useState(false);
   const closeSearch = useCallback(() => setSearchOpen(false), []);
 
   return (
@@ -31,7 +35,10 @@ export default function HeaderActions({
         aria-haspopup="dialog"
         aria-label="Search"
         className={iconBtn}
-        onClick={() => setSearchOpen((o) => !o)}
+        onClick={() => {
+          setSearchUsed(true);
+          setSearchOpen((o) => !o);
+        }}
         type="button"
       >
         <span className="material-symbols-outlined text-[20px]">search</span>
@@ -48,13 +55,13 @@ export default function HeaderActions({
           </span>
         )}
       </Link>
-      <Link aria-label="Client Account" className={iconBtn} href="/account">
+      <Link aria-label="My Account" className={iconBtn} href="/account">
         <span className="material-symbols-outlined text-[20px]">
           account_circle
         </span>
       </Link>
       <Link
-        aria-label={`Shopping Bag (${bagCount} pieces)`}
+        aria-label={`Shopping Bag (${bagCount} items)`}
         className={`${iconBtn} relative`}
         href="/cart"
       >
@@ -67,7 +74,7 @@ export default function HeaderActions({
           </span>
         )}
       </Link>
-      <SearchPanel index={searchIndex} open={searchOpen} onClose={closeSearch} />
+      {searchUsed && <SearchPanel index={searchIndex} open={searchOpen} onClose={closeSearch} />}
     </>
   );
 }

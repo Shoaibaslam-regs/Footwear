@@ -5,8 +5,8 @@ import { getSavedAddress, requireUser } from "@/lib/auth/dal";
 import { getSiteSettings } from "@/lib/server/settings";
 
 export const metadata: Metadata = {
-  title: "Secure Checkout — ÉLORA Maison",
-  description: "Complete your ÉLORA Maison acquisition securely.",
+  title: "Checkout — ÉLORA Maison",
+  description: "Place your ÉLORA order securely.",
 };
 
 /** Checkout is for signed-in clients only (proxy.ts redirects others first). */

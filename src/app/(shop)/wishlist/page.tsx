@@ -3,7 +3,7 @@ import Wishlist from "@/components/Wishlist";
 
 export const metadata: Metadata = {
   title: "Your Wishlist — ÉLORA Maison",
-  description: "The pieces you have saved from the ÉLORA Maison atelier.",
+  description: "The items you have saved at ÉLORA.",
 };
 
 export default function WishlistPage() {

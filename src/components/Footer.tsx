@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { footerColumns } from "@/lib/data";
 import SizeGuideLink from "./SizeGuideLink";
+import FooterCurrency from "./FooterCurrency";
 
 const payments = ["CASH ON DELIVERY", "EASYPAISA", "JAZZCASH", "BANK TRANSFER", "VISA", "MASTERCARD"];
 
@@ -11,14 +12,14 @@ export default function Footer() {
         <div className="pb-space-xl mb-space-xl border-b border-outline-variant/20 flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
           <div className="max-w-xl">
             <p className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em] mb-space-xs">
-              Maison Privilège
+              Newsletter
             </p>
             <h2 className="font-headline-md text-headline-md text-primary font-normal tracking-tight">
-              A Little Luxury In Your Inbox
+              Get News & Offers by Email
             </h2>
             <p className="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">
-              Receive seasonal lookbooks, private atelier invitations, and early
-              bespoke access.
+              Be the first to see new collections, special invitations and early
+              offers.
             </p>
           </div>
           <form className="w-full lg:max-w-md flex flex-col sm:flex-row gap-space-xs items-stretch">
@@ -83,20 +84,9 @@ export default function Footer() {
               Florence — Paris — New York
             </span>
           </div>
-          <div className="flex items-center gap-space-md">
-            <div className="flex items-center gap-space-xs tracking-wider text-on-surface-variant">
-              <span className="text-primary font-medium">CURRENCY:</span>
-              <select
-                aria-label="Currency"
-                defaultValue="PKR"
-                className="bg-transparent text-on-surface font-label-uppercase text-label-uppercase uppercase cursor-pointer border-none focus:outline-none"
-              >
-                <option value="PKR">PKR (Rs)</option>
-                <option value="USD">USD ($)</option>
-                <option value="EUR">EUR (€)</option>
-              </select>
-            </div>
-            <div className="flex items-center gap-space-xs text-[10px] tracking-wider text-on-surface-variant uppercase font-semibold">
+          <div className="w-full md:w-auto flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-end gap-space-sm">
+            <FooterCurrency />
+            <div className="flex flex-wrap items-center justify-center gap-space-xs text-[10px] tracking-wider text-on-surface-variant uppercase font-semibold">
               {payments.map((p) => (
                 <span
                   key={p}

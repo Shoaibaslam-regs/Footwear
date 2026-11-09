@@ -26,9 +26,9 @@ export async function requireLogin(action: string, next?: string): Promise<boole
   if (await isSignedIn()) return true;
   const back = next ?? `${window.location.pathname}${window.location.search}`;
   const signIn = await confirmDialog({
-    title: "Sign in to continue",
-    message: `Please sign in or create a free account to ${action}.`,
-    confirmLabel: "Sign In",
+    title: "Log in to continue",
+    message: `Please log in or create a free account to ${action}.`,
+    confirmLabel: "Log In",
     cancelLabel: "Not Now",
     icon: "person",
   });

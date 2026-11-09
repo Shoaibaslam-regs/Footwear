@@ -46,7 +46,7 @@ export const EMPTY_SUMMARY: ReviewSummary = {
 /** "Ayesha Khan" → "Ayesha K." */
 export function displayName(full: string) {
   const parts = full.trim().split(/\s+/);
-  if (parts.length < 2) return parts[0] || "Client";
+  if (parts.length < 2) return parts[0] || "Customer";
   return `${parts[0]} ${parts[parts.length - 1][0].toUpperCase()}.`;
 }
 

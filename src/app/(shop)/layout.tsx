@@ -4,6 +4,7 @@ import ActionToast from "@/components/ActionToast";
 import { Suspense } from "react";
 import CartDrawerHost from "@/components/cart/CartDrawerHost";
 import WhatsAppButton from "@/components/WhatsAppButton";
+import Motion from "@/components/Motion";
 
 /** Storefront chrome: header, footer and the global toast. */
 export default function ShopLayout({ children }: { children: React.ReactNode }) {
@@ -15,6 +16,7 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
       </main>
       <Footer />
       <ActionToast />
+      <Motion />
       <Suspense fallback={null}>
         <CartDrawerHost />
         <WhatsAppButton />

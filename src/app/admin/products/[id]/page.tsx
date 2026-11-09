@@ -5,6 +5,7 @@ import { productHref } from "@/lib/products";
 import { getProductById } from "@/lib/server/products";
 import ProductForm from "@/components/admin/ProductForm";
 import ConfirmButton from "@/components/admin/ConfirmButton";
+import ListingTabs from "@/components/admin/ListingTabs";
 import { deleteProduct } from "../../actions";
 
 export const metadata = { title: "Edit listing" };
@@ -32,12 +33,13 @@ export default async function EditProductPage({ params }: PageProps<"/admin/prod
           )}
           <form action={deleteProduct}>
             <input name="id" type="hidden" value={product.id} />
-            <ConfirmButton message="It will be removed from the storefront. This cannot be undone." title={`Delete “${product.name}”?`}>
+            <ConfirmButton message="It will be removed from the website. This cannot be undone." title={`Delete “${product.name}”?`}>
               Delete
             </ConfirmButton>
           </form>
         </div>
       </div>
+      <ListingTabs current="edit" id={product.id} />
       <ProductForm key={product.updatedAt} product={product} />
     </div>
   );

@@ -182,7 +182,7 @@ export default function GalleryUploader({
 
       <ol
         className={`grid grid-cols-2 sm:grid-cols-3 gap-3 rounded-lg p-1 border-2 border-dashed transition-colors ${
-          dropActive ? "border-[var(--a-accent)] bg-[#fafafa]" : "border-transparent"
+          dropActive ? "border-[var(--a-accent)] bg-surface-container-low" : "border-transparent"
         }`}
         onDragLeave={(e) => {
           if (!e.currentTarget.contains(e.relatedTarget as Node)) setDropActive(false);
@@ -223,14 +223,14 @@ export default function GalleryUploader({
               setDragId(null);
             }}
           >
-            <div className={`relative ${tileAspect} rounded overflow-hidden bg-[#eee] cursor-grab active:cursor-grabbing`}>
+            <div className={`relative ${tileAspect} rounded overflow-hidden bg-surface-container cursor-grab active:cursor-grabbing`}>
               <Image alt="" className="object-cover pointer-events-none" fill sizes="200px" src={p.url} unoptimized />
               <span className={`absolute top-1 left-1 tag ${i === 0 ? "bg-[var(--a-accent)] text-white border-transparent" : "bg-white"}`}>
                 {i === 0 ? "Cover" : i + 1}
               </span>
               {!p.key && <span className="absolute bottom-1 left-1 tag bg-white text-xs">URL</span>}
             </div>
-            <div className="flex gap-1">
+            <div className="flex flex-wrap gap-1">
               <button aria-label={`Move photo ${i + 1} earlier`} className="btn h-8 px-2" disabled={i === 0} onClick={() => move(i, i - 1)} type="button">
                 ←
               </button>
@@ -248,7 +248,7 @@ export default function GalleryUploader({
                   Make cover
                 </button>
               )}
-              <button aria-label={`Remove photo ${i + 1}`} className="btn btn-danger h-8 px-2 ml-auto" onClick={() => remove(p.id)} type="button">
+              <button aria-label={`Remove photo ${i + 1}`} className="btn btn-danger h-8 px-2 ml-auto shrink-0" onClick={() => remove(p.id)} type="button">
                 ✕
               </button>
             </div>
@@ -279,10 +279,10 @@ export default function GalleryUploader({
 
         {pending.map((p) => (
           <li key={p.id} className="flex flex-col gap-2 rounded-md border border-[var(--a-line)] bg-white p-2">
-            <div className={`${tileAspect} rounded bg-[#f3f3f3] flex flex-col items-center justify-center gap-2 px-3 text-center`}>
+            <div className={`${tileAspect} rounded bg-surface-container flex flex-col items-center justify-center gap-2 px-3 text-center`}>
               <span className="text-xs font-medium truncate max-w-full">{p.name}</span>
               <span className="muted text-xs">{p.stage === "uploading" ? `Uploading ${p.progress}%` : "Compressing…"}</span>
-              <div className="w-full h-1.5 bg-[#ddd] rounded-full overflow-hidden">
+              <div className="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
                 <div className="h-full bg-[var(--a-accent)] transition-all" style={{ width: `${p.stage === "compressing" ? 100 : p.progress}%` }} />
               </div>
             </div>
@@ -292,7 +292,7 @@ export default function GalleryUploader({
         {slotsLeft > 0 && (
           <li>
             <button
-              className={`w-full ${tileAspect} rounded-md border-2 border-dashed border-[var(--a-line)] hover:border-[#bbb] flex flex-col items-center justify-center gap-1 muted`}
+              className={`w-full ${tileAspect} rounded-md border-2 border-dashed border-[var(--a-line)] hover:border-outline flex flex-col items-center justify-center gap-1 muted`}
               onClick={() => fileRef.current?.click()}
               type="button"
             >
@@ -305,8 +305,8 @@ export default function GalleryUploader({
       </ol>
 
       <p className="muted text-xs">
-        Drag photos to reorder. Up to {MAX_MB} MB each: {sizeNote}, converted to WebP and stripped of camera
-        metadata.
+        Drag photos to reorder. Up to {MAX_MB} MB each: {sizeNote}, made smaller automatically, and camera and
+        location details are removed.
       </p>
 
       {slotsLeft > 0 && (

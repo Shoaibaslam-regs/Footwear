@@ -25,11 +25,11 @@ export default function Error({
         error
       </span>
       <h1 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight">
-        A Stitch Came Loose
+        Something Went Wrong
       </h1>
       <p className="font-body-lg text-body-lg text-on-surface-variant font-light max-w-xl">
-        Something went wrong while preparing this page. Please try again, or
-        return to the collection.
+        We could not load this page. Please try again, or go back to the
+        shop.
       </p>
       {digest && (
         <p className="font-label-sm text-label-sm text-outline">Reference: {digest}</p>
@@ -46,7 +46,7 @@ export default function Error({
           className="h-[52px] px-8 rounded-full bg-surface-container hover:bg-surface-container-high text-primary transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest flex items-center justify-center"
           href="/collections"
         >
-          Explore Collection
+          Shop Now
         </Link>
       </div>
     </section>

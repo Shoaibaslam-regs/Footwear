@@ -11,7 +11,7 @@ import { getOrderForUser, statusDates } from "@/lib/server/orders";
 import Price from "@/components/Price";
 import CancelOrderButton from "@/components/account/CancelOrderButton";
 
-export const metadata: Metadata = { title: "Your Order — ÉLORA Maison", robots: { index: false } };
+export const metadata: Metadata = { title: "My Order — ÉLORA Maison", robots: { index: false } };
 
 const date = (iso: string) =>
   new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Karachi" });
@@ -32,7 +32,7 @@ async function OrderDetail({ params }: PageProps<"/account/orders/[number]">) {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-md mb-space-lg">
         <div>
           <Link className="font-label-uppercase text-label-uppercase uppercase tracking-widest text-on-surface-variant hover:text-primary" href="/account">
-            ← Your Account
+            ← My Account
           </Link>
           <h1 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight mt-1">
             Order #{order.number}

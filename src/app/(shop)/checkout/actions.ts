@@ -52,7 +52,7 @@ const schema = z.object({
 export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<PlaceOrderState> {
   // Orders are only taken from signed-in clients (checked against the DB, not just the cookie).
   const user = await getCurrentUser();
-  if (!user) return { message: "Please sign in to place your order." };
+  if (!user) return { message: "Please log in to place your order." };
 
   const parsed = schema.safeParse({
     name: fd.get("name") ?? "",

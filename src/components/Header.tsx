@@ -1,6 +1,4 @@
-import Image from "next/image";
 import Link from "next/link";
-import { profileImage } from "@/lib/data";
 import { getSiteSettings } from "@/lib/server/settings";
 import { toSearchEntry } from "@/lib/products";
 import { getPublishedProducts } from "@/lib/server/products";
@@ -38,7 +36,7 @@ export default async function Header() {
           <AnnouncementGroup announcements={announcements} hidden />
         </div>
       </div>
-      <div className="w-full bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      <div className="site-bar w-full bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
         <div className="h-20 max-w-[1536px] mx-auto px-margin-mobile lg:px-margin flex items-center justify-between">
           <Suspense fallback={<NavLinksFallback />}>
             <NavLinks />
@@ -53,16 +51,6 @@ export default async function Header() {
           </div>
           <div className="flex items-center gap-space-md">
             <HeaderActions searchIndex={searchIndex} />
-            <div className="hidden sm:flex items-center pl-space-xs">
-              <Image
-                alt="Profile"
-                className="w-8 h-8 rounded-full object-cover ring-1 ring-outline-variant/40"
-                src={profileImage}
-                width={32}
-                height={32}
-                unoptimized
-              />
-            </div>
           </div>
         </div>
       </div>

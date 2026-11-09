@@ -22,10 +22,10 @@ export default function ShippingForm({
           <span className="w-7 h-7 bg-primary text-on-primary font-label-uppercase text-label-uppercase flex items-center justify-center font-semibold">
             2
           </span>
-          <h2 className="font-headline-sm text-headline-sm text-primary font-normal">Shipping Address</h2>
+          <h2 className="font-headline-sm text-headline-sm text-primary font-normal">Delivery Address</h2>
         </div>
         <span className="font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider uppercase">
-          Destination
+          Where to Deliver
         </span>
       </div>
       {defaults && (
@@ -36,15 +36,15 @@ export default function ShippingForm({
       )}
       <div className="space-y-space-md">
         <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
-          <TextField autoComplete="address-line1" className="md:col-span-2" errors={errors} label="Street Address *" defaultValue={defaults?.line1} name="line1" placeholder="House number and street name" required />
-          <TextField autoComplete="address-line2" errors={errors} label="Apartment / Suite" defaultValue={defaults?.line2} name="line2" placeholder="Apt, Suite, Floor" />
+          <TextField autoComplete="address-line1" className="md:col-span-2" errors={errors} label="Address *" defaultValue={defaults?.line1} name="line1" placeholder="House number, street and area" required />
+          <TextField autoComplete="address-line2" errors={errors} label="Flat / Floor (optional)" defaultValue={defaults?.line2} name="line2" placeholder="Flat number, floor, building" />
         </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
           <TextField autoComplete="address-level2" errors={errors} label="City *" defaultValue={defaults?.city} name="city" required />
           <TextField autoComplete="postal-code" errors={errors} label="Postal Code *" defaultValue={defaults?.postalCode} name="postalCode" required />
           <div className="flex flex-col gap-1">
             <label className={fieldLabel} htmlFor="co-country">
-              Country / Territory *
+              Country *
             </label>
             <div className="relative">
               <select
@@ -70,7 +70,7 @@ export default function ShippingForm({
         </div>
         <div className="flex flex-col gap-1">
           <label className={fieldLabel} htmlFor="co-phone">
-            Phone for courier updates *
+            Phone number (for the courier) *
           </label>
           <div className="flex gap-2">
             <span className="h-12 px-space-md bg-surface-container-high text-on-surface flex items-center font-body-sm text-body-sm select-none">

@@ -1,7 +1,7 @@
 "use client";
 
 import Image from "next/image";
-import { useEffect, useState } from "react";
+import { useEffect, useRef, useState } from "react";
 
 export type HeroSlide = { image: string; alt: string; position?: string };
 
@@ -26,6 +26,29 @@ export default function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
   const [hidden, setHidden] = useState(false);
   const [reduced, setReduced] = useState(false);
   const running = !hovered && !hidden && !reduced && slides.length > 1;
+  const layer = useRef<HTMLDivElement>(null);
+
+  // Gentle parallax: the photo drifts slower than the page while the hero is on screen.
+  useEffect(() => {
+    const el = layer.current;
+    if (!el || reduced) return;
+    let ticking = false;
+    const update = () => {
+      ticking = false;
+      const h = el.parentElement?.offsetHeight ?? 0;
+      const y = window.scrollY;
+      if (y > h) return;
+      el.style.transform = `translate3d(0, ${Math.round(y * 0.25)}px, 0)`;
+    };
+    const onScroll = () => {
+      if (ticking) return;
+      ticking = true;
+      requestAnimationFrame(update);
+    };
+    update();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    return () => window.removeEventListener("scroll", onScroll);
+  }, [reduced]);
 
   useEffect(() => {
     const mq = window.matchMedia("(prefers-reduced-motion: reduce)");
@@ -42,16 +65,20 @@ export default function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
 
   useEffect(() => {
     if (!running) return;
-    const id = setTimeout(() => setIndex((i) => (i + 1) % slides.length), SLIDE_MS);
+    const id = setTimeout(
+      () => setIndex((i) => (i + 1) % slides.length),
+      SLIDE_MS,
+    );
     return () => clearTimeout(id);
   }, [running, index, slides.length]);
 
   return (
     <>
       <div
+        ref={layer}
         aria-roledescription="carousel"
         aria-label="Featured collections"
-        className="absolute inset-0"
+        className="absolute inset-0 will-change-transform"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         role="region"
@@ -59,6 +86,9 @@ export default function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
         {slides.map((s, i) => {
           const active = i === index;
           const moving = (active || i === prev) && !reduced;
+          // Mount only what's on screen plus the next slide (preloaded), not all of them.
+          const mounted =
+            active || i === prev || i === (index + 1) % slides.length;
           return (
             <div
               key={s.image}
@@ -70,20 +100,22 @@ export default function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
               }`}
               role="group"
             >
-              <Image
-                alt={s.alt}
-                className={`object-cover ${moving ? "animate-kenburns" : "scale-105"}`}
-                fetchPriority={i === 0 ? "high" : "low"}
-                fill
-                priority={i === 0}
-                sizes="100vw"
-                src={s.image}
-                style={{
-                  objectPosition: s.position ?? "center",
-                  animationDuration: `${SLIDE_MS + 1600}ms`,
-                  animationPlayState: running ? "running" : "paused",
-                }}
-              />
+              {mounted && (
+                <Image
+                  alt={s.alt}
+                  className={`object-cover ${moving ? "animate-kenburns" : "scale-105"}`}
+                  fetchPriority={i === 0 ? "high" : "low"}
+                  fill
+                  priority={i === 0}
+                  sizes="100vw"
+                  src={s.image}
+                  style={{
+                    objectPosition: s.position ?? "center",
+                    animationDuration: `${SLIDE_MS + 1600}ms`,
+                    animationPlayState: running ? "running" : "paused",
+                  }}
+                />
+              )}
             </div>
           );
         })}
@@ -91,7 +123,11 @@ export default function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
 
       {slides.length > 1 && (
         <div className="absolute z-20 bottom-space-sm left-1/2 -translate-x-1/2 flex items-center gap-space-sm">
-          <div className="flex items-center gap-1.5" role="group" aria-label="Choose slide">
+          <div
+            className="flex items-center gap-1.5"
+            role="group"
+            aria-label="Choose slide"
+          >
             {slides.map((s, i) => (
               <button
                 key={s.image}
@@ -103,14 +139,20 @@ export default function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
               >
                 <span
                   className={`block h-[3px] rounded-full overflow-hidden bg-surface-container-lowest/30 transition-all duration-300 ${
-                    i === index ? "w-10" : "w-4 group-hover:w-6 group-hover:bg-surface-container-lowest/60"
+                    i === index
+                      ? "w-10"
+                      : "w-4 group-hover:w-6 group-hover:bg-surface-container-lowest/60"
                   }`}
                 >
                   {i === index && (
                     <span
                       key={`${index}-${running}`}
                       className={`block h-full bg-secondary-fixed ${running ? "animate-[heroProgress_linear_forwards]" : "w-full"}`}
-                      style={running ? { animationDuration: `${SLIDE_MS}ms` } : undefined}
+                      style={
+                        running
+                          ? { animationDuration: `${SLIDE_MS}ms` }
+                          : undefined
+                      }
                     />
                   )}
                 </span>

@@ -7,24 +7,24 @@ import { ALL_SIZES, productCategories, type ProductCategory } from "./products";
 /* ---------- Options ---------- */
 
 export const heelProfiles = [
-  { value: "flat", label: "Flat / Ballet", test: (mm: number) => mm <= 20 },
-  { value: "kitten", label: "< 50mm Kitten", test: (mm: number) => mm > 20 && mm < 50 },
-  { value: "midi", label: "50–85mm Midi", test: (mm: number) => mm >= 50 && mm <= 85 },
-  { value: "high", label: "90mm+ High", test: (mm: number) => mm > 85 },
+  { value: "flat", label: "Flat", test: (mm: number) => mm <= 20 },
+  { value: "kitten", label: "Low (under 50mm)", test: (mm: number) => mm > 20 && mm < 50 },
+  { value: "midi", label: "Medium (50–85mm)", test: (mm: number) => mm >= 50 && mm <= 85 },
+  { value: "high", label: "High (90mm+)", test: (mm: number) => mm > 85 },
 ] as const;
 export type HeelProfile = (typeof heelProfiles)[number]["value"];
 
 export const materialGroups = [
-  { value: "leather", label: "Calfskin & Nappa Leather", rx: /calf|nappa|leather|patent|tan\b/i },
+  { value: "leather", label: "Leather", rx: /calf|nappa|leather|patent|tan\b/i },
   { value: "silk", label: "Silk, Satin & Crepe", rx: /silk|satin|crepe|grosgrain/i },
-  { value: "suede", label: "Suede & Velour", rx: /suede|velour/i },
-  { value: "metallic", label: "Metallic, Foil & Pearl", rx: /metallic|foil|pearl/i },
+  { value: "suede", label: "Suede & Velvet", rx: /suede|velour/i },
+  { value: "metallic", label: "Metallic & Pearl", rx: /metallic|foil|pearl/i },
 ] as const;
 export type MaterialGroup = (typeof materialGroups)[number]["value"];
 
 export const sortOptions = [
-  { value: "featured", label: "Featured Atelier" },
-  { value: "newest", label: "Newest Arrivals" },
+  { value: "featured", label: "Featured" },
+  { value: "newest", label: "Newest First" },
   { value: "price-desc", label: "Price: High to Low" },
   { value: "price-asc", label: "Price: Low to High" },
   { value: "best", label: "Best Selling" },
@@ -63,7 +63,7 @@ export type Filters = {
   page: number;
 };
 
-export const EMPTY: Filters = {
+const EMPTY: Filters = {
   q: "",
   categories: [],
   heels: [],
@@ -82,7 +82,7 @@ const isMaterial = (v: string): v is MaterialGroup => materialGroups.some((m) =>
 const isSort = (v: string): v is SortOption => sortOptions.some((s) => s.value === v);
 const num = (v: string | null) => (v && /^\d+$/.test(v) ? Number(v) : null);
 
-export function fromSearch(search: string): Filters {
+function fromSearch(search: string): Filters {
   const q = new URLSearchParams(search);
   const list = (k: string) => q.getAll(k).flatMap((v) => v.split(","));
   return {
@@ -99,7 +99,7 @@ export function fromSearch(search: string): Filters {
   };
 }
 
-export function toSearch(f: Filters): string {
+function toSearch(f: Filters): string {
   const q = new URLSearchParams();
   if (f.q) q.set("q", f.q);
   if (f.categories.length) q.set("category", f.categories.join(","));
@@ -175,7 +175,7 @@ export function toggle<T>(list: T[], value: T): T[] {
 type Skip = Partial<Record<"categories" | "heels" | "sizes" | "materials" | "price" | "onSale", true>>;
 
 /** Every word must appear in the piece's name, material, spec or category. */
-export function matchesText(p: Pick<FilterableProduct, "name" | "material" | "spec" | "tag">, query: string) {
+function matchesText(p: Pick<FilterableProduct, "name" | "material" | "spec" | "tag">, query: string) {
   const terms = query.toLowerCase().split(/\s+/).filter(Boolean);
   if (terms.length === 0) return true;
   const hay = `${p.name} ${p.material} ${p.spec} ${p.tag}`.toLowerCase();

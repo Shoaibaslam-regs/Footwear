@@ -12,22 +12,22 @@ export default async function BestSellers() {
     <section className="w-full bg-surface-container-high py-space-xl">
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm mb-space-lg">
-          <div>
+          <div data-reveal>
             <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              Iconic Silhouettes
+              Customer Favourites
             </span>
             <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight">
-              The Maison Icons
+              Best Sellers
             </h2>
           </div>
           <p className="font-body-sm text-body-sm text-on-surface-variant max-w-sm">
-            Select your Continental sizing for instant inventory verification
-            and atelier same-day dispatch.
+            Choose your EU size to check stock straight away. Orders are
+            dispatched the same day.
           </p>
         </div>
 
         {/* Phones: 2 columns; an odd last card spans both so nothing sits alone. */}
-        <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm md:gap-gutter max-md:[&>*:last-child:nth-child(odd)]:col-span-2">
+        <div data-reveal-stagger className="grid grid-cols-2 md:grid-cols-3 gap-space-sm md:gap-gutter max-md:[&>*:last-child:nth-child(odd)]:col-span-2">
           {bestSellers.map((item, i) => (
             <BestSellerCard key={item.name} item={item} wide={bestSellers.length % 2 === 1 && i === bestSellers.length - 1} />
           ))}

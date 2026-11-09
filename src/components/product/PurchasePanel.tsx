@@ -42,7 +42,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
   const euSize = size.startsWith("EU") ? size : `EU ${size}`;
 
   const toggleWishlist = async () => {
-    if (!(await requireLogin("save pieces to your wishlist"))) return;
+    if (!(await requireLogin("save items to your wishlist"))) return;
     const added = toggleSaved({
       id: product.slug,
       name: product.name,
@@ -52,11 +52,11 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       href: `/products/${product.slug}`,
       detail: product.breadcrumbCategory,
     });
-    setTooltip(added ? "Saved to Atelier" : "Removed");
+    setTooltip(added ? "Added to Wishlist" : "Removed from Wishlist");
   };
 
   const addSelectionToBag = async (goingToCheckout = false) => {
-    if (!(await requireLogin("add pieces to your bag"))) return false;
+    if (!(await requireLogin("add items to your bag"))) return false;
     addToBag(
       {
         id: product.slug,
@@ -115,7 +115,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             <SalePrice price={product.price} compareAt={product.compareAt} discountPercent={product.discountPercent} />
           </span>
           <span className="font-body-sm text-body-sm text-on-surface-variant">
-            VAT included
+            Tax included
           </span>
         </div>
         {product.sold ? (
@@ -137,7 +137,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             <span className="font-normal text-on-surface-variant">{color}</span>
           </span>
           <span className="font-label-uppercase text-label-uppercase text-secondary uppercase text-[10px] tracking-wider">
-            Atelier Exclusive
+            Only at ÉLORA
           </span>
         </div>
         <div
@@ -176,7 +176,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       <div className="space-y-space-sm pt-space-xs">
         <div className="flex justify-between items-center">
           <span className="font-label-uppercase text-label-uppercase text-primary uppercase tracking-widest text-[11px]">
-            Select European Size
+            Choose Your Size (EU)
           </span>
           <button
             className="flex items-center gap-1 font-label-uppercase text-label-uppercase text-secondary hover:text-primary transition-colors uppercase text-[11px] underline underline-offset-4"
@@ -186,7 +186,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             <span className="material-symbols-outlined text-[16px]">
               straighten
             </span>
-            <span>Find Your Fit &amp; Size Guide</span>
+            <span>Size Guide</span>
           </button>
         </div>
         <div
@@ -236,7 +236,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             verified_user
           </span>
           <span>
-            <strong>Fit Insight:</strong> {product.fitInsight}
+            <strong>Fit Tip:</strong> {product.fitInsight}
           </span>
         </div>
       </div>
@@ -277,7 +277,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
               shopping_bag
             </span>
             <span aria-live="polite">
-              {added ? "Added to Bag ✓" : "Add To Shopping Bag"}
+              {added ? "Added to Bag ✓" : "Add to Bag"}
             </span>
           </button>
           <button
@@ -296,11 +296,11 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             </span>
             <span
               aria-live="polite"
-              className={`absolute -top-8 px-2 py-1 bg-primary text-on-primary text-[10px] font-label-uppercase uppercase tracking-wider pointer-events-none transition-opacity duration-200 whitespace-nowrap ${
+              className={`absolute -top-8 right-0 px-2 py-1 bg-primary text-on-primary text-[10px] font-label-uppercase uppercase tracking-wider pointer-events-none transition-opacity duration-200 whitespace-nowrap ${
                 tooltip ? "opacity-100" : "opacity-0"
               }`}
             >
-              {tooltip ?? "Saved to Atelier"}
+              {tooltip ?? "Added to Wishlist"}
             </span>
           </button>
         </div>
@@ -310,7 +310,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
           className="w-full h-[52px] bg-secondary-fixed text-on-secondary-fixed hover:bg-secondary hover:text-on-secondary font-label-uppercase text-label-uppercase uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-space-sm"
         >
           <span className="material-symbols-outlined text-[18px]">bolt</span>
-          <span>Buy Now With 1-Click</span>
+          <span>Buy Now</span>
         </Link>
       </div>
 
@@ -331,7 +331,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       {/* Accordions */}
       <div className="space-y-space-xs pt-space-xs">
         <Accordion
-          title="Artisanal Specifications & Materials"
+          title="Product Details & Materials"
           className="px-space-md pb-space-md space-y-space-xs font-body-sm text-body-sm text-on-surface-variant"
         >
           <ul className="space-y-2 list-none">
@@ -344,7 +344,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
           </ul>
         </Accordion>
         <Accordion
-          title="Care & Longevity Maintenance"
+          title="How to Care for Your Shoes"
           className="px-space-md pb-space-md font-body-sm text-body-sm text-on-surface-variant space-y-space-xs"
         >
           {product.care.map((p) => (
@@ -352,7 +352,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
           ))}
         </Accordion>
         <Accordion
-          title="Complimentary Shipping & Duties"
+          title="Delivery & Returns"
           className="px-space-md pb-space-md font-body-sm text-body-sm text-on-surface-variant space-y-space-xs"
         >
           {product.shipping.map((p) => (

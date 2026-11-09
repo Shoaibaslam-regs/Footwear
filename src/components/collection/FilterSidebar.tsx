@@ -167,9 +167,9 @@ export default function FilterSidebar({
             </div>
           </fieldset>
 
-          {/* Heel Profile */}
+          {/* Heel Height */}
           <fieldset className="space-y-space-xs">
-            <legend className={`${sectionTitle} mb-space-xs`}>Heel Profile</legend>
+            <legend className={`${sectionTitle} mb-space-xs`}>Heel Height</legend>
             <div className="grid grid-cols-2 gap-space-xs">
               {heelProfiles.map((h) => {
                 const active = f.heels.includes(h.value);
@@ -229,7 +229,7 @@ export default function FilterSidebar({
 
           {/* Craft & Material */}
           <fieldset className="space-y-space-xs">
-            <legend className={`${sectionTitle} mb-space-xs`}>Craft &amp; Material</legend>
+            <legend className={`${sectionTitle} mb-space-xs`}>Material</legend>
             <div className="space-y-2 font-body-sm text-body-sm text-on-surface-variant">
               {materialGroups.map((m) => {
                 const checked = f.materials.includes(m.value);
@@ -290,7 +290,7 @@ export default function FilterSidebar({
             onClick={onCloseMobile}
             type="button"
           >
-            Show {resultCount} {resultCount === 1 ? "Piece" : "Pieces"}
+            Show {resultCount} {resultCount === 1 ? "Result" : "Results"}
           </button>
         </div>
       </aside>

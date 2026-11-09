@@ -5,7 +5,7 @@ import { getPublishedProducts } from "@/lib/server/products";
 
 export const metadata: Metadata = {
   title: "Your Shopping Bag — ÉLORA Maison",
-  description: "Review the pieces in your ÉLORA Maison shopping bag.",
+  description: "See the items in your ÉLORA shopping bag.",
 };
 
 export default async function CartPage() {

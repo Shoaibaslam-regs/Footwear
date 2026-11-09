@@ -17,14 +17,14 @@ export default function Wishlist() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-md mb-space-lg">
         <div>
           <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-            Atelier Wishlist
+            My Wishlist
           </span>
           <h1 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight mt-1">
-            Saved Pieces
+            Saved Items
           </h1>
         </div>
         <span className="font-label-uppercase text-label-uppercase text-on-surface-variant uppercase tracking-widest">
-          {items.length} {items.length === 1 ? "Piece" : "Pieces"}
+          {items.length} {items.length === 1 ? "Item" : "Items"}
         </span>
       </div>
 
@@ -37,13 +37,13 @@ export default function Wishlist() {
             Your wishlist is empty
           </h2>
           <p className="font-body-md text-body-md text-on-surface-variant max-w-md">
-            Tap the heart on any piece to keep it here for later.
+            Tap the heart on any product to save it here for later.
           </p>
           <Link
             className="px-8 py-4 rounded-full bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest shadow-xl"
             href="/collections"
           >
-            Explore Collection
+            Shop Now
           </Link>
         </div>
       ) : (
@@ -89,7 +89,7 @@ export default function Wishlist() {
                 <button
                   className="w-full mt-space-sm h-11 bg-primary-container hover:bg-secondary-fixed text-surface hover:text-on-secondary-fixed font-label-uppercase text-label-uppercase uppercase tracking-wider rounded-full transition-all flex items-center justify-center gap-1 shadow-md"
                   onClick={async () => {
-                    if (!(await requireLogin("add pieces to your bag"))) return;
+                    if (!(await requireLogin("add items to your bag"))) return;
                     addToBag({ ...w, size: DEFAULT_SIZE, material: w.detail });
                     removeFromWishlist(w.id);
                   }}

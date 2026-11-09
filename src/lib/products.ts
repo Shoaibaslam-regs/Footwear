@@ -7,10 +7,10 @@ import type { FilterableProduct } from "./catalog-filters";
 import type { SearchEntry } from "./search-data";
 
 export const productCategories = [
-  { value: "heels", label: "Sculptural Heels" },
-  { value: "sandals", label: "Artisan Sandals" },
+  { value: "heels", label: "Heels" },
+  { value: "sandals", label: "Sandals" },
   { value: "flats", label: "Flats & Loafers" },
-  { value: "bridal", label: "Bridal & Evening" },
+  { value: "bridal", label: "Bridal & Party" },
 ] as const;
 export type ProductCategory = (typeof productCategories)[number]["value"];
 
@@ -108,7 +108,7 @@ function priceFields(p: Listing): PriceFields {
 /* ---------- Storefront view mappers ---------- */
 
 /** First "95mm"-style height in the spec; flats without one count as 0. */
-export function heelHeight(p: Pick<Listing, "spec" | "category">): number | null {
+function heelHeight(p: Pick<Listing, "spec" | "category">): number | null {
   const mm = p.spec.match(/(\d{1,3})\s*mm/i);
   if (mm) return Number(mm[1]);
   return p.category === "flats" ? 0 : null;

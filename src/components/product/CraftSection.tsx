@@ -8,16 +8,16 @@ export default function CraftSection() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-space-xl items-center">
           <div className="lg:col-span-5 space-y-space-md">
             <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              The Architectural Last
+              How It&apos;s Made
             </span>
             <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight font-normal">
-              Designed for 8 Hours of Weightless Grace.
+              Comfortable for 8 Hours, Light on Your Feet.
             </h2>
             <p className="font-body-lg text-body-lg text-on-surface-variant font-light">
-              Traditional stilettos force 85% of body weight onto the metatarsal
-              head. The Aurelia recalibrates the center-of-gravity backward by
-              12mm, using a hidden carbon-composite shank that redistributes
-              load across the natural arch.
+              Normal stilettos put 85% of your body weight on the front of your
+              foot. The Aurelia moves your balance point 12mm back, using a
+              hidden carbon support inside the sole that spreads the weight
+              across your arch.
             </p>
             <div className="grid grid-cols-2 gap-space-md pt-space-xs">
               <div className="p-space-md bg-surface-container-lowest">
@@ -33,7 +33,7 @@ export default function CraftSection() {
                   6.2mm
                 </span>
                 <p className="font-label-uppercase text-label-uppercase text-on-surface-variant uppercase text-[10px] mt-1">
-                  Dual Density Latex
+                  Two-Layer Foam Cushion
                 </p>
               </div>
             </div>
@@ -41,7 +41,7 @@ export default function CraftSection() {
           <div className="lg:col-span-7">
             <div className="relative aspect-[16/10] overflow-hidden bg-surface-container-highest shadow-sm">
               <Image
-                alt="Artisan carving a wooden shoe last in a Florence workshop"
+                alt="Shoemaker carving a wooden shoe mould in a Florence workshop"
                 className="w-full h-full object-cover"
                 src={craftImage}
                 fill

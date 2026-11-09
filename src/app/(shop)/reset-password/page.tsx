@@ -27,7 +27,7 @@ async function ResetBody({ searchParams }: PageProps<"/reset-password">) {
 
 export default function ResetPasswordPage(props: PageProps<"/reset-password">) {
   return (
-    <AuthShell eyebrow="Account Help" intro="Choose a new password. You'll be signed out of other devices." title="New Password">
+    <AuthShell eyebrow="Account Help" intro="Choose a new password. You will be logged out on your other devices." title="New Password">
       <Suspense>
         <ResetBody {...props} />
       </Suspense>

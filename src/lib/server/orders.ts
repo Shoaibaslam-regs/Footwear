@@ -6,7 +6,6 @@ import type {
   Order,
   OrderEvent,
   OrderStatus,
-  PaymentMethod,
   PaymentStatus,
 } from "../orders";
 import { getDb } from "./db";
@@ -19,7 +18,7 @@ export type OrderDoc = Omit<Order, "id" | "userId" | "createdAt" | "updatedAt" |
   updatedAt: Date;
 };
 
-export function toOrder(d: OrderDoc): Order {
+function toOrder(d: OrderDoc): Order {
   const { _id, userId, history, createdAt, updatedAt, ...rest } = d;
   return {
     ...rest,
@@ -164,4 +163,3 @@ export async function updateOrder(
   return res.matchedCount === 1;
 }
 
-export type { PaymentMethod };

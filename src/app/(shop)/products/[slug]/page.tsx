@@ -27,7 +27,7 @@ export async function generateMetadata({
   if (!listing) return {};
   return {
     title: `${listing.name} — ÉLORA Maison`,
-    description: listing.description || `${listing.name}, handcrafted in Florence. ${listing.material}.`,
+    description: listing.description || `${listing.name}, handmade in Florence. ${listing.material}.`,
   };
 }
 

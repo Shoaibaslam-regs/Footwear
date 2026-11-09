@@ -3,7 +3,7 @@ import sharp from "sharp";
 import { UTApi, UTFile } from "uploadthing/server";
 
 /** Largest file an admin may send before compression. */
-export const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
+const MAX_UPLOAD_BYTES = 15 * 1024 * 1024;
 /** Resize targets: product photos are portrait; hero slides fill the screen. */
 export const IMAGE_PRESETS = {
   product: { width: 1600, height: 2000, quality: 80 },
@@ -12,7 +12,7 @@ export const IMAGE_PRESETS = {
 } as const;
 export type ImagePreset = keyof typeof IMAGE_PRESETS;
 
-export const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif", "image/tiff"];
+const ACCEPTED_TYPES = ["image/jpeg", "image/png", "image/webp", "image/avif", "image/gif", "image/tiff"];
 
 let api: UTApi | undefined;
 const utapi = () => (api ??= new UTApi()); // reads UPLOADTHING_TOKEN
@@ -33,7 +33,7 @@ export class ImageError extends Error {}
  * without upscaling (product 1600×2000, hero 2400×2400), strips metadata
  * (GPS etc.) and re-encodes as WebP.
  */
-export async function compressImage(input: Buffer, preset: ImagePreset = "product") {
+async function compressImage(input: Buffer, preset: ImagePreset = "product") {
   const { width, height, quality } = IMAGE_PRESETS[preset];
   try {
     const { data, info } = await sharp(input, { limitInputPixels: 60_000_000, animated: false })

@@ -20,14 +20,14 @@ export default function ContactCard({
         {user ? (
           <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-widest flex items-center gap-1">
             <span className="material-symbols-outlined text-[16px]">verified</span>
-            Signed in
+            Logged in
           </span>
         ) : (
           <Link
             className="font-label-uppercase text-label-uppercase uppercase tracking-wider text-secondary hover:text-primary transition-colors underline underline-offset-4"
             href="/login?next=/checkout"
           >
-            Sign in for faster checkout
+            Log in for faster checkout
           </Link>
         )}
       </div>

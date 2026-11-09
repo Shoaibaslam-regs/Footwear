@@ -38,10 +38,10 @@ export default function WishlistButton({
   }, [popping]);
 
   const toggle = async () => {
-    if (!(await requireLogin("save pieces to your wishlist"))) return;
+    if (!(await requireLogin("save items to your wishlist"))) return;
     const added = toggleWishlist(item);
     setPopping(true);
-    showToast(added ? "Saved to Atelier Wishlist" : "Removed from Wishlist");
+    showToast(added ? "Added to Wishlist" : "Removed from Wishlist");
   };
 
   return (

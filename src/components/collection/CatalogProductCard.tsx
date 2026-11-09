@@ -62,12 +62,12 @@ export default function CatalogProductCard({
           type="button"
         >
           <span className="material-symbols-outlined text-[16px]">360</span>
-          <span>Quick View &amp; 360°</span>
+          <span>Quick View</span>
         </button>
         {/* Quick Size Overlay */}
         <div className="absolute inset-x-3 bottom-3 translate-y-12 opacity-0 group-hover:translate-y-0 group-hover:opacity-100 transition-all duration-300 hidden sm:flex flex-col gap-1.5 p-2 bg-surface-container-lowest/95 backdrop-blur-md rounded-lg shadow-md">
           <span className="text-[10px] font-label-uppercase uppercase text-outline tracking-wider text-center">
-            Quick Add EU
+            Quick Add (EU Size)
           </span>
           <div className="grid grid-cols-4 gap-1">
             {p.quickSizes.map((size) => (
@@ -126,7 +126,7 @@ export default function CatalogProductCard({
             </span>
           ) : (
             <span className="hidden sm:inline font-label-uppercase text-[10px] text-secondary tracking-widest uppercase">
-              Interactive 360°
+              360° View
             </span>
           )}
         </div>

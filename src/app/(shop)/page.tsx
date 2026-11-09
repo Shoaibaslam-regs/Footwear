@@ -4,7 +4,6 @@ import NewArrivals from "@/components/NewArrivals";
 import Campaign from "@/components/Campaign";
 import BestSellers from "@/components/BestSellers";
 import Craft from "@/components/Craft";
-import Testimonials from "@/components/Testimonials";
 import SocialGallery from "@/components/SocialGallery";
 
 export default function Home() {
@@ -16,7 +15,6 @@ export default function Home() {
       <Campaign />
       <BestSellers />
       <Craft />
-      <Testimonials />
       <SocialGallery />
     </div>
   );

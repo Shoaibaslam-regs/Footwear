@@ -8,9 +8,9 @@ import { getRatingsBySlug } from "@/lib/server/reviews";
 import { getOnlineSales } from "@/lib/server/sales";
 
 export const metadata: Metadata = {
-  title: "The Spring Atelier Collection 2025 — ÉLORA Maison",
+  title: "Shop All Shoes — ÉLORA Maison",
   description:
-    "Discover 48 handcrafted silhouettes sculpted in Tuscany: sculptural heels, artisan sandals, flats and bridal footwear.",
+    "Shop handmade Italian shoes for women: heels, sandals, flats and bridal shoes. Cash on Delivery across Pakistan.",
 };
 
 export default async function CollectionsPage() {

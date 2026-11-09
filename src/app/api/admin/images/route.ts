@@ -7,7 +7,7 @@ import { IMAGE_PRESETS, ImageError, uploadProductImage, type ImagePreset } from 
  */
 export async function POST(request: Request) {
   const user = await getCurrentUser();
-  if (!user) return Response.json({ error: "Sign in required." }, { status: 401 });
+  if (!user) return Response.json({ error: "Please log in." }, { status: 401 });
   if (user.role !== "admin") return Response.json({ error: "Admins only." }, { status: 403 });
 
   let file: FormDataEntryValue | null;

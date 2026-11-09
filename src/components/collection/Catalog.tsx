@@ -17,7 +17,11 @@ import {
 import FilterSidebar from "./FilterSidebar";
 import CatalogProductCard from "./CatalogProductCard";
 import Pagination from "./Pagination";
-import QuickViewModal, { type QuickViewState } from "./QuickViewModal";
+import dynamic from "next/dynamic";
+import type { QuickViewState } from "./QuickViewModal";
+
+// Loaded on first use: most visitors never open quick view.
+const QuickViewModal = dynamic(() => import("./QuickViewModal"), { ssr: false });
 
 const densityActive = "bg-surface-container-lowest text-primary shadow-sm";
 const densityIdle = "text-on-surface-variant hover:text-primary";
@@ -39,8 +43,13 @@ export default function Catalog({ products }: { products: FilterableProduct[] })
     document.getElementById("catalog-grid")?.scrollIntoView({ behavior: "smooth", block: "start" });
   };
   const [columns, setColumns] = useState<3 | 4>(4);
-  const [quickView, setQuickView] = useState<QuickViewState | null>(null);
-  const closeQuickView = useCallback(() => setQuickView(null), []);
+  const [quickView, setQuickViewRaw] = useState<QuickViewState | null>(null);
+  const [quickViewUsed, setQuickViewUsed] = useState(false);
+  const setQuickView = (v: QuickViewState | null) => {
+    if (v) setQuickViewUsed(true);
+    setQuickViewRaw(v);
+  };
+  const closeQuickView = useCallback(() => setQuickViewRaw(null), []);
 
   return (
     <>
@@ -84,7 +93,7 @@ export default function Catalog({ products }: { products: FilterableProduct[] })
                   columns === 3 ? densityActive : densityIdle
                 }`}
                 onClick={() => setColumns(3)}
-                title="3-Column Editorial"
+                title="3 per row"
                 type="button"
               >
                 <span className="material-symbols-outlined text-[20px]">
@@ -97,7 +106,7 @@ export default function Catalog({ products }: { products: FilterableProduct[] })
                   columns === 4 ? densityActive : densityIdle
                 }`}
                 onClick={() => setColumns(4)}
-                title="4-Column Grid"
+                title="4 per row"
                 type="button"
               >
                 <span className="material-symbols-outlined text-[20px]">
@@ -152,14 +161,14 @@ export default function Catalog({ products }: { products: FilterableProduct[] })
             >
               {products.length === 0 && (
                 <p className="col-span-full font-body-md text-body-md text-on-surface-variant">
-                  New pieces are being prepared in the atelier. Please check back soon.
+                  New styles are coming soon. Please check back later.
                 </p>
               )}
               {products.length > 0 && results.length === 0 && (
                 <div className="col-span-full bg-surface-container-lowest rounded-xl shadow-sm p-space-xl flex flex-col items-center text-center gap-space-md">
                   <span className="material-symbols-outlined text-secondary text-[40px]">filter_alt_off</span>
-                  <h2 className="font-headline-sm text-headline-sm text-primary">No pieces match these filters</h2>
-                  <p className="font-body-md text-body-md text-on-surface-variant">Try removing a filter or widening the price range.</p>
+                  <h2 className="font-headline-sm text-headline-sm text-primary">No shoes match these filters</h2>
+                  <p className="font-body-md text-body-md text-on-surface-variant">Try removing a filter or changing the price range.</p>
                   <button
                     className="h-12 px-8 rounded-full bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest"
                     onClick={resetFilters}
@@ -190,7 +199,7 @@ export default function Catalog({ products }: { products: FilterableProduct[] })
         </div>
       </section>
 
-      <QuickViewModal state={quickView} onClose={closeQuickView} />
+      {quickViewUsed && <QuickViewModal state={quickView} onClose={closeQuickView} />}
       <Suspense fallback={null}>
         <FiltersUrlSync />
       </Suspense>

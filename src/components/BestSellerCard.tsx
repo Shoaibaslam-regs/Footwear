@@ -30,7 +30,7 @@ export default function BestSellerCard({
   const size = available.includes(selected) ? selected : available[0];
 
   const reserve = async () => {
-    if (!(await requireLogin("reserve this size"))) return;
+    if (!(await requireLogin("add this to your bag"))) return;
     addToBag({
       id: productId(item.name, item.href),
       name: item.name,
@@ -54,7 +54,7 @@ export default function BestSellerCard({
         }`}
       >
         <Image
-          className="w-full h-full object-cover"
+          className="img-fade w-full h-full object-cover"
           alt={item.alt}
           src={item.image}
           fill
@@ -71,7 +71,7 @@ export default function BestSellerCard({
           <div className="flex flex-col md:flex-row md:justify-between md:items-baseline gap-0.5 mb-1">
             <h3 className="font-headline-sm text-body-lg md:text-headline-sm leading-snug text-primary line-clamp-2 md:line-clamp-none">
               {item.href ? (
-                <Link className="hover:text-secondary transition-colors" href={item.href}>
+                <Link className="link-draw hover:text-secondary transition-colors" href={item.href}>
                   {item.name}
                 </Link>
               ) : (
@@ -108,7 +108,7 @@ export default function BestSellerCard({
           {/* Tablet & desktop: size chips */}
           <div className="hidden md:block pt-space-xs">
             <span className="font-label-uppercase text-[10px] text-outline uppercase tracking-wider block mb-2">
-              Select EU Size:
+              Choose EU Size:
             </span>
             <div className="flex flex-wrap gap-1.5">
               {sizes.map((size) => {
@@ -153,8 +153,7 @@ export default function BestSellerCard({
           >
             <span className="material-symbols-outlined text-sm">shopping_bag</span>
             <span>
-              {available.length === 0 ? "Sold Out" : "Reserve"}
-              <span className="hidden sm:inline">{available.length === 0 ? "" : " Size"}</span>
+              {available.length === 0 ? "Sold Out" : "Add to Bag"}
             </span>
           </button>
         </div>

@@ -28,10 +28,10 @@ export default function AuthShell({
           <div className="absolute inset-0 bg-linear-to-t/srgb from-primary via-primary/30 to-transparent" />
           <div className="absolute bottom-0 p-space-xl flex flex-col gap-space-sm">
             <span className="font-label-uppercase text-label-uppercase uppercase tracking-[0.25em] text-secondary-fixed">
-              Client Salon
+              My Account
             </span>
             <p className="font-headline-md text-headline-md text-surface-container-lowest max-w-md">
-              Private access to atelier previews, fittings and your order archive.
+              Track your orders, save your favourites and check out faster.
             </p>
           </div>
         </div>

@@ -97,7 +97,7 @@ export const catalogProducts: CatalogProduct[] = [
   },
   {
     name: "Olympia Sculpted Wedge",
-    badge: "Atelier Edition",
+    badge: "Limited Edition",
     badgeClass: "bg-tertiary-fixed text-on-tertiary-fixed",
     spec: "Wedge Heel • 80mm",
     tag: "Limited (100 Pairs)",
@@ -124,17 +124,17 @@ export const catalogProducts: CatalogProduct[] = [
 export const assurances = [
   {
     icon: "published_with_changes",
-    title: "Flawless Fit Guarantee",
-    text: "Complimentary size exchange within 30 days. Pre-paid courier pickup right at your doorstep.",
+    title: "Perfect Fit Promise",
+    text: "Free size exchange within 30 days. Our courier picks up the pair from your door at no cost.",
   },
   {
     icon: "support_agent",
-    title: "Private Styling Concierge",
-    text: "Consult live with our Milan footwear specialists via video or chat for bespoke sizing and event pairing.",
+    title: "Personal Styling Help",
+    text: "Talk to our shoe experts in Milan on video call or chat. They help with sizing and choosing shoes for any event.",
   },
   {
     icon: "workspace_premium",
-    title: "Florentine Guild Seal",
-    text: "Crafted in certified multi-generational Tuscan workshops with audited sustainable practices.",
+    title: "Made in Florence",
+    text: "Made in certified family workshops in Tuscany, checked for eco-friendly practices.",
   },
 ];

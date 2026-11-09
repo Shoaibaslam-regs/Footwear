@@ -122,16 +122,16 @@ export default function AuthForm({
         disabled={pending}
         type="submit"
       >
-        {pending ? "Please wait…" : isLogin ? "Sign In" : "Create Account"}
+        {pending ? "Please wait…" : isLogin ? "Log In" : "Create Account"}
       </button>
 
       <p className="font-body-sm text-body-sm text-on-surface-variant text-center">
-        {isLogin ? "New to Maison ÉLORA? " : "Already a client? "}
+        {isLogin ? "New to ÉLORA? " : "Already have an account? "}
         <Link
           className="text-primary underline underline-offset-4 decoration-secondary hover:text-secondary"
           href={otherHref}
         >
-          {isLogin ? "Create an account" : "Sign in"}
+          {isLogin ? "Create an account" : "Log in"}
         </Link>
       </p>
     </form>

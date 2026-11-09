@@ -168,7 +168,7 @@ export async function saveProduct(
     }
   } catch (e) {
     if (e instanceof MongoServerError && e.code === 11000) {
-      return { errors: { slug: ["Another listing already uses this URL slug."] } };
+      return { errors: { slug: ["Another listing already uses this web address."] } };
     }
     throw e;
   }
@@ -227,7 +227,9 @@ export async function setUserRole(formData: FormData) {
   await (await getDb())
     .collection<UserDoc>("users")
     .updateOne({ _id: new ObjectId(id) }, { $set: { role: role.data } });
-  redirect("/admin/users");
+  // Return to the page the change was made from (the list or that user's page).
+  const back = String(formData.get("back") ?? "");
+  redirect(/^\/admin\/users(\/[a-f0-9]{24})?$/.test(back) ? back : "/admin/users");
 }
 
 export async function deleteUser(formData: FormData) {

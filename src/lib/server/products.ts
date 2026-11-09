@@ -16,7 +16,7 @@ export type ProductDoc = Omit<Listing, "id" | "createdAt" | "updatedAt"> & {
   updatedAt: Date;
 };
 
-export function toListing(d: ProductDoc): Listing {
+function toListing(d: ProductDoc): Listing {
   const { _id, createdAt, updatedAt, ...rest } = d;
   return {
     ...rest,

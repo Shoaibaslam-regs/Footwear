@@ -32,10 +32,10 @@ export default function ProductReviews({
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-lg">
           <div className="space-y-space-xs">
             <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              Client Impressions
+              Customer Reviews
             </span>
             <h2 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary font-normal">
-              Worn &amp; Celebrated
+              What Customers Say
             </h2>
             {summary.count > 0 ? (
               <div className="flex flex-wrap items-center gap-space-sm pt-space-xs">
@@ -47,7 +47,7 @@ export default function ProductReviews({
               </div>
             ) : (
               <p className="font-body-md text-body-md text-on-surface-variant pt-space-xs">
-                No reviews yet. Be the first to share how this piece wears.
+                No reviews yet. Be the first to review this product.
               </p>
             )}
           </div>
@@ -72,7 +72,7 @@ export default function ProductReviews({
               {/* Fit gauge from real feedback */}
               <div className="p-space-md bg-surface-container-low space-y-space-xs">
                 <div className="flex justify-between items-center font-label-uppercase text-label-uppercase text-[11px] uppercase">
-                  <span className="text-primary font-semibold">Client Fit Feedback</span>
+                  <span className="text-primary font-semibold">How It Fits</span>
                   <span className="text-secondary font-medium">{pct(summary.fit.true)}% True to Size</span>
                 </div>
                 <div className="w-full h-1.5 bg-surface-container-highest rounded-full overflow-hidden flex">
@@ -163,9 +163,9 @@ async function ReviewComposer({ slug, sizes }: { slug: string; sizes: number[] }
           className="text-primary underline underline-offset-4 decoration-secondary hover:text-secondary"
           href={`/login?next=${encodeURIComponent(`/products/${slug}#reviews-anchor`)}`}
         >
-          Sign in
+          Log in
         </Link>{" "}
-        to share your experience with this piece.
+        to write a review.
       </p>
     );
   }

@@ -70,7 +70,7 @@ export default async function AdminOrder({ params }: PageProps<"/admin/orders/[i
                     <th>Product</th>
                     <th>Size</th>
                     <th>Qty</th>
-                    <th>Unit</th>
+                    <th>Price each</th>
                     <th className="text-right">Line total</th>
                   </tr>
                 </thead>
@@ -78,7 +78,7 @@ export default async function AdminOrder({ params }: PageProps<"/admin/orders/[i
                   {order.items.map((i) => (
                     <tr key={`${i.slug}-${i.size}`}>
                       <td>
-                        <div className="relative w-10 h-12 rounded overflow-hidden bg-[#eee]">
+                        <div className="relative w-10 h-12 rounded overflow-hidden bg-surface-container">
                           <Image alt="" className="object-cover" fill sizes="40px" src={i.image} unoptimized />
                         </div>
                       </td>
@@ -169,7 +169,7 @@ export default async function AdminOrder({ params }: PageProps<"/admin/orders/[i
         <div className="flex flex-col gap-4">
           <section className="panel p-3 flex flex-col gap-3">
             <div className="flex items-center justify-between gap-2">
-              <h2>Fulfilment</h2>
+              <h2>Order status</h2>
               {wa && (
                 <a
                   className="btn h-8 text-xs"
@@ -228,7 +228,7 @@ export default async function AdminOrder({ params }: PageProps<"/admin/orders/[i
                 </>
               )}
             </p>
-            <p className="muted text-xs">{order.userId ? "Registered client" : "Guest checkout"}</p>
+            <p className="muted text-xs">{order.userId ? "Registered customer" : "Guest checkout"}</p>
           </section>
 
           <section className="panel p-3 flex flex-col gap-1">

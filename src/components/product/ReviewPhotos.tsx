@@ -3,7 +3,10 @@
 import Image from "next/image";
 import { useCallback, useState } from "react";
 import type { ReviewPhoto } from "@/lib/reviews";
-import PhotoViewer from "./PhotoViewer";
+import dynamic from "next/dynamic";
+
+// Full-screen viewer code loads only when a photo is opened.
+const PhotoViewer = dynamic(() => import("./PhotoViewer"), { ssr: false });
 
 /** Review photo thumbnails that open the full-screen viewer. */
 export default function ReviewPhotos({ photos, author }: { photos: ReviewPhoto[]; author: string }) {
@@ -25,7 +28,7 @@ export default function ReviewPhotos({ photos, author }: { photos: ReviewPhoto[]
           </button>
         ))}
       </div>
-      <PhotoViewer onClose={close} photos={photos.map((p, i) => ({ src: p.url, alt: `Photo ${i + 1} from ${author}'s review` }))} start={open} />
+      {open !== null && <PhotoViewer onClose={close} photos={photos.map((p, i) => ({ src: p.url, alt: `Photo ${i + 1} from ${author}'s review` }))} start={open} />}
     </>
   );
 }

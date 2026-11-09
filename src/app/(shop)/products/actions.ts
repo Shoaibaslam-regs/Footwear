@@ -18,8 +18,8 @@ export type ReviewFormState =
 const schema = z.object({
   slug: z.string().min(1).max(120),
   rating: z.coerce.number().int().min(1, "Choose a star rating.").max(5),
-  title: z.string().trim().min(3, "Add a short headline (3+ characters).").max(80),
-  body: z.string().trim().min(20, "Tell other clients a little more (20+ characters).").max(1500),
+  title: z.string().trim().min(3, "Add a short title (at least 3 characters).").max(80),
+  body: z.string().trim().min(20, "Please write a little more (at least 20 characters).").max(1500),
   fit: z.enum(fitOptions.map((f) => f.value), "Tell us how the size fits."),
   size: z.union([z.literal(""), z.coerce.number().int().min(30).max(46)]),
   photos: z
@@ -29,7 +29,7 @@ const schema = z.object({
 
 export async function submitReview(_: ReviewFormState, fd: FormData): Promise<ReviewFormState> {
   const user = await getCurrentUser();
-  if (!user) return { message: "Please sign in to write a review." };
+  if (!user) return { message: "Please log in to write a review." };
 
   const parsed = schema.safeParse({
     slug: fd.get("slug") ?? "",
@@ -87,7 +87,7 @@ export async function submitReview(_: ReviewFormState, fd: FormData): Promise<Re
   return {
     ok:
       existing?.status === "hidden"
-        ? "Review updated. It is currently hidden by our team."
+        ? "Review updated. Our team has hidden it for now."
         : existing
           ? "Your review has been updated."
           : "Thank you, your review is live.",
@@ -110,7 +110,7 @@ export async function deleteMyReview(fd: FormData) {
 
 export async function requestStockAlert(slugValue: string, size: number): Promise<{ ok?: string; error?: string }> {
   const user = await getCurrentUser();
-  if (!user) return { error: "Please sign in first." };
+  if (!user) return { error: "Please log in first." };
   const p = await getPublishedProduct(String(slugValue));
   if (!p || !p.sizes.includes(size)) return { error: "This size isn't offered." };
   if (!p.soldOutSizes.includes(size) && p.stock[String(size)] !== 0) return { error: "Good news: this size is in stock now." };

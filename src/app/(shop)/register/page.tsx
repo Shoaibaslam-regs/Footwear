@@ -5,7 +5,7 @@ import AuthShell from "@/components/auth/AuthShell";
 
 export const metadata: Metadata = {
   title: "Create Account — ÉLORA Maison",
-  description: "Create your ÉLORA Maison client account.",
+  description: "Create your free ÉLORA account.",
 };
 
 async function RegisterForm({ searchParams }: PageProps<"/register">) {
@@ -16,8 +16,8 @@ async function RegisterForm({ searchParams }: PageProps<"/register">) {
 export default function RegisterPage(props: PageProps<"/register">) {
   return (
     <AuthShell
-      eyebrow="Client Salon"
-      intro="Join for early atelier access, saved sizes and faster checkout."
+      eyebrow="My Account"
+      intro="Create a free account to save your favourites, track orders and check out faster."
       title="Create Account"
     >
       <Suspense>

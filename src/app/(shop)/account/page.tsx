@@ -9,7 +9,7 @@ import Price from "@/components/Price";
 import ConfirmButton from "@/components/ConfirmButton";
 
 export const metadata: Metadata = {
-  title: "Your Account — ÉLORA Maison",
+  title: "My Account — ÉLORA Maison",
 };
 
 const card = "bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-sm";
@@ -23,7 +23,7 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-md mb-space-lg">
         <div>
           <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-            Client Salon
+            My Account
           </span>
           <h1 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight mt-1">
             Welcome, {user.name.split(" ")[0]}
@@ -33,26 +33,26 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
           <ConfirmButton
             className="h-11 px-space-lg rounded-full bg-surface-container hover:bg-surface-container-high text-primary font-label-uppercase text-label-uppercase uppercase tracking-widest transition-colors"
             confirm={{
-              title: "Sign out of your account?",
-              message: "Your bag and wishlist stay saved on this device.",
-              confirmLabel: "Sign Out",
-              cancelLabel: "Stay Signed In",
+              title: "Log out of your account?",
+              message: "Your bag and wishlist stay saved in your account.",
+              confirmLabel: "Log Out",
+              cancelLabel: "Stay Logged In",
               icon: "logout",
             }}
           >
-            Sign Out
+            Log Out
           </ConfirmButton>
         </form>
       </div>
 
       {reset === "1" && (
         <p className="mb-space-md font-body-sm text-body-sm bg-secondary-fixed/40 text-primary rounded-lg px-space-md py-space-sm" role="status">
-          Your password has been changed. Other devices have been signed out.
+          Your password has been changed. You have been logged out on your other devices.
         </p>
       )}
       {denied === "admin" && (
         <p className="mb-space-md font-body-sm text-body-sm bg-error-container text-on-error-container rounded-lg px-space-md py-space-sm" role="alert">
-          The admin panel is only available to Maison administrators.
+          Only ÉLORA admins can open the admin panel.
         </p>
       )}
 
@@ -64,39 +64,39 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
           <p className="font-headline-sm text-headline-sm text-primary">{user.name}</p>
           <p className="font-body-sm text-body-sm text-on-surface-variant">{user.email}</p>
           <p className="font-label-sm text-label-sm text-secondary uppercase tracking-wider">
-            {user.role === "admin" ? "Administrator" : "Client"}
+            {user.role === "admin" ? "Admin" : "Customer"}
           </p>
         </div>
         <Link className={`${card} hover:shadow-xl transition-shadow`} href="/wishlist">
           <span className="material-symbols-outlined text-secondary">favorite</span>
           <p className="font-headline-sm text-headline-sm text-primary">Wishlist</p>
-          <p className="font-body-sm text-body-sm text-on-surface-variant">Pieces you have saved.</p>
+          <p className="font-body-sm text-body-sm text-on-surface-variant">Items you have saved.</p>
         </Link>
         {user.role === "admin" ? (
           <Link className={`${card} hover:shadow-xl transition-shadow`} href="/admin">
             <span className="material-symbols-outlined text-secondary">dashboard</span>
             <p className="font-headline-sm text-headline-sm text-primary">Admin Panel</p>
-            <p className="font-body-sm text-body-sm text-on-surface-variant">Manage listings and clients.</p>
+            <p className="font-body-sm text-body-sm text-on-surface-variant">Manage products, orders and customers.</p>
           </Link>
         ) : (
           <Link className={`${card} hover:shadow-xl transition-shadow`} href="/cart">
             <span className="material-symbols-outlined text-secondary">shopping_bag</span>
             <p className="font-headline-sm text-headline-sm text-primary">Shopping Bag</p>
-            <p className="font-body-sm text-body-sm text-on-surface-variant">Review and check out.</p>
+            <p className="font-body-sm text-body-sm text-on-surface-variant">See your bag and check out.</p>
           </Link>
         )}
       </div>
 
       <div className="mt-space-xl">
         <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-          Order Archive
+          Order History
         </span>
         <h2 className="font-headline-md text-headline-md text-primary mt-1 mb-space-md">Your Orders</h2>
         {orders.length === 0 ? (
           <p className="font-body-md text-body-md text-on-surface-variant">
             No orders yet.{" "}
             <Link className="text-primary underline underline-offset-4 decoration-secondary" href="/collections">
-              Explore the collection
+              Start shopping
             </Link>
             .
           </p>

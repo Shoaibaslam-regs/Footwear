@@ -4,8 +4,8 @@ import AuthForm from "@/components/auth/AuthForm";
 import AuthShell from "@/components/auth/AuthShell";
 
 export const metadata: Metadata = {
-  title: "Sign In — ÉLORA Maison",
-  description: "Sign in to your ÉLORA Maison client account.",
+  title: "Log In — ÉLORA Maison",
+  description: "Log in to your ÉLORA account.",
 };
 
 async function LoginForm({ searchParams }: PageProps<"/login">) {
@@ -17,8 +17,8 @@ export default function LoginPage(props: PageProps<"/login">) {
   return (
     <AuthShell
       eyebrow="Welcome Back"
-      intro="Sign in to view your orders, wishlist and private appointments."
-      title="Sign In"
+      intro="Log in to see your orders and wishlist."
+      title="Log In"
     >
       <Suspense>
         <LoginForm {...props} />

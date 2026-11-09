@@ -11,8 +11,8 @@ export type DeliveryOption = {
 };
 
 export const POLICY_PAGES = [
-  { slug: "shipping-returns", title: "Shipping & Returns" },
+  { slug: "shipping-returns", title: "Delivery & Returns" },
   { slug: "privacy", title: "Privacy Policy" },
-  { slug: "terms", title: "Terms of Service" },
+  { slug: "terms", title: "Terms & Conditions" },
 ] as const;
 export type PolicySlug = (typeof POLICY_PAGES)[number]["slug"];

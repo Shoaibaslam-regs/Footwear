@@ -26,7 +26,7 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
   return (
     <article className="w-full max-w-3xl mx-auto px-margin-mobile lg:px-margin pt-space-md pb-space-xl">
       <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-        Client Care
+        Customer Help
       </span>
       <h1 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight mt-1 mb-space-lg">
         {page.title}

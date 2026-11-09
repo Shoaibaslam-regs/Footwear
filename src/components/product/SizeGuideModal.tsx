@@ -40,7 +40,7 @@ function SizeGuidePanel({ onClose }: { onClose: () => void }) {
           <div className="flex items-center justify-between pb-space-md border-b border-outline-variant/30">
             <div>
               <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-                Maison ÉLORA Concierge
+                ÉLORA Size Help
               </span>
               <h3
                 id="size-guide-title"
@@ -149,7 +149,7 @@ function SizeGuidePanel({ onClose }: { onClose: () => void }) {
 
             <div className="p-space-sm bg-surface-container flex items-center justify-between gap-space-sm">
               <span className="font-body-sm text-body-sm text-on-surface">
-                Still unsure? Our concierge will help you choose your size.
+                Still not sure? Our team will help you choose your size.
               </span>
               <a
                 className="font-label-uppercase text-label-uppercase uppercase text-primary underline underline-offset-4 hover:text-secondary whitespace-nowrap"

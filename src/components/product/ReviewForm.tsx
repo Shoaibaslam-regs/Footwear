@@ -9,7 +9,7 @@ import { fitOptions, MAX_REVIEW_PHOTOS, type Fit, type ReviewPhoto } from "@/lib
 const label = "font-label-sm text-label-sm text-on-surface-variant tracking-wider uppercase font-semibold";
 const input =
   "w-full px-space-md bg-surface-container-low text-on-surface font-body-md text-body-md focus:bg-surface-container-lowest focus:outline-none focus:ring-2 focus:ring-secondary transition-all aria-invalid:ring-2 aria-invalid:ring-error";
-const starLabels = ["Poor", "Fair", "Good", "Very good", "Exceptional"];
+const starLabels = ["Poor", "Fair", "Good", "Very good", "Excellent"];
 
 export type ExistingReview = {
   rating: number;
@@ -72,8 +72,8 @@ export default function ReviewForm({
     return (
       <div className="flex flex-wrap items-center justify-between gap-space-md">
         <p className="font-body-md text-body-md text-on-surface-variant">
-          {state?.ok ?? "You have reviewed this piece."}
-          {existing.status === "hidden" && " It is currently hidden by our team."}
+          {state?.ok ?? "You have already reviewed this product."}
+          {existing.status === "hidden" && " Our team has hidden it for now."}
         </p>
         <div className="flex gap-space-sm">
           <button
@@ -138,7 +138,7 @@ export default function ReviewForm({
 
       <div className="flex flex-col gap-1 md:col-span-2">
         <label className={label} htmlFor="rv-title">
-          Headline *
+          Title *
         </label>
         <input aria-invalid={e.title ? true : undefined} className={`${input} h-12`} defaultValue={existing?.title} id="rv-title" maxLength={80} name="title" placeholder="e.g. Comfortable all evening" />
         <Err list={e.title} />
@@ -223,7 +223,7 @@ export default function ReviewForm({
         <p className="font-body-sm text-body-sm text-on-surface-variant">
           {verified
             ? "Your review will show a Verified Purchase badge."
-            : "Reviews from clients whose order was delivered get a Verified Purchase badge."}
+            : "Reviews from customers whose order was delivered get a Verified Purchase badge."}
         </p>
         <div className="flex gap-space-sm">
           {existing && (

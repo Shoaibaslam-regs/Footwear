@@ -87,7 +87,7 @@ export default function SettingsForm({
           ))}
         </ul>
         <div
-          className="rounded bg-[#1b1c1a] text-[#ece0dc] px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] overflow-hidden whitespace-nowrap"
+          className="rounded bg-primary text-primary-fixed px-3 py-1.5 text-[11px] uppercase tracking-[0.14em] overflow-hidden whitespace-nowrap"
           aria-label="Preview"
         >
           {lines.join("  ◆  ") || "—"}

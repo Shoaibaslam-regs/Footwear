@@ -37,6 +37,11 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 ### Route groups
 - `src/app/(shop)/`: the storefront. Its layout renders `Header`, `Footer` and `ActionToast`.
 - `src/app/admin/`: the admin panel. Its own layout uses deliberately plain styling (`admin.css`, system font). Do not use brand tokens there.
+  - The overview reads `getDashboard(range)` from `lib/server/dashboard.ts`. It is uncached, and its days are Pakistan calendar days (Asia/Karachi), comparing the current period with the one before.
+  - `/admin/users` and `/admin/products` read per-row figures from `lib/server/insights.ts`: orders, spend, bag and wishlist counts per user, and sold, revenue, rating, wishlists and restock requests per listing. They filter, sort and page in memory with `components/admin/Pager.tsx` (`?page=`, `?per=25|50|100`).
+  - `/admin/users/[id]` shows one customer: profile, saved address, orders, live bag and wishlist, reviews and restock requests. `/admin/products/[id]/insights` shows one listing's performance; `ListingTabs` switches between it and the edit form.
+  - `setUserRole` returns to the page in its `back` field, but only to `/admin/users` or `/admin/users/<id>`.
+  - Charts are client SVG components in `components/admin/charts/`. They take a serialisable `unit` prop (`"pkr"` or `"count"`), not a formatter function, because server pages render them.
 - `src/app/layout.tsx` (root): fonts only, plus `DialogHost` and `CartSync` (both app-wide).
 - `src/app/not-found.tsx` wraps itself in the shop layout. `src/app/api/` holds `cart`, `session` and `admin/images`.
 
@@ -74,6 +79,11 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 - `placeOrder` (`app/(shop)/checkout/actions.ts`) builds orders from the account's `carts` document and re-prices from listings, then clears the bag after insert.
 - Cart mutations (`lib/cart-actions.ts`) validate product and size against published listings.
 - Payments are recorded, not processed: COD, EasyPaisa/JazzCash (wallet number stored), bank transfer, and card via a payment link.
+
+### Performance rules
+- **Icons:** the Material Symbols font is a subset of the names in `src/lib/icons.ts` (about 10 KB instead of about 4 MB). **When you use a new icon, add its name there**, or it renders as plain text.
+- **Lazy overlays:** quick view, the search panel and the photo viewer load with `next/dynamic` only on first open. Keep new heavy overlays the same way.
+- **Images:** photos go through `next/image` with real `sizes`; never use CSS `background-image` for photos. The hero mounts only the current, outgoing and next slides.
 
 ### Client state
 - `lib/store.ts` mirrors the account bag and wishlist. It applies changes optimistically, queues the server actions in order, and applies the last server result. Only the display currency is per device (localStorage).

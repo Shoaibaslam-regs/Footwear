@@ -64,13 +64,13 @@ export const paymentMethods = [
   {
     value: "bank",
     label: "Bank Transfer",
-    description: "Our concierge sends bank details once your order is confirmed.",
+    description: "We send you our bank details once your order is confirmed.",
     wallet: false,
   },
   {
     value: "card_link",
     label: "Debit / Credit Card",
-    description: "We email a secure card payment link after confirmation. No card details are entered here.",
+    description: "After we confirm your order, we email you a safe link to pay by card. You do not enter card details on this website.",
     wallet: false,
   },
 ] as const;

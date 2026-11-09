@@ -78,7 +78,7 @@ function Panel({ index, onClose }: { index: Entry[]; onClose: () => void }) {
 
       <div className="relative max-w-[1536px] mx-auto px-margin-mobile lg:px-margin flex justify-end">
         <div
-          aria-label="Search the collection"
+          aria-label="Search products"
           className="w-full sm:max-w-xl mt-2 bg-surface-container-lowest rounded-2xl shadow-2xl ring-1 ring-outline-variant/30 overflow-hidden motion-safe:animate-[dialogIn_160ms_ease-out]"
           role="dialog"
         >
@@ -91,7 +91,7 @@ function Panel({ index, onClose }: { index: Entry[]; onClose: () => void }) {
               aria-autocomplete="list"
               aria-controls={listId}
               aria-expanded={results.length > 0}
-              aria-label="Search pieces"
+              aria-label="Search products"
               autoComplete="off"
               className="flex-1 min-w-0 bg-transparent font-body-lg text-body-lg text-primary placeholder:text-outline focus:outline-none"
               enterKeyHint="search"
@@ -146,7 +146,7 @@ function Panel({ index, onClose }: { index: Entry[]; onClose: () => void }) {
             )}
 
             <p aria-live="polite" className="px-space-md pt-space-md pb-space-xs font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              {q ? `${all.length} ${all.length === 1 ? "piece" : "pieces"} for “${q}”` : "Atelier favourites"}
+              {q ? `${all.length} ${all.length === 1 ? "result" : "results"} for “${q}”` : "Popular picks"}
             </p>
 
             {results.length > 0 ? (
@@ -204,7 +204,7 @@ function Panel({ index, onClose }: { index: Entry[]; onClose: () => void }) {
                 href="/collections"
                 onClick={onClose}
               >
-                Browse the collection
+                See all products
                 <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
               </Link>
             )}

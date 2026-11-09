@@ -5,7 +5,7 @@ import { DAILY_REVIEW_UPLOADS, recordUpload, uploadsToday } from "@/lib/server/r
 /** Signed-in clients upload review photos (compressed to 1200px WebP). */
 export async function POST(request: Request) {
   const user = await getCurrentUser();
-  if (!user) return Response.json({ error: "Please sign in to add photos." }, { status: 401 });
+  if (!user) return Response.json({ error: "Please log in to add photos." }, { status: 401 });
   if ((await uploadsToday(user.id)) >= DAILY_REVIEW_UPLOADS) {
     return Response.json({ error: "You've reached today's photo limit. Please try again tomorrow." }, { status: 429 });
   }

@@ -26,7 +26,7 @@ export type SiteSettings = {
 };
 
 /** Shown until an admin saves their own messages. Only factual claims. */
-export const DEFAULT_SETTINGS: SiteSettings = {
+const DEFAULT_SETTINGS: SiteSettings = {
   // Placeholder until the business enters its real couriers and charges.
   deliveryOptions: [
     {

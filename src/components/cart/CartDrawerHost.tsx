@@ -2,10 +2,8 @@
 
 import { usePathname } from "next/navigation";
 import { useCallback, useEffect, useState } from "react";
-import { useBag } from "@/lib/store";
+import { BAG_OPEN_EVENT, useBag } from "@/lib/store";
 import CartDrawer from "./CartDrawer";
-
-export const BAG_OPEN_EVENT = "elora:bag-open";
 
 /** Slide-in mini bag shown on any page right after something is added. */
 export default function CartDrawerHost() {

@@ -45,7 +45,7 @@ export default function RecentlyViewed({ current, catalogue }: { current: string
 
   return (
     <section className="max-w-[1536px] w-full mx-auto px-margin-mobile lg:px-margin pb-space-xl">
-      <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">Your History</span>
+      <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">You Looked At</span>
       <h2 className="font-headline-md text-headline-md text-primary mb-space-md">Recently Viewed</h2>
       <ul className="grid grid-cols-2 lg:grid-cols-4 gap-space-sm sm:gap-gutter">
         {items.map((r) => (

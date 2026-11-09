@@ -44,7 +44,7 @@ export function ForgotPasswordForm() {
       <p className="font-body-sm text-body-sm text-on-surface-variant text-center">
         Remembered it?{" "}
         <Link className="text-primary underline underline-offset-4 decoration-secondary" href="/login">
-          Sign in
+          Log in
         </Link>
       </p>
     </form>

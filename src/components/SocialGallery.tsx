@@ -6,9 +6,9 @@ export default function SocialGallery() {
     <section className="w-full py-space-xl bg-surface">
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm mb-space-lg">
-          <div>
+          <div data-reveal>
             <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              The Visual Dialogue
+              As Seen on Instagram
             </span>
             <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight">
               #MaisonElora
@@ -20,14 +20,14 @@ export default function SocialGallery() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            <span>Follow @MaisonElora</span>
+            <span className="link-draw">Follow @MaisonElora</span>
             <span className="material-symbols-outlined text-base">
               arrow_forward
             </span>
           </a>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-space-sm">
+        <div data-reveal-stagger className="grid grid-cols-2 md:grid-cols-3 lg:grid-cols-5 gap-space-sm">
           {socialTiles.map((tile, i) => (
             <a
               key={tile.image}
@@ -37,7 +37,7 @@ export default function SocialGallery() {
               href="#social"
             >
               <Image
-                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                className="img-fade w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 alt={tile.alt}
                 src={tile.image}
                 fill

@@ -13,13 +13,13 @@ export type CancelState = { ok?: string; error?: string } | undefined;
 /** Clients may cancel their own order until the team confirms it. */
 export async function cancelMyOrder(_: CancelState, formData: FormData): Promise<CancelState> {
   const user = await getCurrentUser();
-  if (!user) return { error: "Please sign in." };
+  if (!user) return { error: "Please log in." };
   const order = await getOrderForUser(String(formData.get("number") ?? ""), user.id);
   if (!order) return { error: "Order not found." };
   if (order.status !== "pending") {
     return { error: "This order is already being prepared. Please message us on WhatsApp to change it." };
   }
-  const ok = await updateOrder(order.id, { status: "cancelled" }, { kind: "status", text: "Cancelled — by client", by: user.email }, "pending");
+  const ok = await updateOrder(order.id, { status: "cancelled" }, { kind: "status", text: "Cancelled by customer", by: user.email }, "pending");
   if (!ok) return { error: "This order was just updated. Please refresh the page." };
   await releaseStock(order.items);
   updateTag(SALES_TAG);

@@ -30,6 +30,8 @@ type State = {
 };
 
 const CURRENCY_KEY = "elora:currency";
+/** Dispatched after adding to the bag; the shop layout's mini bag listens for it. */
+export const BAG_OPEN_EVENT = "elora:bag-open";
 /** Pre-account storage; imported into the account once, then removed. */
 const LEGACY_KEY = "elora:store:v2";
 const MAX_QTY = 10;
@@ -161,7 +163,7 @@ function optimisticLine(p: BagProduct, quantity: number): CartItem {
   return {
     id: lineId(p),
     href: p.href,
-    badge: "Atelier Edition",
+    badge: "Limited Edition",
     collection: p.collection ?? "",
     name: p.name,
     drawerName: p.name,
@@ -175,7 +177,7 @@ function optimisticLine(p: BagProduct, quantity: number): CartItem {
     stockNote: "Saving to your bag…",
     stockNoteClass: "text-on-surface-variant",
     stockDotClass: "bg-primary",
-    packaging: { title: "Maison ÉLORA Presentation Box:", text: "Includes a monogrammed silk dust pouch." },
+    packaging: { title: "ÉLORA Gift Box:", text: "Comes with a silk shoe bag with our logo." },
     quantity,
     image: p.image,
     alt: p.alt,
@@ -193,7 +195,7 @@ export function addToBag(p: BagProduct, quantity = 1, opts: { openBag?: boolean 
       : [...state.bag, optimisticLine(p, quantity)],
   });
   sync(() => cartAdd({ slug: p.id, size: sizeNumber(p.size), quantity }));
-  if (opts.openBag !== false) window.dispatchEvent(new Event("elora:bag-open"));
+  if (opts.openBag !== false) window.dispatchEvent(new Event(BAG_OPEN_EVENT));
 }
 
 export function setBagQuantity(id: string, quantity: number) {
