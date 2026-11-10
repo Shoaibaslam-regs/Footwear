@@ -216,7 +216,7 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
               />
             </p>
           </div>
-          <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-gutter">
+          <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm sm:gap-gutter">
             {shoes.map((p, i) => {
               const now = salePrice(p);
               const withCoupon = priceWithCoupon(t, now, p.discountPercent);
@@ -228,51 +228,51 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
                       className="object-cover object-center group-hover:scale-105 transition-transform duration-700"
                       fill
                       priority={i === 0}
-                      sizes="(min-width: 768px) 30vw, (min-width: 640px) 50vw, 100vw"
+                      sizes="(min-width: 768px) 30vw, 50vw"
                       src={p.image}
                     />
                     {p.spec && (
-                      <div className="absolute top-4 left-4">
-                        <span className="px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur text-primary font-label-uppercase text-[10px] tracking-wider shadow-sm uppercase">
+                      <div className="absolute top-2 left-2 sm:top-4 sm:left-4">
+                        <span className="px-2 sm:px-2.5 py-0.5 sm:py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur text-primary font-label-uppercase text-[10px] tracking-wider shadow-sm uppercase">
                           {p.spec}
                         </span>
                       </div>
                     )}
                   </div>
-                  <div className="p-space-md space-y-space-xs flex-1 flex flex-col justify-between">
+                  <div className="p-space-sm sm:p-space-md space-y-space-xs flex-1 flex flex-col justify-between">
                     <div>
-                      <span className="font-label-uppercase text-[10px] tracking-widest text-secondary block uppercase">{p.material}</span>
-                      <h3 className="font-headline-sm text-headline-sm text-primary font-normal">{p.name}</h3>
-                      <p className="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-1">
+                      <span className="font-label-uppercase text-[9px] sm:text-[10px] tracking-widest text-secondary block uppercase truncate">{p.material}</span>
+                      <h3 className="font-headline-sm text-[15px] leading-snug sm:text-headline-sm text-primary font-normal line-clamp-2">{p.name}</h3>
+                      <p className="hidden sm:block font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-1">
                         {p.description || `${categoryLabel(p.category)}, handmade in Karachi.`}
                       </p>
                     </div>
-                    <div className="pt-space-sm flex items-center justify-between">
-                      <div>
+                    <div className="pt-space-xs sm:pt-space-sm flex items-end justify-between gap-1">
+                      <div className="min-w-0">
                         <WhenRevealed
                           before={
-                            <span className="font-headline-sm text-headline-sm text-primary font-semibold">
+                            <span className="font-headline-sm text-[15px] sm:text-headline-sm text-primary font-semibold">
                               <Price amount={now} />
                             </span>
                           }
                           after={withCoupon !== null && withCoupon < now ? (
                           <>
-                            <span className="font-body-sm text-body-sm text-outline line-through block">
+                            <span className="font-body-sm text-[11px] sm:text-body-sm text-outline line-through block">
                               <Price amount={now} />
                             </span>
-                            <div className="flex items-center gap-1.5">
-                              <span className="font-headline-sm text-headline-sm text-primary font-semibold">
+                            <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                              <span className="font-headline-sm text-[15px] sm:text-headline-sm text-primary font-semibold">
                                 <Price amount={withCoupon} />
                               </span>
-                              <span className="font-label-uppercase text-[10px] text-secondary font-semibold bg-secondary-container/50 px-1.5 py-0.5 rounded whitespace-nowrap">WITH COUPON</span>
+                              <span className="font-label-uppercase text-[8px] sm:text-[10px] text-secondary font-semibold bg-secondary-container/50 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap">WITH COUPON</span>
                             </div>
                           </>
                         ) : (
-                          <div className="flex items-center gap-1.5">
-                            <span className="font-headline-sm text-headline-sm text-primary font-semibold">
+                          <div className="flex flex-wrap items-center gap-x-1.5 gap-y-0.5">
+                            <span className="font-headline-sm text-[15px] sm:text-headline-sm text-primary font-semibold">
                               <Price amount={now} />
                             </span>
-                            <span className="font-label-uppercase text-[10px] text-secondary font-semibold bg-secondary-container/50 px-1.5 py-0.5 rounded whitespace-nowrap">
+                            <span className="font-label-uppercase text-[8px] sm:text-[10px] text-secondary font-semibold bg-secondary-container/50 px-1 sm:px-1.5 py-0.5 rounded whitespace-nowrap">
                               {t.type === "free_delivery" ? "FREE DELIVERY" : "ON SALE"}
                             </span>
                           </div>
@@ -281,7 +281,7 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
                       </div>
                       <Link
                         aria-label={`View ${p.name}`}
-                        className="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-secondary transition-colors"
+                        className="shrink-0 w-8 h-8 sm:w-10 sm:h-10 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-secondary transition-colors"
                         href={productHref(p)}
                         title="View product"
                       >

@@ -1,10 +1,11 @@
 "use server";
 
 import { ObjectId } from "mongodb";
+import { revalidatePath } from "next/cache";
 import { getCurrentUser } from "./auth/dal";
 import { CODE_RX, normaliseCode, type CouponTerms } from "./coupons";
 import { carts } from "./server/carts";
-import { coupons, couponState, getCouponByCode, markRevealed, toTerms, unavailableReason } from "./server/coupons";
+import { appliedCouponFor, coupons, couponState, getCouponByCode, markRevealed, toTerms, unavailableReason } from "./server/coupons";
 
 export type CouponActionResult =
   | { ok: true; terms: CouponTerms }
@@ -37,12 +38,14 @@ export async function applyCouponCode(raw: string): Promise<CouponActionResult> 
     { $set: { coupon: c.code, updatedAt: new Date() }, $setOnInsert: { bag: [], wishlist: [] } },
     { upsert: true },
   );
+  forgetCheckout();
   return { ok: true, terms: toTerms(c) };
 }
 
 export async function removeCouponCode(): Promise<{ ok: true }> {
   const user = await getCurrentUser();
   if (user) await (await carts()).updateOne({ _id: new ObjectId(user.id) }, { $unset: { coupon: "" }, $set: { updatedAt: new Date() } });
+  forgetCheckout();
   return { ok: true };
 }
 
@@ -53,4 +56,22 @@ export async function markCouponRevealed(raw: string): Promise<void> {
   const c = await getCouponByCode(normaliseCode(String(raw ?? "")));
   if (!c || c.type === "random" || (c.ownerId && c.ownerId.toHexString() !== user.id)) return;
   await markRevealed(c, user.id);
+}
+
+/**
+ * The browser keeps pages it has already shown. A checkout opened before the
+ * coupon was applied would come back without it, and the discount would only
+ * show after the order was placed. Clearing these paths makes the next visit
+ * load them fresh.
+ */
+function forgetCheckout() {
+  revalidatePath("/checkout");
+  revalidatePath("/cart");
+}
+
+/** The coupon saved on this customer's bag right now (checkout re-reads it whenever it opens). */
+export async function currentCoupon(): Promise<{ terms: CouponTerms | null; dropped?: string }> {
+  const user = await getCurrentUser();
+  if (!user) return { terms: null };
+  return appliedCouponFor(user.id);
 }

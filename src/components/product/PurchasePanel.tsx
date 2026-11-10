@@ -11,7 +11,7 @@ import StockAlert from "./StockAlert";
 import Accordion from "./Accordion";
 import SizeGuideModal from "./SizeGuideModal";
 import SalePrice from "@/components/SalePrice";
-import { addToBag, toggleWishlist as toggleSaved, useIsWishlisted } from "@/lib/store";
+import { addToBag, openBag, toggleWishlist as toggleSaved, useInBag, useIsWishlisted } from "@/lib/store";
 
 const MAX_QTY = 5;
 
@@ -40,6 +40,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
 
   const cover = product.gallery[0];
   const euSize = size.startsWith("EU") ? size : `EU ${size}`;
+  const inBag = useInBag(product.slug, euSize);
 
   const toggleWishlist = async () => {
     if (!(await requireLogin("save items to your wishlist"))) return;
@@ -78,7 +79,8 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
 
   const buyNow = async (e: React.MouseEvent) => {
     e.preventDefault();
-    if (await addSelectionToBag(true)) router.push("/checkout");
+    // Already in the bag in this size: go straight to checkout without adding a second pair.
+    if (inBag || (await addSelectionToBag(true))) router.push("/checkout");
   };
 
   return (
@@ -270,14 +272,14 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
           </div>
           <button
             className="flex-1 h-[52px] bg-primary-container text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed font-label-uppercase text-label-uppercase uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-space-sm shadow-sm"
-            onClick={() => addSelectionToBag()}
+            onClick={() => (inBag ? openBag() : addSelectionToBag())}
             type="button"
           >
             <span className="material-symbols-outlined text-[18px]">
-              shopping_bag
+              {inBag ? "check" : "shopping_bag"}
             </span>
             <span aria-live="polite">
-              {added ? "Added to Bag ✓" : "Add to Bag"}
+              {added ? "Added to Bag ✓" : inBag ? "In Your Bag · View" : "Add to Bag"}
             </span>
           </button>
           <button

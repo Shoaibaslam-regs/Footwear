@@ -144,6 +144,11 @@ function useStore<T>(select: (s: State) => T): T {
 
 export const useBag = () => useStore((s) => s.bag);
 export const useBagCount = () => useStore((s) => s.bag.reduce((n, i) => n + i.quantity, 0));
+/** True when this product, in this size, is already a line in the bag. */
+export const useInBag = (id: string, size: string) =>
+  useStore((s) => s.bag.some((i) => i.id === `${id}--eu-${sizeNumber(size)}`));
+/** Opens the mini bag (the drawer listens for this event). */
+export const openBag = () => window.dispatchEvent(new Event(BAG_OPEN_EVENT));
 export const useWishlist = () => useStore((s) => s.wishlist);
 export const useIsWishlisted = (id: string) => useStore((s) => s.wishlist.some((w) => w.id === id));
 export const useCurrency = () => useStore((s) => s.currency);

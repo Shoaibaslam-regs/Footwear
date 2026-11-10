@@ -10,6 +10,7 @@ import { paymentMethodLabel } from "@/lib/orders";
 import { clearBag, useBag } from "@/lib/store";
 import Price from "@/components/Price";
 import { applyCoupon, type CouponTerms } from "@/lib/coupons";
+import { currentCoupon } from "@/lib/coupon-actions";
 import type { OfferSummary } from "@/lib/coupons";
 import CheckoutSteps, { type StepTarget } from "./CheckoutSteps";
 import ContactCard from "./ContactCard";
@@ -46,6 +47,22 @@ export default function Checkout({
   const [step, setStep] = useState(2);
   const [delivery, setDelivery] = useState(deliveryOptions[0].id);
   const [coupon, setCoupon] = useState<CouponTerms | null>(initialCoupon);
+  const [droppedNote, setDroppedNote] = useState(couponNote);
+  // The page may come from the browser's memory (e.g. Back, or opened before the
+  // coupon was applied on the offer page), so re-read the bag's coupon on open.
+  useEffect(() => {
+    let live = true;
+    currentCoupon()
+      .then((r) => {
+        if (!live) return;
+        setCoupon(r.terms);
+        if (r.dropped) setDroppedNote(r.dropped);
+      })
+      .catch(() => {});
+    return () => {
+      live = false;
+    };
+  }, []);
 
   const pieces = items.reduce((n, i) => n + i.quantity, 0);
   const subtotal = items.reduce((n, i) => n + i.price * i.quantity, 0);
@@ -120,7 +137,7 @@ export default function Checkout({
         </form>
         <CheckoutSummary
           coupon={coupon}
-          couponNote={couponNote}
+          couponNote={droppedNote}
           couponResult={couponResult}
           offers={offers}
           deliveryDiscount={deliveryDiscount}

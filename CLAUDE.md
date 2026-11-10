@@ -98,6 +98,9 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - `revealedAt` is set when the customer scratches the card (`markCouponRevealed`).
   - Until then, tickets, strips, step text and "with coupon" prices never show the discount (`OfferSummary.headline` is `null`, and `components/offers/Reveal.tsx` gates the offer page).
 - `carts.coupon`: the code the customer applied (from checkout or the offer page). It is cleared when the order is placed.
+  - The browser keeps pages it has already shown, so a checkout opened before the coupon was applied would come back without it.
+    - `applyCouponCode` / `removeCouponCode` call `revalidatePath` on `/checkout` and `/cart`.
+    - `Checkout` re-reads the bag's coupon on open (`currentCoupon()`).
 - `meta`: seed and migration markers.
 
 ### Money paths never trust the client

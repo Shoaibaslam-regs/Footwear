@@ -7,7 +7,7 @@ import { useState } from "react";
 import { sizes, type BestSeller } from "@/lib/data";
 import SalePrice, { DiscountBadge } from "@/components/SalePrice";
 import { productId } from "@/lib/product-id";
-import { addToBag } from "@/lib/store";
+import { addToBag, openBag, useInBag } from "@/lib/store";
 
 const chipBase =
   "w-10 h-10 rounded border-none font-label-sm text-label-sm font-medium";
@@ -29,10 +29,14 @@ export default function BestSellerCard({
   // Never reserve a sold-out size, even if it was the listing's default.
   const size = available.includes(selected) ? selected : available[0];
 
+  const id = productId(item.name, item.href);
+  const inBag = useInBag(id, `EU ${size}`);
+
   const reserve = async () => {
+    if (inBag) return openBag();
     if (!(await requireLogin("add this to your bag"))) return;
     addToBag({
-      id: productId(item.name, item.href),
+      id,
       name: item.name,
       price: item.price,
       image: item.image,
@@ -151,9 +155,9 @@ export default function BestSellerCard({
             onClick={reserve}
             type="button"
           >
-            <span className="material-symbols-outlined text-sm">shopping_bag</span>
+            <span className="material-symbols-outlined text-sm">{inBag ? "check" : "shopping_bag"}</span>
             <span>
-              {available.length === 0 ? "Sold Out" : "Add to Bag"}
+              {available.length === 0 ? "Sold Out" : inBag ? "In Bag · View" : "Add to Bag"}
             </span>
           </button>
         </div>

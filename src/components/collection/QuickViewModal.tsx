@@ -17,7 +17,9 @@ import { showToast } from "@/lib/toast";
 import { productId } from "@/lib/product-id";
 import {
   addToBag as addItemToBag,
+  openBag,
   toggleWishlist as toggleSaved,
+  useInBag,
   useIsWishlisted,
 } from "@/lib/store";
 
@@ -209,7 +211,13 @@ function QuickViewStudio({
     showToast(`Size EU ${s} selected`);
   };
 
+  const inBag = useInBag(pid, `EU ${size}`);
   const addToBag = async () => {
+    if (inBag) {
+      onClose();
+      openBag();
+      return;
+    }
     if (!(await requireLogin("add items to your bag"))) return;
     addItemToBag({
       id: pid,
@@ -551,9 +559,9 @@ function QuickViewStudio({
                   type="button"
                 >
                   <span className="material-symbols-outlined text-[18px]">
-                    shopping_bag
+                    {inBag ? "check" : "shopping_bag"}
                   </span>
-                  <span>Add to Bag</span>
+                  <span>{inBag ? "In Your Bag · View" : "Add to Bag"}</span>
                 </button>
                 <button
                   aria-label={
