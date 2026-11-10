@@ -31,6 +31,9 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 `next.config.ts` enables `cacheComponents`, `partialPrefetching` and `reactCompiler`. Consequences you will hit:
 - Anything reading `cookies()`, `searchParams`, `usePathname()` or the session must sit inside `<Suspense>`, or the build fails. The pattern used throughout is a small async component inside Suspense (e.g. `CheckoutForUser`, `ReviewComposer`, `SignedInAs`, `CartSync`).
 - Prerendered code must not read the current time (`Date.now()` / `new Date()`). That's why review dates are absolute.
+- **Every admin page wraps its content in its own `<Suspense>`** (`XContent` plus a default-export wrapper). `requireAdmin()` verifies the JWT with async crypto, and the admin layout's Suspense doesn't count for navigations: without it, dev logs "uncached data … outside of `<Suspense>`" and navigations aren't instant. `loading.tsx` did not fix it.
+- Code that reads the time after cookies (coupon dates, the dashboard) awaits `io()` from `next/cache` first. Use `io()`, not `connection()`, which blocks prefetching.
+- A button with a function `formAction` can't carry `name`/`value`, because React drops them. Bind the value instead: `formAction={action.bind(null, "hidden")}`.
 - Storefront data is read through `'use cache'` functions with tags: `products` (`lib/server/products.ts`), `reviews` / `reviews:<slug>` (`lib/server/reviews.ts`), `sales` (`lib/server/sales.ts`), and `settings` (`lib/server/settings.ts`). Any server action that changes that data must call `updateTag(...)` with the matching tag. Admin order actions that only re-render the current page use `refresh()`.
 - `npm run build` executes these cached reads, so it hits MongoDB. The one-time seed (`meta: products-seed`, from the static data in `lib/data.ts` / `collection-data.ts`) and migrations (`meta: gallery-v1`) run at build time against the real DB.
 
@@ -77,7 +80,9 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - Types: `percent` (with an optional `maxDiscount`), `fixed` (PKR) and `free_delivery`.
   - Rules: `minOrder`, `startsAt` / `endsAt` (Pakistan days), `maxUses` (total) and `perCustomer`.
   - `fullPriceOnly` is on by default, so items with a listing discount don't get the coupon as well.
-  - `active` pauses a coupon. One that has been used can't be deleted, only paused.
+  - `active` pauses a coupon.
+  - Any coupon can be deleted, used or not (`deleteCoupon`). It also removes a campaign's cards, the `coupon_redemptions` rows, and `carts.coupon` references.
+  - Orders keep their own `coupon` copy, so they stay intact and findable. `releaseCoupon` ignores codes that no longer exist.
   - `public` ("Show on website") lists it to customers through `publicCouponsFor(userId)`, which returns only coupons this customer can still use and never includes the code.
     - "My Coupons" (`components/offers/MyCoupons.tsx`, account page `#my-coupons`) shows them as tickets that open the scratch card.
     - `OfferStripView` shows a "You have a coupon" strip on the bag page and in the checkout summary. It hides once a coupon is applied. With several coupons, it links to My Coupons.
@@ -102,7 +107,9 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - The maths lives in `lib/coupons.ts` (`applyCoupon`), so checkout shows the same numbers live.
   - `placeOrder` re-checks the coupon (`unavailableReason` and `applyCoupon` against the re-priced lines and the real fee), then claims it atomically with `claimCoupon` after reserving stock. Both are rolled back if the insert fails.
   - Cancelling an order (customer or admin) calls `releaseCoupon`.
-  - Orders store `coupon: {code, type, discount}`. For free delivery, `shippingFee` is 0 and `discount` is the fee that was waived.
+  - Orders store `coupon: {code, type, discount, campaign?}`. `campaign` is the surprise campaign a card came from. Older orders without it are resolved through `campaignOfCards()`.
+  - For free delivery, `shippingFee` is 0 and `discount` is the fee that was waived.
+  - `/admin/orders?coupon=any|none|<CODE>` filters orders; `orderCodesFor()` expands a campaign to its cards' codes. The list shows a Coupon column, and the filter options include codes of deleted coupons.
 - Payments are recorded, not processed: COD, EasyPaisa/JazzCash (wallet number stored), bank transfer, and card via a payment link.
 
 ### Performance rules

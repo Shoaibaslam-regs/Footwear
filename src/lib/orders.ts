@@ -127,7 +127,7 @@ export type Order = {
   shippingFee: number;
   total: number;
   /** Coupon used on this order: `discount` is PKR saved (items, or the delivery fee for free delivery). */
-  coupon?: { code: string; type: CouponType; discount: number };
+  coupon?: { code: string; type: CouponType; discount: number; /** Surprise campaign the card came from. */ campaign?: string };
   delivery: { id: string; name: string };
   payment: {
     method: PaymentMethod;

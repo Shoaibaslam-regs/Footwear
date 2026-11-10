@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -17,7 +18,7 @@ const whatsapp = (phone: string) => {
   return `https://wa.me/${intl}`;
 };
 
-export default async function AdminUserPage({ params }: PageProps<"/admin/users/[id]">) {
+async function AdminUserPageContent({ params }: PageProps<"/admin/users/[id]">) {
   const me = await requireAdmin();
   const { id } = await params;
   const u = await getUserDetail(id);
@@ -251,5 +252,18 @@ export default async function AdminUserPage({ params }: PageProps<"/admin/users/
         </section>
       </div>
     </div>
+  );
+}
+
+/**
+ * Its own loading placeholder: requireAdmin() verifies the login token (async
+ * crypto), so the content streams inside the page; otherwise navigations to it
+ * can't be instant and Next.js warns "uncached data … outside of <Suspense>".
+ */
+export default function AdminUserPage(props: PageProps<"/admin/users/[id]">) {
+  return (
+    <Suspense fallback={<p className="muted">Loading…</p>}>
+      <AdminUserPageContent {...props} />
+    </Suspense>
   );
 }

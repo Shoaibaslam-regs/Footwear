@@ -71,14 +71,21 @@ export async function listOrders(opts: {
   q?: string;
   status?: OrderStatus;
   payment?: PaymentStatus;
+  /** "any" = used a coupon, "none" = didn't; otherwise these codes (a campaign plus its cards). */
+  coupon?: "any" | "none" | string[];
 } = {}): Promise<Order[]> {
   const filter: Record<string, unknown> = {};
+  const and: Record<string, unknown>[] = [];
   if (opts.status) filter.status = opts.status;
   if (opts.payment) filter["payment.status"] = opts.payment;
+  if (opts.coupon === "any") filter["coupon.code"] = { $exists: true };
+  else if (opts.coupon === "none") filter["coupon.code"] = { $exists: false };
+  else if (Array.isArray(opts.coupon)) and.push({ $or: [{ "coupon.code": { $in: opts.coupon } }, { "coupon.campaign": { $in: opts.coupon } }] });
   if (opts.q) {
     const rx = new RegExp(opts.q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
-    filter.$or = [{ number: rx }, { "customer.email": rx }, { "customer.name": rx }, { "customer.phone": rx }, { "coupon.code": rx }];
+    and.push({ $or: [{ number: rx }, { "customer.email": rx }, { "customer.name": rx }, { "customer.phone": rx }, { "coupon.code": rx }, { "coupon.campaign": rx }] });
   }
+  if (and.length) filter.$and = and;
   const docs = await (await orders()).find(filter).sort({ createdAt: -1 }).limit(500).toArray();
   return docs.map(toOrder);
 }

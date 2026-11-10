@@ -17,7 +17,7 @@ import { getDb } from "@/lib/server/db";
 import { orderPlacedLines, sendMail, siteUrl } from "@/lib/server/mail";
 import { updateTag } from "next/cache";
 import { applyCoupon } from "@/lib/coupons";
-import { claimCoupon, getCouponByCode, releaseCoupon, toTerms, unavailableReason } from "@/lib/server/coupons";
+import { claimCoupon, coupons, getCouponByCode, releaseCoupon, toTerms, unavailableReason } from "@/lib/server/coupons";
 
 export type PlaceOrderState =
   | {
@@ -133,6 +133,10 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
     itemDiscount = r.itemDiscount;
     deliveryDiscount = r.deliveryDiscount;
     coupon = { code: couponDoc.code, type: couponDoc.type, discount: itemDiscount + deliveryDiscount };
+    if (couponDoc.campaignId) {
+      const campaign = await (await coupons()).findOne({ _id: couponDoc.campaignId }, { projection: { code: 1 } });
+      if (campaign) coupon.campaign = campaign.code;
+    }
   }
 
   const reserved = await reserveStock(lines);

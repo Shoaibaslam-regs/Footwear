@@ -14,7 +14,7 @@ export default function DeliveryOptions({
   onSelect: (id: string) => void;
 }) {
   return (
-    <div className="bg-surface-container-lowest p-space-lg shadow-sm scroll-mt-28" id="step-section-delivery">
+    <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm scroll-mt-28" id="step-section-delivery">
       <div className="flex items-baseline justify-between mb-space-md">
         <div className="flex items-center gap-space-sm">
           <span className="w-7 h-7 bg-primary text-on-primary font-label-uppercase text-label-uppercase flex items-center justify-center font-semibold">
@@ -27,7 +27,8 @@ export default function DeliveryOptions({
           href="/policies/shipping-returns"
           target="_blank"
         >
-          Shipping &amp; Returns
+          <span className="sm:hidden">Returns</span>
+          <span className="hidden sm:inline">Delivery &amp; Returns</span>
         </Link>
       </div>
       <fieldset className="space-y-space-sm">
@@ -41,7 +42,7 @@ export default function DeliveryOptions({
                 isActive ? "bg-surface-container-low ring-1 ring-secondary" : "bg-surface-container-lowest hover:bg-surface-container-low ring-1 ring-outline-variant/40"
               }`}
             >
-              <span className="flex items-start gap-space-md">
+              <span className="flex items-start gap-space-sm sm:gap-space-md min-w-0">
                 <input
                   checked={isActive}
                   className="mt-1 accent-primary w-4 h-4 cursor-pointer"
@@ -53,8 +54,8 @@ export default function DeliveryOptions({
                 <span className="flex flex-col">
                   <span className="font-body-lg text-body-lg text-primary font-medium">{o.name}</span>
                   {o.eta && (
-                    <span className="font-body-sm text-body-sm text-on-surface flex items-center gap-1">
-                      <span className="material-symbols-outlined text-[16px] text-secondary">schedule</span>
+                    <span className="font-body-sm text-body-sm text-on-surface flex items-start gap-1">
+                      <span className="material-symbols-outlined text-[16px] leading-5 text-secondary shrink-0">schedule</span>
                       {o.eta}
                     </span>
                   )}

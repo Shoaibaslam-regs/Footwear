@@ -40,6 +40,15 @@ const sizeList = z
   .array(z.coerce.number().refine((n) => (ALL_SIZES as readonly number[]).includes(n)))
   .default([]);
 
+/**
+ * A photo is either an https:// link (uploads live on UploadThing) or an image
+ * stored in this site's public/ folder, e.g. "/home/heels.jpeg" (the built-in
+ * home photos, which the starter hero slides reuse).
+ */
+const SITE_IMAGE = /^\/(?!\/)(?!.*\.\.)[\w\-./ ()]+\.(?:jpe?g|png|webp|avif)$/i;
+const imageUrl = (message: string) =>
+  z.string().trim().refine((u) => SITE_IMAGE.test(u) || (/^https:\/\/[^\s]+$/.test(u) && URL.canParse(u)), message);
+
 const productSchema = z.object({
   name: z.string().trim().min(2, "Name is required.").max(120),
   slug: z
@@ -67,7 +76,7 @@ const productSchema = z.object({
   gallery: z
     .array(
       z.object({
-        url: z.url({ protocol: /^https$/, message: "Every photo needs an https:// URL." }),
+        url: imageUrl("Every photo needs an uploaded image or an https:// link."),
         key: z.string().trim().max(200).regex(/^[\w.-]*$/, "Invalid image key."),
         alt: z.string().trim().min(3, "Describe every photo for screen readers (at least 3 characters).").max(300),
         caption: z.string().trim().max(24, "Captions are 24 characters max."),
@@ -416,10 +425,11 @@ export async function clearOrderHistory(formData: FormData) {
 
 /* ---------- Reviews (moderation only: admins cannot write reviews) ---------- */
 
-export async function setReviewsStatus(formData: FormData) {
+/** Bound per button: `setReviewsStatus.bind(null, "hidden")` (React drops `name` on buttons with a function formAction). */
+export async function setReviewsStatus(statusValue: unknown, formData: FormData) {
   await requireAdmin();
   const ids = readIds(formData);
-  const status = z.enum(["published", "hidden"]).safeParse(formData.get("status"));
+  const status = z.enum(["published", "hidden"]).safeParse(statusValue);
   if (ids.length === 0 || !status.success) return;
   const col = (await getDb()).collection("reviews");
   const slugs = await col.distinct("productSlug", { _id: { $in: ids } });
@@ -459,7 +469,7 @@ export async function saveSettings(_: SettingsFormState, formData: FormData): Pr
   const slides = z
     .array(
       z.object({
-        url: z.url({ protocol: /^https$/, message: "Every slide needs an https:// image." }),
+        url: imageUrl("Every slide needs an uploaded image or an https:// link."),
         key: z.string().trim().max(200).regex(/^[\w.-]*$/),
         alt: z.string().trim().min(3, "Describe every hero slide (at least 3 characters).").max(300),
         caption: z.string().max(24).default(""),

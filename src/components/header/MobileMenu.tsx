@@ -62,9 +62,6 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
         </div>
 
         <nav className="flex-1 overflow-y-auto px-margin-mobile pt-space-lg flex flex-col gap-space-md">
-          <span className="font-label-uppercase text-label-uppercase text-secondary-fixed uppercase tracking-[0.2em]">
-            Ŕose Atelier
-          </span>
           {navLinks.map((link) => {
             const prefixes: readonly string[] =
               "activePrefixes" in link ? (link.activePrefixes ?? []) : [];

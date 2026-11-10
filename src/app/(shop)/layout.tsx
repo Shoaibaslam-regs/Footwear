@@ -1,6 +1,7 @@
 import Header from "@/components/Header";
 import Footer from "@/components/Footer";
 import ActionToast from "@/components/ActionToast";
+import TopNotice from "@/components/TopNotice";
 import { Suspense } from "react";
 import CartDrawerHost from "@/components/cart/CartDrawerHost";
 import WhatsAppButton from "@/components/WhatsAppButton";
@@ -16,6 +17,7 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
       </main>
       <Footer />
       <ActionToast />
+      <TopNotice />
       <Motion />
       <Suspense fallback={null}>
         <CartDrawerHost />

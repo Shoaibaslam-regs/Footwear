@@ -1,11 +1,13 @@
 "use client";
 
+import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { applyCouponCode, markCouponRevealed } from "@/lib/coupon-actions";
 import { useReveal } from "./Reveal";
 import { requireLogin } from "@/lib/require-login";
 import { showToast } from "@/lib/toast";
+import { showNotice } from "@/lib/notice";
 import { alertDialog } from "@/components/Dialogs";
 
 const REVEAL_AT = 45; // % scratched before the rest of the foil falls away
@@ -142,15 +144,19 @@ export default function ScratchCard({
     ctx.fillStyle = "#3a250b";
     ctx.fillText("SCRATCH CARD", cx, cy + 22);
 
-    ctx.font = `600 11px ${sans}`;
-    spaced.letterSpacing = "3px";
+    const narrow = width < 400;
+    ctx.font = `600 ${narrow ? 10 : 11}px ${sans}`;
+    spaced.letterSpacing = narrow ? "1.5px" : "3px";
     ctx.fillStyle = "#2c1906";
-    ctx.fillText("✦ SCRATCH TO SEE YOUR COUPON ✦", cx, height - 78);
+    ctx.fillText("✦ SCRATCH TO SEE YOUR COUPON ✦", cx, height - (narrow ? 82 : 78), width - 48);
 
-    ctx.font = `400 10px ${sans}`;
-    spaced.letterSpacing = "1px";
-    ctx.fillStyle = "#5c3a10";
-    ctx.fillText("Rub the gold with your finger or mouse", cx, height - 62);
+    // On phones the floating hint below says the same, so the second line is desktop-only.
+    if (!narrow) {
+      ctx.font = `400 10px ${sans}`;
+      spaced.letterSpacing = "1px";
+      ctx.fillStyle = "#5c3a10";
+      ctx.fillText("Rub the gold with your finger or mouse", cx, height - 62, width - 48);
+    }
     ctx.restore();
   }, []);
 
@@ -213,7 +219,7 @@ export default function ScratchCard({
       }
       if (celebrate) {
         confetti();
-        showToast(`✦ You got ${headline} ✦`);
+        showNotice({ title: `You got ${headline.replace(/ OFF$/, " off").replace(/^FREE DELIVERY$/, "free delivery")}`, message: `Your code ${code} is ready. Tap Apply to Bag, or use it at checkout.` });
         // Remember it on the account too, so "My Coupons" shows the discount from now on.
         void markCouponRevealed(code).catch(() => {});
       }
@@ -334,7 +340,7 @@ export default function ScratchCard({
       return;
     }
     setApplied(true);
-    showToast(`${headline} added to your bag. You'll see the saving at checkout.`);
+    showNotice({ title: "Coupon added to your bag", message: `${headline} comes off at checkout.`, icon: "shopping_bag" });
   };
 
   return (
@@ -373,8 +379,8 @@ export default function ScratchCard({
 
       {/* The scratch card */}
       <div className="relative max-w-4xl mx-auto mb-space-xl">
-        <div className="p-3 lg:p-4 rounded-xl bg-surface-container-highest shadow-xl relative">
-          <div className="bg-surface-container-lowest rounded-lg p-4 sm:p-6 lg:p-10 relative overflow-hidden shadow-sm">
+        <div className="p-1.5 sm:p-3 lg:p-4 rounded-xl bg-surface-container-highest shadow-xl relative">
+          <div className="bg-surface-container-lowest rounded-lg p-3 sm:p-6 lg:p-10 relative overflow-hidden shadow-sm">
             {/* Guilloché watermark */}
             <div aria-hidden="true" className="absolute inset-0 pointer-events-none opacity-[0.035] flex items-center justify-center">
               <svg fill="none" height="400" viewBox="0 0 600 400" width="600" xmlns="http://www.w3.org/2000/svg">
@@ -391,9 +397,8 @@ export default function ScratchCard({
             {/* Card header strip */}
             <div className="flex items-center justify-between gap-space-sm pb-space-sm mb-space-sm">
               <div className="flex items-center gap-space-sm min-w-0">
-                <div className="w-9 h-9 shrink-0 rounded-full bg-primary flex items-center justify-center text-on-primary">
-                  <span className="font-headline-sm text-headline-sm italic">Ŕ</span>
-                </div>
+                {/* The site icon (src/app/icon.png, served at /icon.png). */}
+                <Image alt="" className="w-10 h-10 shrink-0 object-contain" height={40} src="/icon.png" width={40} />
                 <div className="min-w-0">
                   <span className="font-label-uppercase text-label-uppercase tracking-[0.2em] text-primary font-bold block truncate">ŔOSE ATELIER</span>
                   <span className="font-body-sm text-body-sm text-on-surface-variant text-[11px] block">Karachi, Pakistan</span>
@@ -409,7 +414,7 @@ export default function ScratchCard({
             <div ref={stageRef} className="relative w-full rounded-lg overflow-hidden select-none bg-surface-container-low shadow-inner">
               <div
                 aria-hidden={!revealed}
-                className="relative min-h-[340px] md:min-h-[380px] p-4 sm:p-6 md:p-8 flex flex-col justify-between gap-space-sm bg-gradient-to-br from-surface-container-lowest via-surface-container-low to-secondary-container/20"
+                className="relative min-h-[340px] md:min-h-[380px] p-3.5 sm:p-6 md:p-8 flex flex-col justify-between gap-space-sm bg-gradient-to-br from-surface-container-lowest via-surface-container-low to-secondary-container/20"
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
@@ -417,8 +422,8 @@ export default function ScratchCard({
                       <span className="material-symbols-outlined icon-filled text-[13px]">workspace_premium</span>
                       {surprise ? "YOUR SURPRISE DISCOUNT" : "YOUR COUPON"}
                     </span>
-                    <h2 className="font-headline-md text-headline-md text-primary pt-space-xs font-normal">{headline}</h2>
-                    <p className="font-body-md text-body-md text-secondary font-medium">{conditions}</p>
+                    <h2 className="font-headline-lg-mobile text-[34px] leading-tight sm:font-headline-md sm:text-headline-md text-primary pt-space-xs font-normal">{headline}</h2>
+                    <p className="font-body-sm text-body-sm sm:font-body-md sm:text-body-md text-secondary font-medium">{conditions}</p>
                   </div>
                   <div className="hidden sm:flex flex-col items-center justify-center p-3 rounded-md bg-surface-container-highest/60 text-center min-w-[110px]">
                     <span className="material-symbols-outlined text-secondary text-[24px]">verified</span>
@@ -428,14 +433,14 @@ export default function ScratchCard({
                 </div>
 
                 {/* Code with copy / apply */}
-                <div className="p-4 md:p-5 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-md">
+                <div className="p-3 sm:p-4 md:p-5 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-sm sm:gap-space-md">
                   <div className="space-y-0.5 text-center md:text-left">
                     <span className="font-label-uppercase text-label-uppercase text-outline tracking-wider block">YOUR COUPON CODE</span>
-                    <span className="font-headline-sm text-headline-sm tracking-[0.18em] text-primary font-bold select-all selection:bg-secondary-container">{code}</span>
+                    <span className="font-headline-sm text-[20px] sm:text-headline-sm tracking-[0.12em] sm:tracking-[0.18em] text-primary font-bold select-all selection:bg-secondary-container break-all">{code}</span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-space-xs w-full md:w-auto justify-center">
+                  <div className="grid grid-cols-1 min-[400px]:grid-cols-2 md:flex md:flex-wrap items-center gap-space-xs w-full md:w-auto justify-center">
                     <button
-                      className={`flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full ${copied ? "bg-secondary" : "bg-primary"} text-on-primary hover:bg-secondary transition-all font-label-uppercase text-label-uppercase tracking-wider shadow-sm`}
+                      className={`w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full ${copied ? "bg-secondary" : "bg-primary"} text-on-primary hover:bg-secondary transition-all font-label-uppercase text-label-uppercase tracking-wider shadow-sm`}
                       disabled={!revealed}
                       onClick={copy}
                       type="button"
@@ -444,7 +449,7 @@ export default function ScratchCard({
                       <span>{copied ? "COPIED" : "COPY CODE"}</span>
                     </button>
                     <button
-                      className={`flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full ${applied ? "bg-secondary text-on-secondary" : "bg-secondary-container text-on-secondary-fixed"} hover:bg-secondary hover:text-on-secondary transition-all font-label-uppercase text-label-uppercase tracking-wider disabled:opacity-60`}
+                      className={`w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full ${applied ? "bg-secondary text-on-secondary" : "bg-secondary-container text-on-secondary-fixed"} hover:bg-secondary hover:text-on-secondary transition-all font-label-uppercase text-label-uppercase tracking-wider disabled:opacity-60`}
                       disabled={!revealed || applying}
                       onClick={applyToBag}
                       type="button"
@@ -470,7 +475,7 @@ export default function ScratchCard({
                       • Use it online at checkout
                     </span>
                   </div>
-                  <div className="flex items-center gap-space-sm">
+                  <div className="flex flex-wrap items-center gap-x-space-sm gap-y-1 whitespace-nowrap">
                     <Link className="font-label-uppercase text-label-uppercase text-secondary hover:text-primary transition-colors underline underline-offset-4" href="/collections">
                       Shop Now
                     </Link>
@@ -517,11 +522,12 @@ export default function ScratchCard({
                   role="img"
                 />
                 <div
-                  className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none bg-primary/80 backdrop-blur-md text-on-primary px-4 py-1.5 rounded-full shadow-lg transition-opacity duration-500 whitespace-nowrap ${touched || revealed ? "opacity-0" : "opacity-100"}`}
+                  className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none bg-primary/80 backdrop-blur-md text-on-primary px-3 sm:px-4 py-1.5 rounded-full shadow-lg transition-opacity duration-500 whitespace-nowrap ${touched || revealed ? "opacity-0" : "opacity-100"}`}
                 >
                   <span className="font-label-uppercase text-[10px] tracking-[0.18em] uppercase flex items-center gap-1.5">
                     <span className="material-symbols-outlined text-[14px] text-secondary-fixed">gesture</span>
-                    Scratch with finger or mouse
+                    <span className="sm:hidden">Scratch with your finger</span>
+                    <span className="hidden sm:inline">Scratch with finger or mouse</span>
                   </span>
                 </div>
             </div>

@@ -16,7 +16,7 @@ export default function ShippingForm({
   const dial = countries.find((c) => c.code === country)?.dial ?? "";
 
   return (
-    <div className="bg-surface-container-lowest p-space-lg shadow-sm scroll-mt-28" id="step-section-shipping">
+    <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm scroll-mt-28" id="step-section-shipping">
       <div className="flex items-baseline justify-between mb-space-md">
         <div className="flex items-center gap-space-sm">
           <span className="w-7 h-7 bg-primary text-on-primary font-label-uppercase text-label-uppercase flex items-center justify-center font-semibold">
@@ -24,7 +24,7 @@ export default function ShippingForm({
           </span>
           <h2 className="font-headline-sm text-headline-sm text-primary font-normal">Delivery Address</h2>
         </div>
-        <span className="font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider uppercase">
+        <span className="hidden sm:inline font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider uppercase">
           Where to Deliver
         </span>
       </div>

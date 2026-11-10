@@ -66,7 +66,13 @@ async function AdminCouponsContent({ searchParams }: PageProps<"/admin/coupons">
       )}
       {one(sp.deleted) && (
         <p className="notice notice-ok" role="status">
-          Coupon deleted.
+          Coupon {one(sp.deleted) === "1" ? "" : `${one(sp.deleted)} `}deleted. Orders that used it keep their discount;{" "}
+          {one(sp.deleted) !== "1" && (
+            <Link className="link" href={`/admin/orders?coupon=${encodeURIComponent(one(sp.deleted)!)}`}>
+              see them on the Orders page
+            </Link>
+          )}
+          .
         </p>
       )}
       {one(sp.error) === "used" && (
@@ -147,7 +153,13 @@ async function AdminCouponsContent({ searchParams }: PageProps<"/admin/coupons">
                       {c.type === "random" && <div className="muted text-xs">cards</div>}
                     </td>
                     <td className="text-right tabular-nums whitespace-nowrap">
-                      {c.orders}
+                      {c.orders > 0 ? (
+                        <Link className="link" href={`/admin/orders?coupon=${encodeURIComponent(c.code)}`} title="Show these orders">
+                          {c.orders}
+                        </Link>
+                      ) : (
+                        c.orders
+                      )}
                       <div className="muted text-xs">{pkr(c.sales)}</div>
                     </td>
                     <td className="text-right tabular-nums whitespace-nowrap">{pkr(c.discountGiven)}</td>
@@ -167,14 +179,21 @@ async function AdminCouponsContent({ searchParams }: PageProps<"/admin/coupons">
                         <Link className="btn btn-sm" href={`/admin/coupons/${c.id}`}>
                           Edit
                         </Link>
-                        {c.uses === 0 && c.orders === 0 && (
-                          <form action={deleteCoupon}>
-                            <input name="id" type="hidden" value={c.id} />
-                            <ConfirmButton className="btn btn-sm btn-danger" message="It has never been used. This cannot be undone." title={`Delete coupon ${c.code}?`}>
-                              Delete
-                            </ConfirmButton>
-                          </form>
-                        )}
+                        <form action={deleteCoupon}>
+                          <input name="id" type="hidden" value={c.id} />
+                          <ConfirmButton
+                            className="btn btn-sm btn-danger"
+                            confirmLabel="Delete coupon"
+                            message={
+                              c.orders > 0 || c.uses > 0
+                                ? `${c.type === "random" ? `Its ${c.uses} surprise ${c.uses === 1 ? "card" : "cards"} stop working too. ` : ""}It was used on ${c.orders} ${c.orders === 1 ? "order" : "orders"}: those orders keep their discount and still show "${c.code}" on the Orders page. Customers can't use it any more. This cannot be undone.`
+                                : "It has never been used. This cannot be undone."
+                            }
+                            title={`Delete coupon ${c.code}?`}
+                          >
+                            Delete
+                          </ConfirmButton>
+                        </form>
                       </div>
                     </td>
                   </tr>

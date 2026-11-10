@@ -12,7 +12,7 @@ export default function WhatsAppButton() {
   return (
     <a
       aria-label="Chat with us on WhatsApp"
-      className="fixed z-40 right-4 bottom-4 sm:right-6 sm:bottom-6 h-12 sm:h-14 pl-3 pr-4 sm:pl-4 sm:pr-5 rounded-full bg-[#25D366] text-white shadow-2xl flex items-center gap-2 hover:brightness-95 transition-[filter,transform] motion-safe:hover:-translate-y-0.5"
+      className="fixed z-40 right-4 bottom-[calc(1rem+var(--bottom-bar,0px))] sm:right-6 sm:bottom-[calc(1.5rem+var(--bottom-bar,0px))] h-12 sm:h-14 pl-3 pr-4 sm:pl-4 sm:pr-5 rounded-full bg-[#25D366] text-white shadow-2xl flex items-center gap-2 hover:brightness-95 transition-[filter,transform,bottom] motion-safe:hover:-translate-y-0.5"
       href={`${whatsappUrl}?text=${encodeURIComponent(text)}`}
       // Add the full product link at click time (same markup on server and client).
       onClick={(e) => {

@@ -74,6 +74,8 @@ export default function GalleryUploader({
   const [dropActive, setDropActive] = useState(false);
   const [dragId, setDragId] = useState<string | null>(null);
   const [pasteUrl, setPasteUrl] = useState("");
+  /** The link box is optional: hidden until asked for, so uploading is the obvious way to add a photo. */
+  const [showLink, setShowLink] = useState(false);
   const fileRef = useRef<HTMLInputElement>(null);
 
   const slotsLeft = max - photos.length - pending.length;
@@ -228,7 +230,14 @@ export default function GalleryUploader({
               <span className={`absolute top-1 left-1 tag ${i === 0 ? "bg-[var(--a-accent)] text-white border-transparent" : "bg-white"}`}>
                 {i === 0 ? "Cover" : i + 1}
               </span>
-              {!p.key && <span className="absolute bottom-1 left-1 tag bg-white text-xs">URL</span>}
+              {!p.key && (
+                <span
+                  className="absolute bottom-1 left-1 tag bg-white text-xs"
+                  title={p.url.startsWith("/") ? "A built-in photo from the website. Upload your own to replace it." : "Added from a link, not uploaded."}
+                >
+                  {p.url.startsWith("/") ? "Built-in" : "Link"}
+                </span>
+              )}
             </div>
             <div className="flex flex-wrap gap-1">
               <button aria-label={`Move photo ${i + 1} earlier`} className="btn h-8 px-2" disabled={i === 0} onClick={() => move(i, i - 1)} type="button">
@@ -309,11 +318,18 @@ export default function GalleryUploader({
         location details are removed.
       </p>
 
-      {slotsLeft > 0 && (
+      {slotsLeft > 0 && !showLink && (
+        <button className="btn-text muted text-xs self-start underline underline-offset-4" onClick={() => setShowLink(true)} type="button">
+          Use an image link instead (optional)
+        </button>
+      )}
+      {slotsLeft > 0 && showLink && (
         <div className="flex gap-2">
           <input
-            aria-label="Image URL"
+            aria-label="Image link (optional)"
+            autoComplete="off"
             className="input"
+            inputMode="url"
             onChange={(e) => setPasteUrl(e.target.value)}
             onKeyDown={(e) => {
               if (e.key === "Enter") {
@@ -321,12 +337,22 @@ export default function GalleryUploader({
                 addByUrl();
               }
             }}
-            placeholder="Or paste an https:// image URL"
-            type="url"
+            placeholder="Paste an https:// image link"
+            type="text"
             value={pasteUrl}
           />
           <button className="btn" onClick={addByUrl} type="button">
-            Add URL
+            Add link
+          </button>
+          <button
+            className="btn"
+            onClick={() => {
+              setShowLink(false);
+              setPasteUrl("");
+            }}
+            type="button"
+          >
+            Cancel
           </button>
         </div>
       )}

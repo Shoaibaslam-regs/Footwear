@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useBottomBar } from "@/lib/use-bottom-bar";
 import { paymentMethods, type PaymentMethod } from "@/lib/orders";
 import { formatPrice as formatIn } from "@/lib/currency";
 import { FieldError, fieldInput, fieldLabel, type FieldErrors } from "./fields";
@@ -33,13 +34,13 @@ export default function PaymentSection({
   const active = paymentMethods.find((m) => m.value === method)!;
 
   return (
-    <div className="bg-surface-container-lowest p-space-lg shadow-sm scroll-mt-28" id="step-section-payment">
-      <div className="flex items-baseline justify-between mb-space-md">
+    <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm scroll-mt-28" id="step-section-payment">
+      <div className="flex flex-wrap items-baseline justify-between gap-x-space-md gap-y-1 mb-space-md">
         <div className="flex items-center gap-space-sm">
           <span className="w-7 h-7 bg-primary text-on-primary font-label-uppercase text-label-uppercase flex items-center justify-center font-semibold">
             4
           </span>
-          <h2 className="font-headline-sm text-headline-sm text-primary font-normal">Payment Method</h2>
+          <h2 className="font-headline-sm text-headline-sm text-primary font-normal">Payment</h2>
         </div>
         <div className="flex items-center gap-1 text-on-surface-variant font-label-uppercase text-[11px] uppercase tracking-widest">
           <span className="material-symbols-outlined text-[16px] text-secondary">lock</span>
@@ -58,7 +59,7 @@ export default function PaymentSection({
                 isActive ? "bg-surface-container-low ring-1 ring-secondary" : "bg-surface-container-lowest hover:bg-surface-container-low ring-1 ring-outline-variant/40"
               }`}
             >
-              <label className="flex items-center justify-between gap-space-md p-space-md cursor-pointer select-none">
+              <label className="flex items-center justify-between gap-space-sm sm:gap-space-md p-space-sm sm:p-space-md cursor-pointer select-none">
                 <span className="flex items-center gap-space-sm">
                   <input
                     checked={isActive}
@@ -70,7 +71,7 @@ export default function PaymentSection({
                   />
                   <span>
                     <span className="block font-body-lg text-body-lg text-primary font-medium">{m.label}</span>
-                    <span className="block font-body-sm text-body-sm text-on-surface-variant">{m.description}</span>
+                    <span className={`${isActive ? "block" : "hidden sm:block"} font-body-sm text-body-sm text-on-surface-variant`}>{m.description}</span>
                   </span>
                 </span>
                 <span className="material-symbols-outlined text-secondary text-[22px]">{methodIcon[m.value]}</span>
@@ -111,7 +112,7 @@ export default function PaymentSection({
           </p>
         )}
         <button
-          className="w-full h-14 bg-primary hover:bg-secondary-fixed text-on-primary hover:text-on-secondary-fixed rounded-none font-label-uppercase text-label-uppercase uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-space-sm shadow-md disabled:opacity-75 disabled:cursor-wait"
+          className="max-lg:hidden w-full h-14 bg-primary hover:bg-secondary-fixed text-on-primary hover:text-on-secondary-fixed rounded-none font-label-uppercase text-label-uppercase uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-space-sm shadow-md disabled:opacity-75 disabled:cursor-wait"
           disabled={pending}
           type="submit"
         >
@@ -129,9 +130,39 @@ export default function PaymentSection({
           </span>
           <span>•</span>
           <span className="flex items-center gap-1">
-            <span className="material-symbols-outlined text-[14px] text-secondary">autorenew</span> 30-Day Atelier Returns
+            <span className="material-symbols-outlined text-[14px] text-secondary">autorenew</span> 30-Day Returns
           </span>
         </div>
+      </div>
+
+      {/* Phones/tablets: Place Order always in reach (inside the form, so it submits it). */}
+      <PlaceOrderBar message={message} pending={pending} total={formatPKR(total)} />
+    </div>
+  );
+}
+
+function PlaceOrderBar({ total, pending, message }: { total: string; pending: boolean; message?: string }) {
+  useBottomBar(message ? 112 : 76);
+  return (
+    <div className="lg:hidden fixed inset-x-0 bottom-0 z-40 bg-surface/95 backdrop-blur-xl border-t border-outline-variant/40 shadow-[0_-6px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
+      {message && (
+        <p className="px-margin-mobile pt-2 font-body-sm text-[12px] leading-snug text-on-error-container line-clamp-2" role="alert">
+          {message}
+        </p>
+      )}
+      <div className="h-[76px] px-margin-mobile flex items-center justify-between gap-space-md">
+        <div className="min-w-0">
+          <span className="block font-label-uppercase text-[10px] uppercase tracking-widest text-on-surface-variant">Total to pay</span>
+          <span className="block font-headline-sm text-headline-sm text-primary whitespace-nowrap">{total}</span>
+        </div>
+        <button
+          className="h-12 px-space-lg shrink-0 bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed rounded-full font-label-uppercase text-label-uppercase uppercase tracking-widest font-semibold flex items-center gap-2 transition-colors shadow-md disabled:opacity-75 disabled:cursor-wait"
+          disabled={pending}
+          type="submit"
+        >
+          <span aria-hidden="true" className="material-symbols-outlined text-[18px]">lock</span>
+          <span aria-live="polite">{pending ? "Placing…" : "Place Order"}</span>
+        </button>
       </div>
     </div>
   );

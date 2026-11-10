@@ -39,7 +39,7 @@ export default function SettingsForm({
     .filter(Boolean);
 
   return (
-    <form action={action} className="flex flex-col gap-4">
+    <form action={action} className="flex flex-col gap-4" noValidate>
       <section className="panel p-4 flex flex-col gap-3">
         <div>
           <p className="muted">

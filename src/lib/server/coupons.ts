@@ -381,3 +381,46 @@ export async function publicCouponsFor(userId: string): Promise<OfferSummary[]> 
   }
   return out.sort((a, b) => (a.doc.endsAt?.getTime() ?? Infinity) - (b.doc.endsAt?.getTime() ?? Infinity)).map((o) => o.summary);
 }
+
+/* ---------- Order tracking (admin) ---------- */
+
+/** Surprise campaign code for each personal card code (orders placed before orders stored it). */
+export async function campaignOfCards(codes: string[]): Promise<Map<string, string>> {
+  const out = new Map<string, string>();
+  if (codes.length === 0) return out;
+  const col = await coupons();
+  const cards = await col.find({ code: { $in: codes }, campaignId: { $exists: true } }, { projection: { code: 1, campaignId: 1 } }).toArray();
+  const ids = [...new Set(cards.map((c) => c.campaignId!.toHexString()))].map((h) => new ObjectId(h));
+  const camps = new Map((await col.find({ _id: { $in: ids } }, { projection: { code: 1 } }).toArray()).map((c) => [c._id.toHexString(), c.code]));
+  for (const c of cards) {
+    const camp = camps.get(c.campaignId!.toHexString());
+    if (camp) out.set(c.code, camp);
+  }
+  return out;
+}
+
+/**
+ * Codes an order filter can match: the code itself and, for a surprise
+ * campaign, every card it gave out (orders use the cards' own codes).
+ */
+export async function orderCodesFor(code: string): Promise<string[]> {
+  const col = await coupons();
+  const c = await col.findOne({ code });
+  if (c?.type !== "random") return [code];
+  const cards = await col.find({ campaignId: c._id }, { projection: { code: 1 } }).toArray();
+  return [code, ...cards.map((x) => x.code)];
+}
+
+/** Choices for the Orders page "Coupon" filter: current coupons and campaigns, plus codes only old orders still mention. */
+export async function couponFilterOptions(): Promise<string[]> {
+  const db = await getDb();
+  const [current, used, usedCampaigns] = await Promise.all([
+    (await coupons()).find({ campaignId: { $exists: false } }, { projection: { code: 1 } }).toArray(),
+    db.collection("orders").distinct("coupon.code", { "coupon.campaign": { $exists: false } }) as Promise<string[]>,
+    db.collection("orders").distinct("coupon.campaign") as Promise<string[]>,
+  ]);
+  const cards = new Set((await (await coupons()).find({ campaignId: { $exists: true } }, { projection: { code: 1 } }).toArray()).map((c) => c.code));
+  const codes = new Set<string>([...current.map((c) => c.code), ...usedCampaigns.filter(Boolean)]);
+  for (const c of used) if (c && !cards.has(c)) codes.add(c);
+  return [...codes].sort();
+}

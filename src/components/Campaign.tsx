@@ -1,5 +1,4 @@
 import Image from "next/image";
-import { campaignImage } from "@/lib/data";
 
 export default function Campaign() {
   return (
@@ -10,23 +9,25 @@ export default function Campaign() {
           <div className="lg:col-span-7 relative">
             <div data-reveal="curtain" className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-2xl bg-surface-container">
               <Image
-                alt="Elegant woman stepping out of a vintage emerald cab on a wet city street at dusk wearing metallic gold strappy stilettos"
+                alt="Woman in a black suit sitting in a cream armchair, wearing black pointed slingback kitten heels"
                 className="img-fade object-cover"
                 fill
                 sizes="(min-width: 1024px) 58vw, 100vw"
-                src={campaignImage}
+                src="/home/campaign.jpeg"
+                style={{ objectPosition: "center 88%" }}
               />
-              <div className="absolute inset-0 bg-linear-to-t/srgb from-primary/60 via-transparent to-transparent" />
-              <div className="absolute bottom-6 left-6 right-6 p-space-md bg-surface/90 backdrop-blur-md rounded-lg flex items-center justify-between text-on-surface shadow-lg">
+              <div className="absolute inset-0 bg-linear-to-t/srgb from-primary/30 via-transparent to-transparent" />
+              {/* Bottom-right, over the empty floor: the face (top) and the shoes (bottom-left) stay visible. */}
+              <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 max-w-[52%] sm:max-w-[48%] p-space-sm sm:p-space-md bg-surface/90 backdrop-blur-md rounded-lg flex flex-col items-start gap-1.5 text-on-surface shadow-lg">
                 <div>
                   <p className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-widest">
                     Karachi
                   </p>
-                  <p className="font-headline-sm text-headline-sm text-primary">
+                  <p className="font-headline-sm text-[15px] leading-snug sm:text-headline-sm text-primary">
                     Style That Moves With You
                   </p>
                 </div>
-                <span className="font-label-uppercase text-label-uppercase px-3 py-1 bg-primary text-on-primary rounded-full">
+                <span className="font-label-uppercase text-[10px] sm:text-label-uppercase px-3 py-1 bg-primary text-on-primary rounded-full whitespace-nowrap">
                   Summer Collection
                 </span>
               </div>
@@ -90,17 +91,6 @@ export default function Campaign() {
                   </p>
                 </div>
               </div>
-            </div>
-            <div className="pt-space-md">
-              <a
-                className="inline-flex items-center gap-space-sm px-8 py-4 rounded-full bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest shadow-xl group"
-                href="#campaign-film"
-              >
-                <span>Watch the Video</span>
-                <span className="material-symbols-outlined text-base transition-transform group-hover:translate-x-1">
-                  play_arrow
-                </span>
-              </a>
             </div>
           </div>
         </div>

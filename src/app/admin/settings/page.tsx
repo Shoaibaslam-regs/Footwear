@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import { requireAdmin } from "@/lib/auth/dal";
 import {
   getSiteSettings,
@@ -10,7 +11,7 @@ import SettingsForm from "@/components/admin/SettingsForm";
 
 export const metadata = { title: "Settings" };
 
-export default async function AdminSettings() {
+async function AdminSettingsContent() {
   await requireAdmin();
   const settings = await getSiteSettings();
   return (
@@ -28,5 +29,18 @@ export default async function AdminSettings() {
         maxLines={MAX_ANNOUNCEMENTS}
       />
     </div>
+  );
+}
+
+/**
+ * Its own loading placeholder: requireAdmin() verifies the login token (async
+ * crypto), so the content streams inside the page; otherwise navigations to it
+ * can't be instant and Next.js warns "uncached data … outside of <Suspense>".
+ */
+export default function AdminSettings() {
+  return (
+    <Suspense fallback={<p className="muted">Loading…</p>}>
+      <AdminSettingsContent />
+    </Suspense>
   );
 }

@@ -35,6 +35,8 @@ export type Category = {
   subtitle: string;
   image: string;
   alt: string;
+  /** CSS object-position, so the shoes stay in view when a wide tile crops the photo. */
+  position?: string;
   span: "lg:col-span-7" | "lg:col-span-5" | "lg:col-span-4";
   /** Tile height from tablet up (phones use compact tiles). */
   height: "md:h-[460px]" | "md:h-[380px]";
@@ -47,10 +49,9 @@ export const categories: Category[] = [
     eyebrow: "Our Signature",
     title: "Heels",
     subtitle: "Stilettos, Slingbacks & Block Heels",
-    image:
-      IMG +
-      "AB6AXuCMKwzghoYrROl6T1d1mVE-eaWaWfUtSE8fuDo4vpwFoqJy7DJHSqL-NS4Zn6E4kcwvzjdb5-iHRhZkivxu65QjWLzGdCu9mIWCi667RdD3M9lsr5t5eDji5foRqj5fI62aLrp9zmrjVEbq3Bfg3KrkjkFmIRut5jy-_85aqesKIHH0PFREl6G1WVPzy2Dc3HdKhkN4M9fKRlymSRo4uzXeV-HQmRy20V3bPal88eQ",
-    alt: "Woman wearing Rose Atelier metallic stiletto heels in an art gallery",
+    image: "/home/heels.jpeg",
+    alt: "Tan leather pointed stiletto pumps on a white display shelf",
+    position: "center 60%",
     span: "lg:col-span-7",
     height: "md:h-[460px]",
     large: true,
@@ -60,10 +61,9 @@ export const categories: Category[] = [
     eyebrow: "For Summer",
     title: "Sandals",
     subtitle: "Strappy Sandals & Metallic Slides",
-    image:
-      IMG +
-      "AB6AXuAVx5L_stNtH-bN_LyOEW4KiM4ILiV7M3pWorWywRu8ObkkUrbiK79W8WSbVKmjgzI1AV9_W7m7Xyck9Nh-kkMvafh4DHohEl3GjF0AI9iF7NFcfY9uuBjPSE5N4PfmsioCoNQvArggE5nqC1uJpcRKESJ7yyktUA7JsM9lDbg2hZEQbXUaq4SmN1heGXsKCtOslPl4a_3Ydr_7TZlWYGgPxsiX3cCRlHClsL19nSQ",
-    alt: "Gold strappy nappa leather sandals on a sunlit stone step by a lake",
+    image: "/home/sandals.jpeg",
+    alt: "Woman wearing nude ankle-strap heeled sandals on a stone street",
+    position: "center 82%",
     span: "lg:col-span-5",
     height: "md:h-[460px]",
     large: true,
@@ -73,10 +73,9 @@ export const categories: Category[] = [
     eyebrow: "Easy & Comfortable",
     title: "Flats",
     subtitle: "Ballet Flats, Mules & Pointed Loafers",
-    image:
-      IMG +
-      "AB6AXuAHtupL94PZ5fY-oa4CsRlO6597mDHLXQPhTvTqM1s1XUzgdTdbYOl2e-5l07XJExX-cqm3b83OA1QtZBf8VnqTzvrW1tGLmxD-kZy-wtohPB4e45VIBYCEdYKGBykODVQ8zUUGmGCaiU7IlfsesDA2p4lX7JD1SMBOICMYuRHJ3kF43FuZZi9MdEUjJ4j_40WDXH5hZSNvLRD4TXmoZ548RHK-UVxCOEAqbrngt2o",
-    alt: "Pointed toe black calfskin ballerina mules on folded silk crepe",
+    image: "/home/flats.jpeg",
+    alt: "Cream knit pointed flats with a bow, on a soft beige blanket",
+    position: "center 45%",
     span: "lg:col-span-4",
     height: "md:h-[380px]",
     large: false,
@@ -86,10 +85,9 @@ export const categories: Category[] = [
     eyebrow: "Everyday Style",
     title: "Sneakers",
     subtitle: "Leather Sneakers & Fur-Lined Slip-ons",
-    image:
-      IMG +
-      "AB6AXuDQHApOVLLpstknqg8v0i67NzEDLb_jy94YUVfIDHl0a0uy16QCg5KqzoEQdlwmjLOY-vi1KxPbRQBWzFp898bqFgo9D3NMt6GiJW1WSk2CntY9TdHrN2a3xZNydrGABjlAMf_eIEOaLFSFEKkf5WO9frAovrKgoPWkwXxgmkonyM2y4sRTPNlGqekA9raNiJs-Jnsf5X2Fd1__2l_o2jPD_jVxiCCOLfgRWWSuY6g",
-    alt: "Cream white leather court sneakers on a travertine pedestal",
+    image: "/home/sneakers.jpeg",
+    alt: "Cream leather sneakers with beige stripes and a gum sole",
+    position: "center 55%",
     span: "lg:col-span-4",
     height: "md:h-[380px]",
     large: false,
@@ -99,10 +97,9 @@ export const categories: Category[] = [
     eyebrow: "For Weddings",
     title: "Bridal Shoes",
     subtitle: "Ivory Satin & Pearl Details",
-    image:
-      IMG +
-      "AB6AXuDSaCZUj9wTXit4kOtpGIjFMaLw9yq5WkoIj-aCJZeKek4KXdMtZGG-sLGJDMp-JZct4-OiU83I7bZ6CxNNGlwKIff-ntB6uRpbGKeBpH_RJiZEiqTrH3pMqhz4luSlSimGXT0rP2GVKDPhJWOF4sCmhMDecxgAEuOsQndSrzM58CjmdVN-rBzvbeWF0MlOVS0Jhqtv1gdANj-lBB-mhIgl04RVVcF0yFEfoFXi0is",
-    alt: "Ivory Duchess satin platform heels with a freshwater pearl ankle chain",
+    image: "/home/bridal.jpeg",
+    alt: "Ivory bridal sandals with pearl and crystal straps, beside a matching clutch",
+    position: "center 62%",
     span: "lg:col-span-4",
     height: "md:h-[380px]",
     large: false,

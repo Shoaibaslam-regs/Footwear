@@ -126,17 +126,24 @@ export async function setCouponActive(fd: FormData) {
   refresh();
 }
 
-/** Only an unused coupon can be deleted; a used one is paused instead, so past orders keep their record. */
+/**
+ * Deletes a coupon, used or not. Past orders keep their own copy of the code
+ * and discount (and stay findable on the Orders page). A surprise campaign takes
+ * the cards it gave out with it. Bags that still had the code applied lose it.
+ */
 export async function deleteCoupon(fd: FormData) {
   await requireAdmin();
   const id = String(fd.get("id") ?? "");
   if (!ObjectId.isValid(id)) return;
   const col = await coupons();
-  const c = await col.findOne({ _id: new ObjectId(id) });
+  const db = await getDb();
+  const c = await col.findOne({ _id: new ObjectId(id), campaignId: { $exists: false } });
   if (!c) return;
-  const used = c.uses > 0 || (await col.countDocuments({ campaignId: c._id }, { limit: 1 })) > 0 || (await (await getDb()).collection("orders").countDocuments({ "coupon.code": c.code }, { limit: 1 })) > 0;
-  if (used) redirect("/admin/coupons?error=used");
-  await col.deleteOne({ _id: c._id });
-  await (await getDb()).collection("coupon_redemptions").deleteMany({ couponId: c._id });
-  redirect("/admin/coupons?deleted=1");
+  const cards = c.type === "random" ? await col.find({ campaignId: c._id }, { projection: { _id: 1, code: 1 } }).toArray() : [];
+  const ids = [c._id, ...cards.map((x) => x._id)];
+  const codes = [c.code, ...cards.map((x) => x.code)];
+  await col.deleteMany({ _id: { $in: ids } });
+  await db.collection("coupon_redemptions").deleteMany({ couponId: { $in: ids } });
+  await db.collection("carts").updateMany({ coupon: { $in: codes } }, { $unset: { coupon: "" } });
+  redirect(`/admin/coupons?deleted=${encodeURIComponent(c.code)}`);
 }

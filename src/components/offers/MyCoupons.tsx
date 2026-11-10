@@ -44,11 +44,11 @@ export default async function MyCoupons({ userId }: { userId: string }) {
                     <span className="material-symbols-outlined text-secondary text-[24px]">redeem</span>
                   </span>
                   <span className="block font-body-sm text-body-sm text-on-surface-variant pr-space-sm">{o.conditions}</span>
-                  <span className="flex items-center justify-between gap-space-sm pt-space-xs border-t border-dashed border-outline-variant/60 pr-space-sm">
-                    <span className="font-label-uppercase text-[10px] text-outline tracking-widest">
+                  <span className="flex flex-wrap items-center justify-between gap-x-space-sm gap-y-1 pt-space-xs border-t border-dashed border-outline-variant/60 pr-space-sm">
+                    <span className="font-label-uppercase text-[10px] text-outline tracking-widest whitespace-nowrap">
                       {o.validUntil ? `VALID UNTIL ${o.validUntil.toUpperCase()}` : "NO END DATE"}
                     </span>
-                    <span className="flex items-center gap-1 font-label-uppercase text-label-uppercase text-primary group-hover:text-secondary transition-colors">
+                    <span className="flex items-center gap-1 font-label-uppercase text-label-uppercase text-primary group-hover:text-secondary transition-colors whitespace-nowrap ml-auto">
                       {o.headline ? "View card" : "Scratch to reveal"}
                       <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
                     </span>

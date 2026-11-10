@@ -35,6 +35,7 @@ export default function Categories() {
               fill
               sizes={i === 0 ? "(min-width: 1024px) 58vw, (min-width: 768px) 50vw, 100vw" : "(min-width: 1024px) 42vw, 50vw"}
               src={c.image}
+              style={c.position ? { objectPosition: c.position } : undefined}
             />
             <div className="absolute inset-0 bg-linear-to-t/srgb from-primary/80 via-primary/20 to-transparent" />
             {/* Hover (mouse devices): the photo deepens */}

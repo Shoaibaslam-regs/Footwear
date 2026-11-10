@@ -1,6 +1,7 @@
 "use client";
 
 import Image from "next/image";
+import { useState } from "react";
 import Link from "next/link";
 import type { CartItem } from "@/lib/cart-data";
 import { whatsappUrl } from "@/lib/data";
@@ -59,27 +60,48 @@ export default function CheckoutSummary({
   total: number;
 }) {
   const currency = useCurrency();
+  // Phones/tablets: the summary sits at the top as a bar showing the total; it opens to the items.
+  const [open, setOpen] = useState(false);
+  const fold = open ? "" : "max-lg:hidden";
 
   return (
-    <div className="lg:col-span-5 lg:sticky lg:top-28 space-y-space-md">
-      <div className="bg-surface-container-lowest p-space-lg shadow-sm">
-        <div className="flex items-baseline justify-between pb-space-sm border-b border-surface-container-high mb-space-md">
-          <h2 className="font-headline-sm text-headline-sm text-primary font-normal">
-            Order Summary
-          </h2>
+    <div className="order-first lg:order-none lg:col-span-5 lg:sticky lg:top-28 space-y-space-md">
+      <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm">
+        {/* Larger screens: a heading. Phones: a toggle with the total. */}
+        <div className="hidden lg:flex items-baseline justify-between pb-space-sm border-b border-surface-container-high mb-space-md">
+          <h2 className="font-headline-sm text-headline-sm text-primary font-normal">Order Summary</h2>
           <span className="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">
             {pieces} {pieces === 1 ? "Pair" : "Pairs"}
           </span>
         </div>
+        <button
+          aria-controls="checkout-summary-items"
+          aria-expanded={open}
+          className="lg:hidden w-full flex items-center justify-between gap-space-sm text-left"
+          onClick={() => setOpen((v) => !v)}
+          type="button"
+        >
+          <span className="flex items-center gap-space-sm min-w-0">
+            <span className="material-symbols-outlined text-secondary text-[22px]">shopping_bag</span>
+            <span className="min-w-0">
+              <span className="block font-headline-sm text-[18px] text-primary leading-tight">Order Summary</span>
+              <span className="flex items-center gap-1 font-label-uppercase text-[11px] uppercase tracking-wider text-secondary">
+                {open ? "Hide" : "Show"} {pieces} {pieces === 1 ? "pair" : "pairs"}
+                <span className={`material-symbols-outlined text-[16px] transition-transform ${open ? "rotate-180" : ""}`}>expand_more</span>
+              </span>
+            </span>
+          </span>
+          <span className="font-headline-sm text-headline-sm text-primary whitespace-nowrap">{formatPrice(total, "PKR")}</span>
+        </button>
 
         {/* Bag Items */}
-        <ul className="flex flex-col">
+        <ul className={`flex flex-col max-lg:mt-space-sm max-lg:pt-space-xs max-lg:border-t max-lg:border-surface-container-high ${fold}`} id="checkout-summary-items">
           {items.map((item, i) => (
             <li
               key={item.id}
               className={`flex gap-space-md py-space-sm${i > 0 ? ` ${divider}` : ""}`}
             >
-              <div className="relative w-24 h-32 flex-shrink-0 bg-surface-container-high overflow-hidden">
+              <div className="relative w-16 h-20 sm:w-24 sm:h-32 flex-shrink-0 bg-surface-container-high overflow-hidden">
                 <Image
                   className="w-full h-full object-cover"
                   alt={item.alt}
@@ -95,8 +117,8 @@ export default function CheckoutSummary({
               </div>
               <div className="flex-1 min-w-0 flex flex-col justify-between">
                 <div>
-                  <div className="flex items-start justify-between gap-2">
-                    <h3 className="font-headline-sm text-body-lg sm:text-headline-sm text-primary leading-tight font-normal min-w-0 break-words">
+                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-0.5 sm:gap-2">
+                    <h3 className="font-headline-sm text-[16px] sm:text-headline-sm text-primary leading-tight font-normal min-w-0 line-clamp-2">
                       {item.href ? (
                         <Link className="hover:text-secondary transition-colors" href={item.href}>
                           {item.name}
@@ -105,11 +127,11 @@ export default function CheckoutSummary({
                         item.name
                       )}
                     </h3>
-                    <span className="font-body-lg text-body-lg text-primary font-semibold whitespace-nowrap">
+                    <span className="font-body-md text-body-md sm:font-body-lg sm:text-body-lg text-primary font-semibold whitespace-nowrap">
                       <Price amount={item.price * item.quantity} />
                     </span>
                   </div>
-                  <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">
+                  <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5 line-clamp-1">
                     {item.material}
                   </p>
                   <div className="flex flex-wrap items-center gap-x-space-md gap-y-1 mt-2 text-on-surface-variant font-label-uppercase text-[11px] uppercase tracking-wider">
@@ -119,7 +141,7 @@ export default function CheckoutSummary({
                     <span>
                       Qty: <strong className="text-primary">{item.quantity}</strong>
                     </span>
-                    <span>
+                    <span className="hidden sm:inline">
                       Color: <strong className="text-secondary">{item.drawerColor}</strong>
                     </span>
                   </div>
@@ -153,7 +175,7 @@ export default function CheckoutSummary({
         </div>
 
         {/* Financial Breakdown */}
-        <div className={`mt-space-md pt-space-md ${divider} space-y-2`}>
+        <div className={`mt-space-md pt-space-md ${divider} space-y-2 ${fold}`}>
           <div className="flex justify-between font-body-md text-body-md text-on-surface-variant">
             <span>
               Item Subtotal ({pieces} {pieces === 1 ? "Pair" : "Pairs"})
@@ -204,7 +226,7 @@ export default function CheckoutSummary({
       </div>
 
       {/* Concierge Card */}
-      <div className="bg-surface-container-high p-space-md flex items-center justify-between">
+      <div className="hidden lg:flex bg-surface-container-high p-space-md items-center justify-between">
         <div className="flex items-center gap-space-sm">
           <span className="material-symbols-outlined text-secondary text-[28px]">
             support_agent

@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -8,6 +9,7 @@ import { paymentMethodLabel } from "@/lib/orders";
 import { getOrderById } from "@/lib/server/orders";
 import { PaymentTag, StatusTag } from "@/components/admin/OrderTags";
 import { NoteControl, PaymentControl, StatusControl } from "@/components/admin/OrderControls";
+import { campaignOfCards } from "@/lib/server/coupons";
 import { pkr } from "@/components/admin/format";
 import { mailConfigured, siteUrl, statusLines } from "@/lib/server/mail";
 import ConfirmButton from "@/components/admin/ConfirmButton";
@@ -25,11 +27,15 @@ function whatsappTo(phone: string) {
   return digits && digits !== whatsappNumber ? `https://wa.me/${digits}` : null;
 }
 
-export default async function AdminOrder({ params }: PageProps<"/admin/orders/[id]">) {
+async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
   await requireAdmin();
   const { id } = await params;
   const order = await getOrderById(id);
   if (!order) notFound();
+  // Surprise cards: the campaign they came from (older orders didn't store it).
+  const couponCampaign = order.coupon
+    ? (order.coupon.campaign ?? (await campaignOfCards([order.coupon.code])).get(order.coupon.code))
+    : undefined;
   const country = countries.find((c) => c.code === order.address.country)?.label ?? order.address.country;
   const wa = whatsappTo(order.customer.phone);
   const base = await siteUrl();
@@ -115,7 +121,11 @@ export default async function AdminOrder({ params }: PageProps<"/admin/orders/[i
               {order.coupon && (
                 <>
                   <dt className="muted">
-                    Coupon <span className="tag tag-info">{order.coupon.code}</span>
+                    Coupon{" "}
+                    <Link className="tag tag-info hover:underline" href={`/admin/orders?coupon=${encodeURIComponent(couponCampaign ?? order.coupon.code)}`} title="Show every order with this coupon">
+                      {couponCampaign ?? order.coupon.code}
+                    </Link>
+                    {couponCampaign && <span className="block text-xs">surprise card {order.coupon.code}</span>}
                   </dt>
                   <dd className="text-right">
                     {order.coupon.type === "free_delivery"
@@ -257,5 +267,18 @@ export default async function AdminOrder({ params }: PageProps<"/admin/orders/[i
         </div>
       </div>
     </div>
+  );
+}
+
+/**
+ * Its own loading placeholder: requireAdmin() verifies the login token (async
+ * crypto), so the content streams inside the page; otherwise navigations to it
+ * can't be instant and Next.js warns "uncached data … outside of <Suspense>".
+ */
+export default function AdminOrder(props: PageProps<"/admin/orders/[id]">) {
+  return (
+    <Suspense fallback={<p className="muted">Loading…</p>}>
+      <AdminOrderContent {...props} />
+    </Suspense>
   );
 }

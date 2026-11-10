@@ -14,6 +14,7 @@ import { confirmRemoveFromBag } from "./confirmRemove";
 import CartItemCard from "./CartItemCard";
 import Complements, { type Suggestion } from "./Complements";
 import OrderSummary from "./OrderSummary";
+import MobileCheckoutBar from "./MobileCheckoutBar";
 
 export default function ShoppingBag({
   suggestions,
@@ -128,6 +129,7 @@ export default function ShoppingBag({
 
             {/* RIGHT: Checkout Summary */}
             <OrderSummary pieces={pieces} subtotal={subtotal} />
+            <MobileCheckoutBar pieces={pieces} subtotal={subtotal} />
           </div>
         )}
 

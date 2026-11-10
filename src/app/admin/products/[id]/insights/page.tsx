@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
@@ -17,7 +18,7 @@ export const metadata = { title: "Listing insights" };
 
 const n = (x: number) => x.toLocaleString("en-US");
 
-export default async function ListingInsights({ params }: PageProps<"/admin/products/[id]/insights">) {
+async function ListingInsightsContent({ params }: PageProps<"/admin/products/[id]/insights">) {
   await requireAdmin();
   const { id } = await params;
   const p = await getProductById(id);
@@ -195,5 +196,18 @@ export default async function ListingInsights({ params }: PageProps<"/admin/prod
         </section>
       </div>
     </div>
+  );
+}
+
+/**
+ * Its own loading placeholder: requireAdmin() verifies the login token (async
+ * crypto), so the content streams inside the page; otherwise navigations to it
+ * can't be instant and Next.js warns "uncached data … outside of <Suspense>".
+ */
+export default function ListingInsights(props: PageProps<"/admin/products/[id]/insights">) {
+  return (
+    <Suspense fallback={<p className="muted">Loading…</p>}>
+      <ListingInsightsContent {...props} />
+    </Suspense>
   );
 }

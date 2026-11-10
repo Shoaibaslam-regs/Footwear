@@ -24,8 +24,8 @@ async function EditCouponPageContent({ params }: PageProps<"/admin/coupons/[id]"
           <p className="muted">
             Used {coupon.uses}
             {coupon.maxUses !== null ? ` of ${coupon.maxUses}` : ""} times · {pkr(coupon.discountGiven)} discount given ·{" "}
-            <Link className="link" href={`/admin/orders?q=${encodeURIComponent(coupon.code)}`}>
-              orders
+            <Link className="link" href={`/admin/orders?coupon=${encodeURIComponent(coupon.code)}`}>
+              see its orders
             </Link>
           </p>
         </div>

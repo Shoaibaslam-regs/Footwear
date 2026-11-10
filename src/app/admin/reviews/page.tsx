@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/dal";
@@ -14,7 +15,7 @@ const one = (v: string | string[] | undefined) =>
   typeof v === "string" ? v : undefined;
 const stars = (n: number) => "★".repeat(n) + "☆".repeat(5 - n);
 
-export default async function AdminReviews({
+async function AdminReviewsContent({
   searchParams,
 }: PageProps<"/admin/reviews">) {
   await requireAdmin();
@@ -82,19 +83,15 @@ export default async function AdminReviews({
           <form action={deleteReviews} className="flex gap-2" id="bulk-reviews">
             <button
               className="btn"
-              formAction={setReviewsStatus}
-              name="status"
+              formAction={setReviewsStatus.bind(null, "hidden")}
               type="submit"
-              value="hidden"
             >
               Hide selected
             </button>
             <button
               className="btn"
-              formAction={setReviewsStatus}
-              name="status"
+              formAction={setReviewsStatus.bind(null, "published")}
               type="submit"
-              value="published"
             >
               Show selected
             </button>
@@ -209,15 +206,8 @@ export default async function AdminReviews({
                   </td>
                   <td className="align-top">
                     <div className="flex justify-end gap-2">
-                      <form action={setReviewsStatus}>
+                      <form action={setReviewsStatus.bind(null, r.status === "published" ? "hidden" : "published")}>
                         <input name="ids" type="hidden" value={r.id} />
-                        <input
-                          name="status"
-                          type="hidden"
-                          value={
-                            r.status === "published" ? "hidden" : "published"
-                          }
-                        />
                         <button className="btn" type="submit">
                           {r.status === "published" ? "Hide" : "Show"}
                         </button>
@@ -241,5 +231,18 @@ export default async function AdminReviews({
       )}
       <p className="muted">{reviews.length} review(s)</p>
     </div>
+  );
+}
+
+/**
+ * Its own loading placeholder: requireAdmin() verifies the login token (async
+ * crypto), so the content streams inside the page; otherwise navigations to it
+ * can't be instant and Next.js warns "uncached data … outside of <Suspense>".
+ */
+export default function AdminReviews(props: PageProps<"/admin/reviews">) {
+  return (
+    <Suspense fallback={<p className="muted">Loading…</p>}>
+      <AdminReviewsContent {...props} />
+    </Suspense>
   );
 }

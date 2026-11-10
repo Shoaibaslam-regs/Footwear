@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/dal";
 import { listUserInsights, type UserInsightRow } from "@/lib/server/insights";
@@ -34,7 +35,7 @@ const sorters: Record<string, (a: UserInsightRow, b: UserInsightRow) => number> 
   name: (a, b) => a.name.localeCompare(b.name),
 };
 
-export default async function AdminUsers({ searchParams }: PageProps<"/admin/users">) {
+async function AdminUsersContent({ searchParams }: PageProps<"/admin/users">) {
   const me = await requireAdmin();
   const [all, sp] = await Promise.all([listUserInsights(), searchParams]);
 
@@ -208,5 +209,18 @@ export default async function AdminUsers({ searchParams }: PageProps<"/admin/use
       )}
       <Pager noun={["account", "accounts"]} path="/admin/users" sp={sp} total={rows.length} />
     </div>
+  );
+}
+
+/**
+ * Its own loading placeholder: requireAdmin() verifies the login token (async
+ * crypto), so the content streams inside the page; otherwise navigations to it
+ * can't be instant and Next.js warns "uncached data … outside of <Suspense>".
+ */
+export default function AdminUsers(props: PageProps<"/admin/users">) {
+  return (
+    <Suspense fallback={<p className="muted">Loading…</p>}>
+      <AdminUsersContent {...props} />
+    </Suspense>
   );
 }

@@ -116,6 +116,16 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
   - Exception: chart marks use `--a-chart`.
 - Flex or grid children holding wide tables or `<fieldset>`s need `min-w-0` so they scroll inside their card on phones.
 
+### Feedback: toasts and the top notification
+- **Checkout on phones:** the order summary is a collapsible bar at the top (total always visible, coupon box under it), and Place Order is fixed at the bottom.
+- **Toast** (`showToast()` → `components/ActionToast.tsx`): short confirmations such as "Added to Wishlist".
+  - Phones: wide, above the WhatsApp button; larger screens: a pill at the bottom centre.
+  - It springs in and shows a gold timer line.
+- **Top notification** (`showNotice({ title, message, icon })` → `components/TopNotice.tsx`): coupon moments only (revealing a card, adding a coupon to the bag).
+  - Espresso card with the scratch card's gold edge and a gold icon, a close button and a timer.
+  - It slides down from the top.
+- **Fixed bottom bars** on phones (the bag's `MobileCheckoutBar`, the checkout's Place Order bar) call `useBottomBar(height)` (`lib/use-bottom-bar.ts`), which sets `--bottom-bar` on `<html>`. The WhatsApp button, the toasts and the page's bottom padding all add it, so nothing sits underneath the bar.
+
 ## 3. Component Recipes (copy these, don't reinvent them)
 
 | Pattern | Reference file |

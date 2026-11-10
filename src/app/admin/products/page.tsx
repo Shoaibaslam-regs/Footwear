@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Image from "next/image";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/dal";
@@ -62,7 +63,7 @@ const SORTS = [
   { value: "stock", label: "Lowest stock" },
 ] as const;
 
-export default async function AdminProducts({
+async function AdminProductsContent({
   searchParams,
 }: PageProps<"/admin/products">) {
   await requireAdmin();
@@ -415,5 +416,18 @@ export default async function AdminProducts({
       )}
       <Pager noun={["listing", "listings"]} path="/admin/products" sp={sp} total={sorted.length} />
     </div>
+  );
+}
+
+/**
+ * Its own loading placeholder: requireAdmin() verifies the login token (async
+ * crypto), so the content streams inside the page; otherwise navigations to it
+ * can't be instant and Next.js warns "uncached data … outside of <Suspense>".
+ */
+export default function AdminProducts(props: PageProps<"/admin/products">) {
+  return (
+    <Suspense fallback={<p className="muted">Loading…</p>}>
+      <AdminProductsContent {...props} />
+    </Suspense>
   );
 }

@@ -37,20 +37,14 @@ export default function OrderSummary({
           </div>
 
           {/* Total Line */}
-          <div className="pt-space-md mt-space-xs flex items-baseline justify-between">
-            <div>
-              <span className="font-headline-sm text-headline-sm text-primary font-normal">
-                Subtotal
-              </span>
-              <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">
-                Delivery is added at checkout
-              </p>
-            </div>
-            <div className="text-right">
-              <span className="font-headline-md text-headline-md text-primary font-normal whitespace-nowrap">
+          <div className="pt-space-md mt-space-xs">
+            <div className="flex items-baseline justify-between gap-space-sm">
+              <span className="font-headline-sm text-headline-sm text-primary font-normal">Subtotal</span>
+              <span className="font-headline-sm text-headline-sm sm:font-headline-md sm:text-headline-md text-primary font-normal whitespace-nowrap">
                 <Price amount={subtotal} />
               </span>
             </div>
+            <p className="font-label-sm text-label-sm text-on-surface-variant mt-0.5">Delivery is added at checkout</p>
           </div>
 
           {/* Accepted payments */}
@@ -76,7 +70,10 @@ export default function OrderSummary({
             className="w-full h-[54px] bg-primary hover:bg-secondary-fixed text-on-primary hover:text-on-secondary-fixed rounded-full font-label-uppercase text-label-uppercase uppercase tracking-[0.18em] font-semibold transition-all duration-300 shadow-md flex items-center justify-center gap-2"
           >
             <span className="material-symbols-outlined text-[18px]">lock</span>
-            Proceed to Checkout — <Price amount={subtotal} />
+            <span className="sm:hidden">Checkout</span>
+            <span className="hidden sm:inline">
+              Proceed to Checkout — <Price amount={subtotal} />
+            </span>
           </Link>
         </div>
 

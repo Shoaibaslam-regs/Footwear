@@ -172,6 +172,8 @@
   }
   body {
     overscroll-behavior: none;
+    /* Room for a fixed bottom bar (the bag's checkout bar on phones sets this). */
+    padding-bottom: var(--bottom-bar, 0px);
   }
   /* Anchor targets clear the fixed header (marquee + 80px bar). */
   [id] {
@@ -416,4 +418,17 @@ html[data-scrolled] .site-bar {
   .link-draw {
     transition: none;
   }
+}
+
+/* Toast and top notification: a timer line that shrinks while the message is shown. */
+@keyframes notice-timer {
+  from { transform: scaleX(1); }
+  to { transform: scaleX(0); }
+}
+.notice-timer {
+  transform-origin: left;
+  animation: notice-timer var(--notice-ms, 2200ms) linear forwards;
+}
+@media (prefers-reduced-motion: reduce) {
+  .notice-timer { animation: none; }
 }
