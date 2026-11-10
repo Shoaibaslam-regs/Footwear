@@ -137,7 +137,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             <span className="font-normal text-on-surface-variant">{color}</span>
           </span>
           <span className="font-label-uppercase text-label-uppercase text-secondary uppercase text-[10px] tracking-wider">
-            Only at ÉLORA
+            Only at Ŕose Atelier
           </span>
         </div>
         <div

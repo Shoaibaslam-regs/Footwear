@@ -440,7 +440,7 @@ function QuickViewStudio({
                   </span>
                 </div>
                 <span className="text-xs text-secondary font-label-uppercase">
-                  Made in Florence, 2025
+                  Made in Karachi
                 </span>
               </div>
             )}

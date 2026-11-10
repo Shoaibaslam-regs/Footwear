@@ -51,8 +51,8 @@ export const products: Record<string, ProductDetail> = {
     breadcrumbCategory: "Heels",
     breadcrumbName: "The Aurelia 95mm",
     edition: "Edition 08/250",
-    workshop: "Florence Workshop No. 4",
-    eyebrow: "Heels • Handmade in Italy",
+    workshop: "Karachi Workshop No. 4",
+    eyebrow: "Heels • Handmade in Karachi",
     rating: 4.9,
     reviewCount: 42,
     price: 151_200,
@@ -80,7 +80,7 @@ export const products: Record<string, ProductDetail> = {
         ariaLabel: "View the sole and buckle",
         image: IMG + "AB6AXuCpUsAUxHp2fxiAIKY5_jxK6utx2HLYLwPOQqq6a52PvVQ470_JxWoIcyy7QYxzzhZA5w6uDJ6vLse4WU8zyrEP-kdE4DvA5jm6s8cCnpurjRvochU6Mn3CL7C5g8rMfDxm4VOtx9ZhOwQwHqYQSaESTukSRxtp7sCo0iTJNkoLspPluc0DZA6pqTGb7Py5cUfKaeaw99zwUYZGatSgbRYEU8A6dx8VH34_WWKxE5A",
         thumb: IMG + "AB6AXuCpUsAUxHp2fxiAIKY5_jxK6utx2HLYLwPOQqq6a52PvVQ470_JxWoIcyy7QYxzzhZA5w6uDJ6vLse4WU8zyrEP-kdE4DvA5jm6s8cCnpurjRvochU6Mn3CL7C5g8rMfDxm4VOtx9ZhOwQwHqYQSaESTukSRxtp7sCo0iTJNkoLspPluc0DZA6pqTGb7Py5cUfKaeaw99zwUYZGatSgbRYEU8A6dx8VH34_WWKxE5A",
-        alt: "Macro view of the hand-buffed leather sole with debossed gold ÉLORA emblem",
+        alt: "Macro view of the hand-buffed leather sole with a gold Rose Atelier logo",
       },
       {
         label: "04 Vamp",
@@ -122,15 +122,15 @@ export const products: Record<string, ProductDetail> = {
     ],
     specs: [
       { label: "Heel Height", value: "95mm (3.74 inches)" },
-      { label: "Upper Material", value: "100% silk satin from Florence" },
+      { label: "Upper Material", value: "100% silk satin" },
       { label: "Insole", value: "Soft two-layer memory foam" },
       { label: "Sole", value: "Hand-polished Italian leather" },
       { label: "Hardware", value: "Brass buckle with 24k gold coating" },
-      { label: "Origin", value: "Handmade in Florence, Italy" },
+      { label: "Origin", value: "Handmade in Karachi, Pakistan" },
     ],
     care: [
       "Keep away from water, oil and rough surfaces. Clean satin gently with a soft, dry microfiber cloth.",
-      "Keep each shoe in its ÉLORA silk shoe bag, filled with tissue paper, so it keeps its shape.",
+      "Keep each shoe in its Ŕose Atelier silk shoe bag, filled with tissue paper, so it keeps its shape.",
     ],
     shipping: [
       "We deliver across Pakistan. Delivery options, times and charges are shown at checkout before you place your order.",

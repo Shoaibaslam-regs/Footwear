@@ -41,7 +41,7 @@ export default function CraftSection() {
           <div className="lg:col-span-7">
             <div className="relative aspect-[16/10] overflow-hidden bg-surface-container-highest shadow-sm">
               <Image
-                alt="Shoemaker carving a wooden shoe mould in a Florence workshop"
+                alt="Shoemaker carving a wooden shoe mould in our Karachi workshop"
                 className="w-full h-full object-cover"
                 src={craftImage}
                 fill
@@ -49,7 +49,7 @@ export default function CraftSection() {
               />
               <div className="absolute inset-0 bg-linear-to-t/srgb from-primary/60 via-transparent to-transparent flex items-end p-space-lg">
                 <p className="font-headline-sm text-headline-sm text-on-primary font-normal">
-                  Atelier Bottega — Via de&apos; Tornabuoni, Firenze
+                  Ŕose Atelier Workshop — Karachi
                 </p>
               </div>
             </div>

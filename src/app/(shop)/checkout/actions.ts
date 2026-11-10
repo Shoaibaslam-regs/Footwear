@@ -16,6 +16,8 @@ import { PRODUCTS_TAG } from "@/lib/server/products";
 import { getDb } from "@/lib/server/db";
 import { orderPlacedLines, sendMail, siteUrl } from "@/lib/server/mail";
 import { updateTag } from "next/cache";
+import { applyCoupon } from "@/lib/coupons";
+import { claimCoupon, getCouponByCode, releaseCoupon, toTerms, unavailableReason } from "@/lib/server/coupons";
 
 export type PlaceOrderState =
   | {
@@ -25,7 +27,7 @@ export type PlaceOrderState =
     }
   | {
       ok: true;
-      order: Pick<Order, "number" | "items" | "total" | "listTotal" | "discountTotal" | "shippingFee" | "delivery" | "payment" | "customer">;
+      order: Pick<Order, "number" | "items" | "total" | "listTotal" | "discountTotal" | "shippingFee" | "delivery" | "payment" | "customer" | "coupon">;
     }
   | undefined;
 
@@ -118,8 +120,30 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
   const listTotal = lines.reduce((n, l) => n + l.listPrice * l.quantity, 0);
   const subtotal = lines.reduce((n, l) => n + l.unitPrice * l.quantity, 0);
 
+  // Coupon: every rule is checked again here, against the real bag and fee.
+  let coupon: NonNullable<Order["coupon"]> | undefined;
+  let itemDiscount = 0;
+  let deliveryDiscount = 0;
+  const couponDoc = cart.coupon ? await getCouponByCode(cart.coupon) : null;
+  if (cart.coupon) {
+    const why = await unavailableReason(couponDoc, user.id);
+    if (why || !couponDoc) return { message: `Coupon ${cart.coupon}: ${why ?? "This code is not valid."} Remove it to continue.` };
+    const r = applyCoupon(toTerms(couponDoc), lines, option.fee);
+    if (!r.ok) return { message: `Coupon ${couponDoc.code}: ${r.reason} Or remove the coupon to continue.` };
+    itemDiscount = r.itemDiscount;
+    deliveryDiscount = r.deliveryDiscount;
+    coupon = { code: couponDoc.code, type: couponDoc.type, discount: itemDiscount + deliveryDiscount };
+  }
+
   const reserved = await reserveStock(lines);
   if (!reserved.ok) return { message: reserved.error };
+  if (couponDoc && coupon) {
+    const taken = await claimCoupon(couponDoc, user.id);
+    if (taken) {
+      await releaseStock(lines);
+      return { message: `Coupon ${couponDoc.code}: ${taken} Remove it to continue.` };
+    }
+  }
 
   let order: Awaited<ReturnType<typeof insertOrder>>;
   try {
@@ -136,8 +160,9 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
     items: lines,
     listTotal,
     discountTotal: listTotal - subtotal,
-    shippingFee: option.fee,
-    total: subtotal + option.fee,
+    shippingFee: option.fee - deliveryDiscount,
+    total: subtotal - itemDiscount + option.fee - deliveryDiscount,
+    ...(coupon ? { coupon } : {}),
     delivery: { id: option.id, name: option.name },
     payment: {
       method: data.paymentMethod,
@@ -150,6 +175,7 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
   });
   } catch (e) {
     await releaseStock(lines);
+    if (coupon) await releaseCoupon(coupon.code, user.id);
     throw e;
   }
 
@@ -162,14 +188,14 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
     );
   await sendMail(
     data.email,
-    `Order received #${order.number} — ÉLORA`,
+    `Order received #${order.number} — Ŕose Atelier`,
     "Thank you for your order",
     orderPlacedLines(order),
     { label: "View your order", href: `${await siteUrl()}/account/orders/${order.number}` },
   );
 
   // Empty the bag only after the order is safely stored.
-  await cartCol.updateOne({ _id: cart._id }, { $set: { bag: [], updatedAt: new Date() } });
+  await cartCol.updateOne({ _id: cart._id }, { $set: { bag: [], updatedAt: new Date() }, $unset: { coupon: "" } });
   updateTag(SALES_TAG);
   updateTag(PRODUCTS_TAG); // stock changed
 
@@ -185,6 +211,7 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
       delivery: order.delivery,
       payment: order.payment,
       customer: order.customer,
+      coupon: order.coupon,
     },
   };
 }

@@ -11,7 +11,7 @@ export default function SocialGallery() {
               As Seen on Instagram
             </span>
             <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight">
-              #MaisonElora
+              #RoseAtelier
             </h2>
           </div>
           <a
@@ -20,7 +20,7 @@ export default function SocialGallery() {
             rel="noopener noreferrer"
             target="_blank"
           >
-            <span className="link-draw">Follow @MaisonElora</span>
+            <span className="link-draw">Follow @RoseAtelier</span>
             <span className="material-symbols-outlined text-base">
               arrow_forward
             </span>

@@ -8,7 +8,7 @@ export default function WhatsAppButton() {
   const pathname = usePathname();
   if (pathname.startsWith("/checkout")) return null; // checkout has its own help card
   const product = pathname.match(/^\/products\/([a-z0-9-]+)/)?.[1];
-  const text = product ? "Hello ÉLORA, I'm interested in this pair." : "Hello ÉLORA, I have a question.";
+  const text = product ? "Hello Ŕose Atelier, I'm interested in this pair." : "Hello Ŕose Atelier, I have a question.";
   return (
     <a
       aria-label="Chat with us on WhatsApp"

@@ -15,7 +15,14 @@ import CartItemCard from "./CartItemCard";
 import Complements, { type Suggestion } from "./Complements";
 import OrderSummary from "./OrderSummary";
 
-export default function ShoppingBag({ suggestions }: { suggestions: Suggestion[] }) {
+export default function ShoppingBag({
+  suggestions,
+  offerStrip,
+}: {
+  suggestions: Suggestion[];
+  /** "You have a coupon" strip, rendered on the server. */
+  offerStrip?: React.ReactNode;
+}) {
   const items = useBag();
 
   const pieces = items.reduce((n, i) => n + i.quantity, 0);
@@ -99,6 +106,7 @@ export default function ShoppingBag({ suggestions }: { suggestions: Suggestion[]
           <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-space-xl items-start">
             {/* LEFT: Bag Contents & Cross-Sell */}
             <section className="lg:col-span-7 flex flex-col gap-space-lg">
+              {offerStrip}
               <div className="flex flex-col gap-space-md">
                 {items.map((item) => (
                   <CartItemCard

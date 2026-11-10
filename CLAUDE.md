@@ -2,7 +2,7 @@
 
 This file provides guidance to Claude Code (claude.ai/code) when working with code in this repository.
 
-ÉLORA Maison: a luxury women's footwear store for the Pakistani market (prices stored in PKR). Next.js 16.4 App Router + React 19.3, Tailwind v4, MongoDB, JWT auth, UploadThing.
+Ŕose Atelier: a luxury women's footwear store for the Pakistani market (prices stored in PKR). Next.js 16.4 App Router + React 19.3, Tailwind v4, MongoDB, JWT auth, UploadThing.
 
 **Read `AGENTS.md` first:** this Next.js version differs from training data. Check `node_modules/next/dist/docs/` before using any Next API. Examples: `middleware` is now `src/proxy.ts`, `error.tsx` receives `retry` (not `reset`), and route props use the global `PageProps<"/route">` / `LayoutProps` types.
 
@@ -73,11 +73,36 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 - `password_resets`: SHA-256 hashes of single-use tokens with a TTL (1 hour). A reset sets `users.passwordChangedAt`, and `getCurrentUser` rejects JWTs issued before it.
 - `users.savedAddress`: the last checkout address, used to prefill the next one.
 - `review_uploads`: ownership of review photos, for the daily cap and so a review can only reference the uploader's own files.
+- `coupons`: codes managed at `/admin/coupons`.
+  - Types: `percent` (with an optional `maxDiscount`), `fixed` (PKR) and `free_delivery`.
+  - Rules: `minOrder`, `startsAt` / `endsAt` (Pakistan days), `maxUses` (total) and `perCustomer`.
+  - `fullPriceOnly` is on by default, so items with a listing discount don't get the coupon as well.
+  - `active` pauses a coupon. One that has been used can't be deleted, only paused.
+  - `public` ("Show on website") lists it to customers through `publicCouponsFor(userId)`, which returns only coupons this customer can still use and never includes the code.
+    - "My Coupons" (`components/offers/MyCoupons.tsx`, account page `#my-coupons`) shows them as tickets that open the scratch card.
+    - `OfferStripView` shows a "You have a coupon" strip on the bag page and in the checkout summary. It hides once a coupon is applied. With several coupons, it links to My Coupons.
+    - Codes with `public` off are shared by link only.
+  - `uses` counts orders that weren't cancelled.
+- Surprise campaigns (`type: "random"`, with `minPercent` / `maxPercent`) are never used directly.
+  - `cardFor()` gives each customer one personal coupon on their first visit to `/offers/<CAMPAIGN>`: `ROSE-XXXXXX`, type `percent`, a random value from the range via `crypto.randomInt`, with `campaignId` and `ownerId`, `maxUses: 1`.
+  - A unique index on `{campaignId, ownerId}` keeps it to one card each, even with two tabs open at once.
+  - The campaign's `uses` / `maxUses` count cards handed out.
+  - A card works only for its owner, and stops when its campaign is paused or ends. Editing the campaign updates its cards' rules, but each card keeps its own percent.
+  - Admins get a preview, not a card. Personal cards aren't listed in the admin; the campaign row adds up their numbers.
+- `coupon_redemptions`: `{_id: "<couponId>:<userId>", n, revealedAt?}`. `n` is for the per-customer limit.
+  - `revealedAt` is set when the customer scratches the card (`markCouponRevealed`).
+  - Until then, tickets, strips, step text and "with coupon" prices never show the discount (`OfferSummary.headline` is `null`, and `components/offers/Reveal.tsx` gates the offer page).
+- `carts.coupon`: the code the customer applied (from checkout or the offer page). It is cleared when the order is placed.
 - `meta`: seed and migration markers.
 
 ### Money paths never trust the client
 - `placeOrder` (`app/(shop)/checkout/actions.ts`) builds orders from the account's `carts` document and re-prices from listings, then clears the bag after insert.
 - Cart mutations (`lib/cart-actions.ts`) validate product and size against published listings.
+- Coupons:
+  - The maths lives in `lib/coupons.ts` (`applyCoupon`), so checkout shows the same numbers live.
+  - `placeOrder` re-checks the coupon (`unavailableReason` and `applyCoupon` against the re-priced lines and the real fee), then claims it atomically with `claimCoupon` after reserving stock. Both are rolled back if the insert fails.
+  - Cancelling an order (customer or admin) calls `releaseCoupon`.
+  - Orders store `coupon: {code, type, discount}`. For free delivery, `shippingFee` is 0 and `discount` is the fee that was waived.
 - Payments are recorded, not processed: COD, EasyPaisa/JazzCash (wallet number stored), bank transfer, and card via a payment link.
 
 ### Performance rules
@@ -124,6 +149,11 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
 - `/account/orders/[number]`: the owner-only order page (timeline from `statusDates`, tracking number, cancel while `pending`, WhatsApp help).
 - `/forgot-password` and `/reset-password`.
 - `/policies/[slug]`.
+- `/offers/[CODE]`: the scratch-card coupon page, built from the user's `index.html` design (`components/offers/ScratchCard.tsx`).
+  - The admin's Copy link / WhatsApp buttons share it.
+  - "Apply to Bag" saves the code on the account's cart.
+  - Once revealed, the card stays revealed on that device (localStorage `rose:offer-revealed:<code>`).
+  - Paused, expired or used-up codes show "This offer is not available".
 - Shop-layout overlays: `CartDrawerHost` (the mini bag; it opens whenever `addToBag` runs unless `{ openBag: false }`) and the floating `WhatsAppButton`.
 
 ## Open work

@@ -10,7 +10,7 @@ export default function Campaign() {
           <div className="lg:col-span-7 relative">
             <div data-reveal="curtain" className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-2xl bg-surface-container">
               <Image
-                alt="Elegant woman stepping out of a vintage emerald cab on wet Milan cobblestones at dusk wearing metallic gold strappy stilettos"
+                alt="Elegant woman stepping out of a vintage emerald cab on a wet city street at dusk wearing metallic gold strappy stilettos"
                 className="img-fade object-cover"
                 fill
                 sizes="(min-width: 1024px) 58vw, 100vw"
@@ -20,14 +20,14 @@ export default function Campaign() {
               <div className="absolute bottom-6 left-6 right-6 p-space-md bg-surface/90 backdrop-blur-md rounded-lg flex items-center justify-between text-on-surface shadow-lg">
                 <div>
                   <p className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-widest">
-                    Milan Piazza del Duomo
+                    Karachi
                   </p>
                   <p className="font-headline-sm text-headline-sm text-primary">
                     Style That Moves With You
                   </p>
                 </div>
                 <span className="font-label-uppercase text-label-uppercase px-3 py-1 bg-primary text-on-primary rounded-full">
-                  Summer 2025
+                  Summer Collection
                 </span>
               </div>
             </div>
@@ -54,12 +54,12 @@ export default function Campaign() {
             <div className="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant font-light leading-relaxed">
               <p>
                 Shoes should look elegant and feel comfortable at the same time.
-                Our shoemakers in Tuscany build every heel around a strong
+                Our shoemakers in Karachi build every heel around a strong
                 titanium core, covered with soft memory foam that absorbs
                 shock.
               </p>
               <p>
-                The result feels light and steady. Italian style you can wear
+                The result feels light and steady. Elegant style you can wear
                 comfortably, from late-night parties to long flights.
               </p>
             </div>

@@ -165,7 +165,7 @@ export default function ProductGallery({
       <div className="mt-space-lg p-space-lg bg-surface-container-low flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
         <div className="space-y-1">
           <p className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.16em]">
-            Handmade in Florence
+            Handmade in Karachi
           </p>
           <p className="font-headline-sm text-headline-sm text-primary font-normal italic">
             {product.quote}

@@ -1,3 +1,5 @@
+import type { CouponType } from "./coupons";
+
 /** Order model shared by checkout, the account page and the admin panel. */
 
 export const orderStatuses = [
@@ -121,8 +123,11 @@ export type Order = {
   listTotal: number;
   /** Discount given (PKR). */
   discountTotal: number;
+  /** Delivery fee actually charged (0 when a free-delivery coupon was used). */
   shippingFee: number;
   total: number;
+  /** Coupon used on this order: `discount` is PKR saved (items, or the delivery fee for free delivery). */
+  coupon?: { code: string; type: CouponType; discount: number };
   delivery: { id: string; name: string };
   payment: {
     method: PaymentMethod;

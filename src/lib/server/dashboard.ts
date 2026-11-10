@@ -1,4 +1,5 @@
 import "server-only";
+import { io } from "next/cache";
 import type { OrderStatus } from "../orders";
 import { getDb } from "./db";
 
@@ -34,6 +35,7 @@ export type DashboardData = {
  * Callers must requireAdmin first.
  */
 export async function getDashboard(days: RangeDays): Promise<DashboardData> {
+  await io(); // reads the current time; see lib/server/coupons.ts
   const db = await getDb();
   const orders = db.collection("orders");
   const now = Date.now();

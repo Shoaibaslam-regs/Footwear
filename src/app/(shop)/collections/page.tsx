@@ -8,9 +8,9 @@ import { getRatingsBySlug } from "@/lib/server/reviews";
 import { getOnlineSales } from "@/lib/server/sales";
 
 export const metadata: Metadata = {
-  title: "Shop All Shoes — ÉLORA Maison",
+  title: "Shop All Shoes — Ŕose Atelier",
   description:
-    "Shop handmade Italian shoes for women: heels, sandals, flats and bridal shoes. Cash on Delivery across Pakistan.",
+    "Shop handmade shoes for women: heels, sandals, flats and bridal shoes. Cash on Delivery across Pakistan.",
 };
 
 export default async function CollectionsPage() {

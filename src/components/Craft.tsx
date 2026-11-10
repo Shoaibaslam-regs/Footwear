@@ -6,13 +6,13 @@ export default function Craft() {
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div data-reveal className="max-w-2xl mx-auto text-center mb-space-xl">
           <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.25em]">
-            Made in Florence
+            Made in Karachi
           </span>
           <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight mt-1 mb-space-xs">
-            What Goes Into an ÉLORA Shoe
+            What Goes Into an Ŕose Atelier Shoe
           </h2>
           <p className="font-body-md text-body-md text-on-surface-variant font-light">
-            Made in our family workshops in Florence, run by the third
+            Made in our family workshops in Karachi, run by the third
             generation. We mix traditional shoemaking with modern technology
             for better balance.
           </p>
@@ -52,7 +52,7 @@ export default function Craft() {
               Our Workshop
             </span>
             <h3 className="font-headline-lg text-headline-lg font-normal mb-space-xs text-surface-container-lowest">
-              Visit Our Florence Workshop
+              Visit Our Karachi Workshop
             </h3>
             <p className="font-body-md text-body-md text-primary-fixed font-light mb-space-md">
               Book a private appointment with our master shoemaker, Renzo.
@@ -79,10 +79,10 @@ export default function Craft() {
             </div>
             <div>
               <h4 className="font-label-md text-label-md font-semibold text-primary">
-                ÉLORA Workshop, Florence
+                Ŕose Atelier Workshop
               </h4>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
-                Via de&apos; Tornabuoni, 48/R
+                Karachi, Pakistan
               </p>
               <p className="font-label-sm text-label-sm text-secondary font-medium mt-1">
                 Open Mon–Sat • By Appointment

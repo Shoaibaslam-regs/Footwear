@@ -55,7 +55,7 @@ export default function CartDrawer({
         <div className="p-space-lg flex items-center justify-between bg-surface-container-low shadow-sm">
           <div>
             <span className="font-label-uppercase text-label-uppercase text-secondary tracking-widest uppercase">
-              ÉLORA
+              Ŕose Atelier
             </span>
             <h3 className="font-headline-sm text-headline-sm text-primary">
               Shopping Bag ({pieces})

@@ -168,6 +168,7 @@ function optimisticLine(p: BagProduct, quantity: number): CartItem {
     name: p.name,
     drawerName: p.name,
     price: p.price,
+    discountPercent: 0, // replaced by the server's line a moment later
     material: p.material ?? "",
     size: `EU ${sizeNumber(p.size)}`,
     color: p.color ?? "",
@@ -177,7 +178,7 @@ function optimisticLine(p: BagProduct, quantity: number): CartItem {
     stockNote: "Saving to your bag…",
     stockNoteClass: "text-on-surface-variant",
     stockDotClass: "bg-primary",
-    packaging: { title: "ÉLORA Gift Box:", text: "Comes with a silk shoe bag with our logo." },
+    packaging: { title: "Ŕose Atelier Gift Box:", text: "Comes with a silk shoe bag with our logo." },
     quantity,
     image: p.image,
     alt: p.alt,

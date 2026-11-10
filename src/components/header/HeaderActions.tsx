@@ -45,7 +45,8 @@ export default function HeaderActions({
       </button>
       <Link
         aria-label={`Wishlist (${wishCount} saved)`}
-        className={`${iconBtn} relative`}
+        // Phones: the wishlist lives in the menu, so the longer logo fits.
+        className={`${iconBtn} relative max-sm:hidden`}
         href="/wishlist"
       >
         <span className="material-symbols-outlined text-[20px]">favorite</span>

@@ -106,12 +106,12 @@ export default function OrderSummary({
           </div>
           <p className="font-body-sm text-body-sm text-on-surface-variant">
             Not sure about your size, or what to wear for an event? Our
-            stylists in Florence are here to help.
+            stylists in Karachi are here to help.
           </p>
           <div className="flex items-center gap-space-md pt-1">
             <a
               className="font-label-uppercase text-label-uppercase text-primary underline underline-offset-4 decoration-secondary hover:text-secondary transition-colors"
-              href={`${whatsappUrl}?text=${encodeURIComponent("Hello ÉLORA, I'd like help with sizing.")}`}
+              href={`${whatsappUrl}?text=${encodeURIComponent("Hello Ŕose Atelier, I'd like help with sizing.")}`}
               rel="noopener noreferrer"
               target="_blank"
             >

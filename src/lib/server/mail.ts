@@ -41,7 +41,7 @@ function layout(title: string, lines: string[], cta?: { label: string; href: str
     ? `<p style="margin:24px 0"><a href="${escape(cta.href)}" style="background:#030101;color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-size:13px;letter-spacing:.12em;text-transform:uppercase">${escape(cta.label)}</a></p>`
     : "";
   return `<div style="font-family:Georgia,serif;max-width:560px;margin:auto;color:#1b1c1a;line-height:1.55">
-<p style="letter-spacing:.3em;font-size:14px;margin:0 0 24px">ÉLORA</p>
+<p style="letter-spacing:.3em;font-size:14px;margin:0 0 24px">ŔOSE ATELIER</p>
 <h1 style="font-weight:400;font-size:24px;margin:0 0 16px">${escape(title)}</h1>${body}${button}
 <p style="color:#807571;font-size:12px;margin-top:32px">Questions? Reply to this email or message us on WhatsApp 0314 8428115.</p></div>`;
 }
@@ -68,10 +68,11 @@ export async function sendMail(to: string, subject: string, title: string, lines
 
 const pkr = (n: number) => `PKR ${n.toLocaleString("en-US")}`;
 
-export function orderPlacedLines(o: Pick<Order, "number" | "items" | "total" | "delivery" | "payment">) {
+export function orderPlacedLines(o: Pick<Order, "number" | "items" | "total" | "delivery" | "payment" | "coupon">) {
   return [
     `Thank you for your order #${o.number}. Our team will confirm it shortly.`,
     ...o.items.map((i) => `• ${i.name} — EU ${i.size} × ${i.quantity}`),
+    ...(o.coupon ? [`Coupon ${o.coupon.code}: you saved ${pkr(o.coupon.discount)}`] : []),
     `Total: ${pkr(o.total)} · ${o.delivery.name} · ${paymentMethodLabel(o.payment.method)}`,
   ];
 }

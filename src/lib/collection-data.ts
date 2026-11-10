@@ -130,11 +130,11 @@ export const assurances = [
   {
     icon: "support_agent",
     title: "Personal Styling Help",
-    text: "Talk to our shoe experts in Milan on video call or chat. They help with sizing and choosing shoes for any event.",
+    text: "Talk to our shoe experts in Karachi on video call or chat. They help with sizing and choosing shoes for any event.",
   },
   {
     icon: "workspace_premium",
-    title: "Made in Florence",
-    text: "Made in certified family workshops in Tuscany, checked for eco-friendly practices.",
+    title: "Made in Karachi",
+    text: "Made in certified family workshops in Karachi, checked for eco-friendly practices.",
   },
 ];

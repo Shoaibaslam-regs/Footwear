@@ -48,8 +48,8 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
         role="dialog"
       >
         <div className="h-20 px-margin-mobile flex items-center justify-between">
-          <span className="font-headline-md text-headline-md tracking-[0.25em] uppercase text-surface-container-lowest">
-            ÉLORA
+          <span className="font-headline-md text-[20px] tracking-[0.16em] uppercase text-surface-container-lowest whitespace-nowrap">
+            Ŕose Atelier
           </span>
           <button
             aria-label="Close Menu"
@@ -63,7 +63,7 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
 
         <nav className="flex-1 overflow-y-auto px-margin-mobile pt-space-lg flex flex-col gap-space-md">
           <span className="font-label-uppercase text-label-uppercase text-secondary-fixed uppercase tracking-[0.2em]">
-            Maison ÉLORA
+            Ŕose Atelier
           </span>
           {navLinks.map((link) => {
             const prefixes: readonly string[] =

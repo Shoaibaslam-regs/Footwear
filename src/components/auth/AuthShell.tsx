@@ -18,7 +18,7 @@ export default function AuthShell({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-space-xl items-stretch">
         <div className="hidden lg:block lg:col-span-6 relative min-h-[640px] rounded-xl overflow-hidden bg-primary-container">
           <Image
-            alt="Sculpted Italian stilettos on a Venetian marble ledge"
+            alt="Sculpted Italian stilettos on a marble ledge"
             className="object-cover opacity-90"
             fill
             priority

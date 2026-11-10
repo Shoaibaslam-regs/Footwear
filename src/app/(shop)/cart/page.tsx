@@ -1,11 +1,13 @@
 import type { Metadata } from "next";
+import { Suspense } from "react";
 import ShoppingBag from "@/components/cart/ShoppingBag";
+import OfferStrip from "@/components/offers/OfferStrip";
 import { toSearchEntry } from "@/lib/products";
 import { getPublishedProducts } from "@/lib/server/products";
 
 export const metadata: Metadata = {
-  title: "Your Shopping Bag — ÉLORA Maison",
-  description: "See the items in your ÉLORA shopping bag.",
+  title: "Your Shopping Bag — Ŕose Atelier",
+  description: "See the items in your Ŕose Atelier shopping bag.",
 };
 
 export default async function CartPage() {
@@ -16,7 +18,14 @@ export default async function CartPage() {
   });
   return (
     <div className="flex flex-col w-full">
-      <ShoppingBag suggestions={suggestions} />
+      <ShoppingBag
+        offerStrip={
+          <Suspense fallback={null}>
+            <OfferStrip />
+          </Suspense>
+        }
+        suggestions={suggestions}
+      />
     </div>
   );
 }

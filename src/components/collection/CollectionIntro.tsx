@@ -32,13 +32,13 @@ export default function CollectionIntro({
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-end pb-space-lg">
         <div className="lg:col-span-8 space-y-space-sm">
           <span className="inline-flex items-center gap-space-xs px-space-sm py-1 bg-secondary-container/40 text-on-secondary-container font-label-uppercase text-label-uppercase tracking-[0.2em] uppercase rounded-full">
-            Made in Florence • Spring / Summer 2025
+            Made in Karachi • Spring / Summer
           </span>
           <h1 className="font-headline-lg text-headline-lg text-primary tracking-tight">
-            The Spring Collection 2025
+            The Spring Collection
           </h1>
           <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
-            Shop {total} handmade styles from Tuscany. From evening parties to
+            Shop {total} handmade styles from Karachi. From evening parties to
             summer holidays, every pair combines a well-balanced heel with soft
             Italian leather.
           </p>

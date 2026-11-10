@@ -126,7 +126,7 @@ export default function AuthForm({
       </button>
 
       <p className="font-body-sm text-body-sm text-on-surface-variant text-center">
-        {isLogin ? "New to ÉLORA? " : "Already have an account? "}
+        {isLogin ? "New to Ŕose Atelier? " : "Already have an account? "}
         <Link
           className="text-primary underline underline-offset-4 decoration-secondary hover:text-secondary"
           href={otherHref}

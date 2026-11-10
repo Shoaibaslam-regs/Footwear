@@ -42,7 +42,7 @@ export async function notifyRestocked(slug: string, name: string, sizes: number[
   const waiting = await col.find({ slug, size: { $in: sizes }, notifiedAt: { $exists: false } }).toArray();
   const base = await siteUrl();
   for (const a of waiting) {
-    await sendMail(a.email, `Back in stock: ${name} (EU ${a.size}) — ÉLORA`, "It's back in your size", [
+    await sendMail(a.email, `Back in stock: ${name} (EU ${a.size}) — Ŕose Atelier`, "It's back in your size", [
       `${name} is available again in EU ${a.size}.`,
       "Pairs are limited, so they may not last long.",
     ], { label: "Shop now", href: `${base}/products/${slug}` });

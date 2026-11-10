@@ -2,6 +2,7 @@ import type { Metadata } from "next";
 import Link from "next/link";
 import { Suspense } from "react";
 import { requireUser } from "@/lib/auth/dal";
+import MyCoupons from "@/components/offers/MyCoupons";
 import { logout } from "@/lib/auth/actions";
 import { fulfilmentSteps, orderStatusLabel, paymentMethodLabel, paymentStatusLabel } from "@/lib/orders";
 import { listOrdersForUser } from "@/lib/server/orders";
@@ -9,7 +10,7 @@ import Price from "@/components/Price";
 import ConfirmButton from "@/components/ConfirmButton";
 
 export const metadata: Metadata = {
-  title: "My Account — ÉLORA Maison",
+  title: "My Account — Ŕose Atelier",
 };
 
 const card = "bg-surface-container-lowest rounded-xl shadow-sm p-space-lg flex flex-col gap-space-sm";
@@ -52,7 +53,7 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
       )}
       {denied === "admin" && (
         <p className="mb-space-md font-body-sm text-body-sm bg-error-container text-on-error-container rounded-lg px-space-md py-space-sm" role="alert">
-          Only ÉLORA admins can open the admin panel.
+          Only Ŕose Atelier admins can open the admin panel.
         </p>
       )}
 
@@ -86,6 +87,8 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
           </Link>
         )}
       </div>
+
+      <MyCoupons userId={user.id} />
 
       <div className="mt-space-xl">
         <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">

@@ -77,11 +77,11 @@ export default function Footer() {
         <div className="pt-space-lg border-t border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-space-md font-label-uppercase text-label-uppercase text-outline">
           <div className="flex items-center gap-space-sm flex-wrap justify-center md:justify-start">
             <span className="tracking-wider">
-              © 2025 ÉLORA MAISON INC. ALL RIGHTS RESERVED.
+              © ŔOSE ATELIER. ALL RIGHTS RESERVED.
             </span>
             <span className="hidden md:inline">•</span>
             <span className="tracking-wider uppercase">
-              Florence — Paris — New York
+              Karachi
             </span>
           </div>
           <div className="w-full md:w-auto flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-end gap-space-sm">

@@ -112,6 +112,18 @@ export default async function AdminOrder({ params }: PageProps<"/admin/orders/[i
                   <dd className="text-right">−{pkr(order.discountTotal)}</dd>
                 </>
               )}
+              {order.coupon && (
+                <>
+                  <dt className="muted">
+                    Coupon <span className="tag tag-info">{order.coupon.code}</span>
+                  </dt>
+                  <dd className="text-right">
+                    {order.coupon.type === "free_delivery"
+                      ? `Free delivery (−${pkr(order.coupon.discount)})`
+                      : `−${pkr(order.coupon.discount)}`}
+                  </dd>
+                </>
+              )}
               <dt className="muted">Delivery ({order.delivery.name})</dt>
               <dd className="text-right">{order.shippingFee ? pkr(order.shippingFee) : "Free"}</dd>
               <dt className="font-semibold">Total</dt>
@@ -211,7 +223,7 @@ export default async function AdminOrder({ params }: PageProps<"/admin/orders/[i
             <h2 className="mb-1">Customer</h2>
             <p className="font-medium">{order.customer.name}</p>
             <p>
-              <a className="link" href={`mailto:${order.customer.email}?subject=${encodeURIComponent(`Your ÉLORA order ${order.number}`)}`}>
+              <a className="link" href={`mailto:${order.customer.email}?subject=${encodeURIComponent(`Your Ŕose Atelier order ${order.number}`)}`}>
                 {order.customer.email}
               </a>
             </p>

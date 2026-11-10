@@ -1,3 +1,4 @@
+import { Suspense } from "react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/dal";
 import { getDashboard, RANGES, type RangeDays } from "@/lib/server/dashboard";
@@ -19,7 +20,7 @@ export const metadata = { title: "Overview" };
 
 const count = (n: number) => n.toLocaleString("en-US");
 
-export default async function AdminOverview({ searchParams }: PageProps<"/admin">) {
+async function AdminOverviewContent({ searchParams }: PageProps<"/admin">) {
   const me = await requireAdmin();
   const sp = await searchParams;
   const asked = Number(sp.range);
@@ -259,5 +260,17 @@ export default async function AdminOverview({ searchParams }: PageProps<"/admin"
         </section>
       </div>
     </div>
+  );
+}
+
+/**
+ * Its own loading placeholder: the content checks coupon dates (the current time),
+ * so it must stream inside the page rather than block navigation to it.
+ */
+export default function AdminOverview(props: PageProps<"/admin">) {
+  return (
+    <Suspense fallback={<p className="muted">Loading…</p>}>
+      <AdminOverviewContent {...props} />
+    </Suspense>
   );
 }

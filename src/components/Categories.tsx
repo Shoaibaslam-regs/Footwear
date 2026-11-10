@@ -18,7 +18,7 @@ export default function Categories() {
         </div>
         <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md">
           Balanced heels, soft memory foam cushioning and hand-shaped
-          leather from Santa Croce, Italy.
+          leather from Italy.
         </p>
       </div>
 

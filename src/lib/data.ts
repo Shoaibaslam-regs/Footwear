@@ -21,11 +21,11 @@ export const heroImage =
 export const heroSlides = () => [
   {
     image: heroImage,
-    alt: "Sculpted Italian stiletto heels in deep espresso patent leather with a champagne gold heel on a Venetian marble ledge",
+    alt: "Sculpted Italian stiletto heels in deep espresso patent leather with a champagne gold heel on a marble ledge",
     position: "center",
   },
   ...[0, 4, 1].map((i) => ({ image: categories[i].image, alt: categories[i].alt, position: "center" })),
-  { image: campaignImage, alt: "ÉLORA campaign editorial", position: "center 30%" },
+  { image: campaignImage, alt: "Rose Atelier campaign photo", position: "center 30%" },
 ];
 
 export type Category = {
@@ -50,7 +50,7 @@ export const categories: Category[] = [
     image:
       IMG +
       "AB6AXuCMKwzghoYrROl6T1d1mVE-eaWaWfUtSE8fuDo4vpwFoqJy7DJHSqL-NS4Zn6E4kcwvzjdb5-iHRhZkivxu65QjWLzGdCu9mIWCi667RdD3M9lsr5t5eDji5foRqj5fI62aLrp9zmrjVEbq3Bfg3KrkjkFmIRut5jy-_85aqesKIHH0PFREl6G1WVPzy2Dc3HdKhkN4M9fKRlymSRo4uzXeV-HQmRy20V3bPal88eQ",
-    alt: "Woman wearing Élora sculptural metallic stiletto heels in a Milan art gallery",
+    alt: "Woman wearing Rose Atelier metallic stiletto heels in an art gallery",
     span: "lg:col-span-7",
     height: "md:h-[460px]",
     large: true,
@@ -63,7 +63,7 @@ export const categories: Category[] = [
     image:
       IMG +
       "AB6AXuAVx5L_stNtH-bN_LyOEW4KiM4ILiV7M3pWorWywRu8ObkkUrbiK79W8WSbVKmjgzI1AV9_W7m7Xyck9Nh-kkMvafh4DHohEl3GjF0AI9iF7NFcfY9uuBjPSE5N4PfmsioCoNQvArggE5nqC1uJpcRKESJ7yyktUA7JsM9lDbg2hZEQbXUaq4SmN1heGXsKCtOslPl4a_3Ydr_7TZlWYGgPxsiX3cCRlHClsL19nSQ",
-    alt: "Gold strappy nappa leather sandals on a sunlit stone step by Lake Como",
+    alt: "Gold strappy nappa leather sandals on a sunlit stone step by a lake",
     span: "lg:col-span-5",
     height: "md:h-[460px]",
     large: true,
@@ -133,7 +133,7 @@ export const newArrivals: Product[] = [
     shortName: "Aurelia Stiletto",
     badge: "New In",
     badgeClass: "bg-primary text-on-primary",
-    spec: "95mm Florentine Heel",
+    spec: "95mm Heel",
     price: 151_200,
     material: "Cashmere Rose & Espresso Nappa",
     image:
@@ -272,7 +272,7 @@ export const craftPillars = [
   },
   {
     icon: "pan_tool_alt",
-    eyebrow: "From Tuscany",
+    eyebrow: "Fine Italian Leather",
     title: "Hand-Picked Leather & Silk",
     text: "Top-quality full-grain leather from checked Italian tanneries, finished with natural plant oils. It feels soft from day one and looks better with age.",
   },
@@ -289,31 +289,31 @@ export const socialTiles = [
     image:
       IMG +
       "AB6AXuCK-hOOiop4B7_5L786bD9PzyLgW8JxKXgPCFBhgDK5nXOTJpIaq_sJJksjQSRhIkMJut7h3y3jg7FkRyrVq4lMtMLrjwoJtcEf7oAFh0yoOluOkbq8nyPcgI11gRxsJaO6bNh3qxeiGyHrKAii2zjdK5uvPyB6Q_MJKBhcSvPc28a9c8eIlNJa6MmOQ3VKAir0LJhn2-BAlwopQ319NC3gCkUW2POojdsmjuAToVE",
-    alt: "Woman in beige tailored trousers and Élora black stiletto mules at a Rome café",
+    alt: "Woman in beige trousers and Rose Atelier black stiletto mules at a café",
   },
   {
     image:
       IMG +
       "AB6AXuAmCpNZFCIT0tZutBjqf8i4h4aByQp9PKs4rMvpbwUOM9wD8VDvMxNAO8bAwNNGZm0x1LXahWU0lAQGxr-FAhVUNw9SoM8ASbF5E_OI2RJZTQwU2a5bEe7gpFMhm4oultUjoNvhDiKUacVlCOxVCzow8vKZ7BT0KIVrfRnmiVEayncaLrKFyRUjiw0-fcZbiiLleBwI7DdHaUcQu8MaKVehkPshrputGC401D9lqmU",
-    alt: "Artisan hands skiving fine Italian leather in a Florentine bottega",
+    alt: "A shoemaker's hands trimming fine leather in our workshop",
   },
   {
     image:
       IMG +
       "AB6AXuCryA3Ivun2dLD5IlRIedNGApJcnfZiMOttUMURDJ75Pbc1Ht74qw-fD1FSnpdUflCabMhPq_5Sr0qAGm9CLbFX_YwrFnBM8IekgdunV4fJwUsM-uZuQGr7ZI2S2HZgUlN9B9vueIoh98QLqL74XE0A6ILUNWYnbWlH6C6YwtTa0VQhKcoXLC1B8ob5gfP-IAnAozm1QMryM-Hs0Mg6nUhfOI_x7nMFLlb4S2-KKx8",
-    alt: "Architectural heels on concrete steps reflecting sunset in Milan",
+    alt: "Architectural heels on concrete steps at sunset",
   },
   {
     image:
       IMG +
       "AB6AXuBg110S19NPzR6zqO3toNP68p8NGnSNUMTaHE7JjR_KSkm6SKTqClX2jBAleSAsO2jDx2GXC-Eqa2x_VXRS6FGaWz0XrA_2UqTqRCwGzPJFIBnopC99nEg4Dgwi-xQL5yE3iu7t3eZOwadiL3rxrgOQimwIXoOknJkIt6GXGF3-xnrPnpj0a1EJfT5060GU2Bm5rjjFiAp9Y7CHog99Gp0WBfq9bsa5KX_yo6xDEhc",
-    alt: "Champagne gold silk straps tied around an ankle on a terrace overlooking Florence",
+    alt: "Champagne gold silk straps tied around an ankle on a terrace at sunset",
   },
   {
     image:
       IMG +
       "AB6AXuA5RDL2y3G9wehyhEkf6v0TsFc_6qaxL58Rd2UARf_mwd7oVl_p0NHWhqqkCuWujIA2ss6UHxwwRqy2Er_M8yIPODEFbu87cZMtOceqdaCjllilL7cdXOdkSmcLXV6OFDVnQVy8w9dweTwSDRRbWgnV_iF9xv6PYuVbcQfSgqjiiDbxsegFsmmfvjpuE30S6Gjiku4pl-rZkTuw_FZqabqpmAAWtv7JJr-srHADgYI",
-    alt: "Élora embossed ivory shoe box with golden logo and grosgrain ribbon on marble",
+    alt: "Rose Atelier ivory shoe box with golden logo and grosgrain ribbon on marble",
   },
 ];
 
@@ -330,11 +330,11 @@ export type FooterLink = { label: string; href?: string; sizeGuide?: boolean };
 
 export const footerColumns: { title: string; links: FooterLink[] }[] = [
   {
-    title: "About ÉLORA",
+    title: "About Ŕose Atelier",
     links: [
       { label: "Our Story", href: "/#craft" },
       { label: "Eco-Friendly Making", href: "/#craft" },
-      { label: "Our Florence Workshops", href: "/#craft" },
+      { label: "Our Karachi Workshop", href: "/#craft" },
       { label: "In the News" },
     ],
   },

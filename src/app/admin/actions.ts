@@ -27,6 +27,7 @@ import { getOrderById, updateOrder } from "@/lib/server/orders";
 import { deleteImages } from "@/lib/server/images";
 import { createResetToken } from "@/lib/server/password-reset";
 import { releaseStock } from "@/lib/server/stock";
+import { releaseCoupon } from "@/lib/server/coupons";
 import { notifyRestocked } from "@/lib/server/stock-alerts";
 import { deleteReviewPhotos } from "@/lib/server/review-uploads";
 import { sendMail, siteUrl, statusLines } from "@/lib/server/mail";
@@ -276,7 +277,7 @@ export async function setOrderStatus(_: OrderActionState, fd: FormData): Promise
   if (!ok) return { error: "The order changed in the meantime. Refresh and try again." };
   await sendMail(
     order.customer.email,
-    `Order #${order.number}: ${orderStatusLabel[to.data]} — ÉLORA`,
+    `Order #${order.number}: ${orderStatusLabel[to.data]} — Ŕose Atelier`,
     orderStatusLabel[to.data],
     statusLines({ number: order.number, status: to.data, trackingNumber: tracking || order.trackingNumber }),
     { label: "View your order", href: `${await siteUrl()}/account/orders/${order.number}` },
@@ -284,6 +285,7 @@ export async function setOrderStatus(_: OrderActionState, fd: FormData): Promise
   // Cancelling stops an order counting towards "sold" and returns its stock.
   if (to.data === "cancelled") {
     await releaseStock(order.items);
+    if (order.coupon) await releaseCoupon(order.coupon.code, order.userId);
     updateTag(SALES_TAG);
     updateTag(PRODUCTS_TAG);
   }

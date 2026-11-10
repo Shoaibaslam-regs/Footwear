@@ -1,0 +1,784 @@
+<!DOCTYPE html>
+
+<html lang="en"><head><meta charset="utf-8"/><meta content="width=device-width, initial-scale=1.0" name="viewport"/><meta content="web_standard" name="shell-type"/><link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:opsz,wght,FILL,GRAD@20..48,100..700,0..1,-50..200" rel="stylesheet"/><link href="https://fonts.googleapis.com" rel="preconnect"/><link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/><link href="https://fonts.googleapis.com/css2?family=Playfair+Display:ital,wght@0,400;0,500;0,600;0,700;1,400&amp;family=Plus+Jakarta+Sans:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined:wght,FILL@100..700,0..1&amp;display=swap" rel="stylesheet"/><style>@layer base{html,body{margin:0;padding:0;}body{overscroll-behavior:none;}main>:first-child{margin-top:0!important;}main>:last-child{margin-bottom:0!important;}}::-webkit-scrollbar{display:none;}</style><script src="https://cdn.tailwindcss.com"></script><script id="tailwind-config">tailwind.config={"darkMode":"class","theme":{"extend":{"colors":{"surface-container-highest":"#e4e2df","surface-dim":"#dbdad7","on-secondary-fixed":"#251a07","inverse-surface":"#30312f","on-surface-variant":"#4e4542","error-container":"#ffdad6","on-primary-fixed":"#201a18","on-tertiary-fixed":"#2e1412","surface-container-low":"#f5f3f0","surface-container":"#efeeeb","on-primary-container":"#8c827f","primary-container":"#211b19","secondary":"#6c5c44","primary-fixed":"#ece0dc","on-secondary":"#ffffff","on-tertiary-container":"#a37b76","on-error-container":"#93000a","primary-fixed-dim":"#d0c4c1","background":"#fbf9f6","error":"#ba1a1a","surface-variant":"#e4e2df","tertiary-container":"#2f1512","outline-variant":"#d1c4c0","inverse-on-surface":"#f2f0ed","on-error":"#ffffff","secondary-fixed":"#f6dfc1","surface":"#fbf9f6","on-primary-fixed-variant":"#4d4543","on-secondary-container":"#716048","surface-container-lowest":"#ffffff","secondary-fixed-dim":"#d9c3a6","on-primary":"#ffffff","on-surface":"#1b1c1a","on-background":"#1b1c1a","tertiary":"#080000","outline":"#807571","surface-bright":"#fbf9f6","on-tertiary":"#ffffff","primary":"#030101","tertiary-fixed-dim":"#eabcb6","surface-tint":"#655d5a","inverse-primary":"#d0c4c1","surface-container-high":"#eae8e5","on-secondary-fixed-variant":"#53442e","tertiary-fixed":"#ffdad6","secondary-container":"#f3dcbe","on-tertiary-fixed-variant":"#5f3e3b"},"borderRadius":{"DEFAULT":"0.125rem","lg":"0.25rem","xl":"0.5rem","full":"0.75rem"},"spacing":{"space-lg":"1.75rem","space-xs":"0.25rem","margin-mobile":"1.25rem","space-sm":"0.5rem","margin":"3.5rem","space-md":"1rem","gutter-mobile":"0.75rem","space-xl":"3rem","gutter":"1.5rem"},"fontFamily":{"label-sm":["Plus Jakarta Sans"],"body-lg":["Plus Jakarta Sans"],"body-sm":["Plus Jakarta Sans"],"headline-lg-mobile":["Playfair Display"],"display-hero":["Playfair Display"],"label-uppercase":["Plus Jakarta Sans"],"headline-md":["Playfair Display"],"label-md":["Plus Jakarta Sans"],"display-hero-mobile":["Playfair Display"],"headline-lg":["Playfair Display"],"body-md":["Plus Jakarta Sans"],"headline-sm":["Playfair Display"]},"fontSize":{"label-sm":["12px",{"lineHeight":"16px","letterSpacing":"0.04em","fontWeight":"500"}],"body-lg":["18px",{"lineHeight":"28px","letterSpacing":"-0.005em","fontWeight":"400"}],"body-sm":["13px",{"lineHeight":"20px","letterSpacing":"0.01em","fontWeight":"400"}],"headline-lg-mobile":["32px",{"lineHeight":"38px","letterSpacing":"0em","fontWeight":"400"}],"display-hero":["64px",{"lineHeight":"72px","letterSpacing":"-0.02em","fontWeight":"400"}],"label-uppercase":["11px",{"lineHeight":"14px","letterSpacing":"0.14em","fontWeight":"600"}],"headline-md":["28px",{"lineHeight":"36px","letterSpacing":"0em","fontWeight":"400"}],"label-md":["14px",{"lineHeight":"18px","letterSpacing":"0.02em","fontWeight":"500"}],"display-hero-mobile":["40px",{"lineHeight":"48px","letterSpacing":"-0.01em","fontWeight":"400"}],"headline-lg":["44px",{"lineHeight":"52px","letterSpacing":"-0.01em","fontWeight":"400"}],"body-md":["15px",{"lineHeight":"24px","letterSpacing":"0em","fontWeight":"400"}],"headline-sm":["22px",{"lineHeight":"28px","letterSpacing":"0em","fontWeight":"500"}]}}}};</script></head><body class="bg-surface font-body-md text-on-surface antialiased selection:bg-secondary-container selection:text-on-secondary-fixed"><header class="fixed top-0 w-full z-50 bg-surface/90 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.03)]"><div class="h-20 w-full px-margin-mobile lg:px-margin flex items-center justify-between"><div class="flex items-center gap-space-md lg:gap-space-lg"><button aria-label="Toggle menu" class="lg:hidden flex items-center justify-center text-on-surface hover:text-secondary transition-colors"><span class="material-symbols-outlined text-[22px]">menu</span></button><div class="flex items-center gap-space-xs"><span class="font-label-uppercase text-label-uppercase text-on-surface-variant cursor-pointer hover:text-on-surface transition-colors">EUR €</span><span class="material-symbols-outlined text-outline text-[14px]">expand_more</span></div><div class="hidden xl:flex items-center gap-space-xs pl-space-sm"><span class="w-1.5 h-1.5 rounded-full bg-secondary"></span><span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest">VIP PRIVILÈGE CONCIERGE</span></div></div><div class="flex flex-col items-center justify-center"><a class="text-center group" data-path="shop" href="#"><span class="font-headline-md text-headline-md tracking-[0.22em] text-primary block uppercase font-light">ÉLORA</span><span class="font-label-uppercase text-[9px] tracking-[0.35em] text-secondary block -mt-1 uppercase">Maison Privilège</span></a></div><div class="flex items-center gap-space-md lg:gap-space-lg"><nav class="hidden lg:flex items-center gap-space-lg" data-active-classes="text-primary font-semibold"><a class="font-label-uppercase text-label-uppercase tracking-[0.16em] text-on-surface-variant hover:text-on-surface transition-colors" data-path="shop" href="#">SHOP</a><a class="font-label-uppercase text-label-uppercase tracking-[0.16em] text-on-surface-variant hover:text-on-surface transition-colors" data-path="collections" href="#">COLLECTIONS</a><a class="font-label-uppercase text-label-uppercase tracking-[0.16em] text-on-surface-variant hover:text-on-surface transition-colors" data-path="bespoke-atelier" href="#">BESPOKE ATELIER</a><a class="font-label-uppercase text-label-uppercase tracking-[0.16em] text-on-surface-variant hover:text-on-surface transition-colors" data-path="vip-circle" href="#">VIP CIRCLE</a><a class="font-label-uppercase text-label-uppercase tracking-[0.16em] text-on-surface-variant hover:text-on-surface transition-colors" data-path="maison-elora" href="#">MAISON ÉLORA</a></nav><div class="flex items-center gap-space-sm lg:gap-space-md"><button aria-label="View shopping bag" class="relative flex items-center gap-space-xs text-on-surface hover:text-secondary transition-colors"><span class="material-symbols-outlined text-[20px]">shopping_bag</span><span class="font-label-sm text-label-sm font-semibold text-on-surface">0</span></button><div class="w-8 h-8 rounded-full bg-primary flex items-center justify-center cursor-pointer transition-transform hover:scale-105"><span class="material-symbols-outlined text-on-primary text-[18px]">person</span></div></div></div></div></header><main class="w-full pt-20 bg-surface min-h-screen"><div class="flex flex-col w-full">
+<!-- Subtle Ambient Glow -->
+<div class="relative w-full overflow-hidden bg-surface pb-space-xl">
+<div class="absolute -top-40 right-10 w-96 h-96 rounded-full bg-secondary-container/40 blur-3xl pointer-events-none"></div>
+<div class="absolute top-80 -left-20 w-80 h-80 rounded-full bg-surface-container-highest/60 blur-3xl pointer-events-none"></div>
+<div class="max-w-[1360px] mx-auto px-margin-mobile lg:px-margin pt-space-md">
+<!-- Breadcrumb & Authentication Bar -->
+<div class="flex flex-col md:flex-row md:items-center justify-between gap-space-xs pb-space-md">
+<div class="flex items-center gap-space-xs text-on-surface-variant font-label-uppercase text-label-uppercase">
+<span class="text-secondary font-semibold">MAISON PRIVILÈGE</span>
+<span>/</span>
+<span>L'ATELIER CIRCLE</span>
+<span>/</span>
+<span class="text-primary font-bold">PRIVATE FITTING VOUCHER</span>
+</div>
+<div class="flex items-center gap-space-sm bg-surface-container-lowest px-space-md py-1.5 rounded-full shadow-sm">
+<span class="w-2 h-2 rounded-full bg-secondary animate-pulse"></span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface">PATRON: BEATRICE MOREAU</span>
+<span class="font-label-sm text-label-sm text-outline">EL-PRIV-9402</span>
+</div>
+</div>
+<!-- Editorial Header Section -->
+<div class="text-center max-w-3xl mx-auto pt-space-sm pb-space-lg">
+<span class="font-label-uppercase text-label-uppercase tracking-[0.28em] text-secondary uppercase block mb-space-xs">
+          Exclusive Client Endowment • Année 2025
+        </span>
+<h1 class="font-headline-lg text-headline-lg text-primary tracking-tight font-normal mb-space-xs">
+          L'Atelier Cadeau — An Invitation to Unveil
+        </h1>
+<p class="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">
+          Curated exclusively for <span class="text-primary font-semibold">Madame Beatrice Moreau</span>. Scratch the gilded atelier wax seal below using your fingertip or cursor to reveal your bespoke couture bequest and private salon fitting privilege.
+        </p>
+<!-- Status & Scratch Progress Indicator -->
+<div class="mt-space-md inline-flex items-center gap-space-md bg-surface-container-low px-space-lg py-space-xs rounded-full shadow-sm">
+<div class="flex items-center gap-space-xs">
+<span class="material-symbols-outlined text-[18px] text-secondary" style="font-variation-settings: 'FILL' 1;">auto_awesome</span>
+<span class="font-label-uppercase text-label-uppercase text-on-surface">Couture Foil Seal</span>
+</div>
+<div class="w-28 h-1.5 bg-surface-container-highest rounded-full overflow-hidden">
+<div class="h-full bg-secondary transition-all duration-300 w-0" id="scratchProgressBar"></div>
+</div>
+<span class="font-label-sm text-label-sm font-semibold text-secondary min-w-[50px] text-right" id="scratchProgressText">0% Scratched</span>
+</div>
+</div>
+<!-- The Masterpiece Scratchcard Container -->
+<div class="relative max-w-4xl mx-auto mb-space-xl">
+<!-- Physical Card Rim with Linen & Foil Layering -->
+<div class="p-3 lg:p-4 rounded-xl bg-surface-container-highest shadow-xl relative">
+<!-- Card Base Body -->
+<div class="bg-surface-container-lowest rounded-lg p-6 lg:p-10 relative overflow-hidden shadow-sm">
+<!-- Guilloché & Watermark Decorative SVG Pattern -->
+<div class="absolute inset-0 pointer-events-none opacity-[0.035] flex items-center justify-center">
+<svg fill="none" height="400" viewbox="0 0 600 400" width="600" xmlns="http://www.w3.org/2000/svg">
+<circle cx="300" cy="200" r="180" stroke="currentColor" stroke-dasharray="3 3" stroke-width="1.5"></circle>
+<circle cx="300" cy="200" r="140" stroke="currentColor" stroke-width="0.8"></circle>
+<circle cx="300" cy="200" r="100" stroke="currentColor" stroke-dasharray="6 4" stroke-width="1.2"></circle>
+<path d="M150 200 C 220 100, 380 100, 450 200 C 380 300, 220 300, 150 200 Z" stroke="currentColor" stroke-width="0.8"></path>
+<text fill="currentColor" font-family="Playfair Display" font-size="28" letter-spacing="12" text-anchor="middle" x="300" y="210">ÉLORA</text>
+</svg>
+</div>
+<!-- Card Header Strip -->
+<div class="flex items-center justify-between pb-space-sm mb-space-sm">
+<div class="flex items-center gap-space-sm">
+<div class="w-9 h-9 rounded-full bg-primary flex items-center justify-center text-on-primary">
+<span class="font-headline-sm text-headline-sm italic">É</span>
+</div>
+<div>
+<span class="font-label-uppercase text-label-uppercase tracking-[0.2em] text-primary font-bold block">ÉLORA MAISON DE HAUTE CHAUSSURE</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[11px] block">Via de' Tornabuoni, 14 • Firenze — Place Vendôme • Paris</span>
+</div>
+</div>
+<div class="text-right">
+<span class="font-label-uppercase text-[10px] text-outline block tracking-widest">CERTIFICATE IDENTITY</span>
+<span class="font-body-sm text-body-sm font-semibold tracking-wider text-secondary">EL-PRIV-2025-GOLD-77</span>
+</div>
+</div>
+<!-- The Scratch Stage: Dual Layer (Revealed Reward underneath + HTML5 Canvas Foil Top) -->
+<div class="relative w-full min-h-[340px] md:min-h-[380px] rounded-lg overflow-hidden select-none bg-surface-container-low shadow-inner">
+<!-- LAYER 1: The Prestigious Reward (Revealed underneath) -->
+<div class="absolute inset-0 p-6 md:p-8 flex flex-col justify-between bg-gradient-to-br from-surface-container-lowest via-surface-container-low to-secondary-container/20" id="rewardLayer">
+<div class="flex items-start justify-between">
+<div class="space-y-1">
+<span class="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary text-on-secondary font-label-uppercase text-[10px] tracking-widest">
+<span class="material-symbols-outlined text-[13px]" style="font-variation-settings: 'FILL' 1;">workspace_premium</span>
+                      VIP PRIVILÈGE BEQUEST
+                    </span>
+<h2 class="font-headline-md text-headline-md text-primary pt-space-xs font-normal">
+                      €500 Atelier Commission Endowment
+                    </h2>
+<p class="font-body-md text-body-md text-secondary font-medium">
+                      + Complimentary 24K Gold Leaf Sole Monogramming &amp; Bespoke Lasting Session
+                    </p>
+</div>
+<div class="hidden sm:flex flex-col items-center justify-center p-3 rounded-md bg-surface-container-highest/60 text-center min-w-[110px]">
+<span class="material-symbols-outlined text-secondary text-[24px]">verified</span>
+<span class="font-label-uppercase text-[9px] tracking-wider text-on-surface mt-1">OFFICIAL SEAL</span>
+<span class="font-label-sm text-[10px] text-outline">FIRENZE BOTTEGA</span>
+</div>
+</div>
+<!-- Central Voucher Display with Copy Action -->
+<div class="my-space-sm p-4 md:p-5 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-md">
+<div class="space-y-0.5 text-center md:text-left">
+<span class="font-label-uppercase text-label-uppercase text-outline tracking-wider block">PRIVATE PRIVILÈGE CODE</span>
+<span class="font-headline-sm text-headline-sm tracking-[0.18em] text-primary font-bold selection:bg-secondary-container" id="voucherCodeDisplay">
+                      ELORA-AURELIA-500
+                    </span>
+</div>
+<div class="flex items-center gap-space-xs w-full md:w-auto justify-center">
+<button class="flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full bg-primary text-on-primary hover:bg-secondary transition-all font-label-uppercase text-label-uppercase tracking-wider shadow-sm" id="copyVoucherBtn">
+<span class="material-symbols-outlined text-[16px]" id="copyIcon">content_copy</span>
+<span id="copyText">COPY CODE</span>
+</button>
+<button class="flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full bg-secondary-container text-on-secondary-fixed hover:bg-secondary hover:text-on-secondary transition-all font-label-uppercase text-label-uppercase tracking-wider" id="applyCartBtn">
+<span class="material-symbols-outlined text-[16px]">shopping_bag</span>
+<span id="applyCartText">1-CLICK APPLY</span>
+</button>
+</div>
+</div>
+<!-- Footer Terms & Salon Actions -->
+<div class="pt-space-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
+<div class="flex items-center gap-space-xs text-[12px]">
+<span class="material-symbols-outlined text-secondary text-[16px]">schedule</span>
+<span>Valid until <strong>December 31, 2025</strong> • Florence &amp; Milan Bottegas or Private Digital Concierge</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<a class="font-label-uppercase text-label-uppercase text-secondary hover:text-primary transition-colors underline underline-offset-4" href="#conciergeDesk">
+                      Book Private Fitting
+                    </a>
+<span class="text-outline">•</span>
+<button class="font-label-uppercase text-label-uppercase text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1" id="downloadPdfBtn">
+<span class="material-symbols-outlined text-[14px]">download</span> PDF Certificate
+                    </button>
+</div>
+</div>
+</div>
+<!-- LAYER 2: The HTML5 Interactive Scratch Canvas (Gilded Antique Gold Foil) -->
+<canvas class="absolute inset-0 w-full h-full cursor-crosshair z-20 touch-none transition-opacity duration-700 ease-out" id="scratchCanvas"></canvas>
+<!-- Helper Floating Badge Over Canvas -->
+<div class="absolute bottom-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none bg-primary/80 backdrop-blur-md text-on-primary px-4 py-1.5 rounded-full shadow-lg transition-opacity duration-500" id="scratchHelperBadge">
+<span class="font-label-uppercase text-[10px] tracking-[0.18em] uppercase flex items-center gap-1.5">
+<span class="material-symbols-outlined text-[14px] text-secondary-fixed">gesture</span>
+                  Scratch with cursor or finger
+                </span>
+</div>
+</div>
+<!-- Card Bottom Ribbon -->
+<div class="mt-space-md pt-space-sm flex flex-col sm:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-uppercase text-[10px] tracking-widest">
+<div class="flex items-center gap-space-md">
+<span class="flex items-center gap-1">
+<span class="material-symbols-outlined text-[14px] text-secondary">lock</span>
+                  NON-TRANSFERABLE • BEATRICE MOREAU
+                </span>
+<span>AUTHENTICATED BY BOTTEGA FALCHI</span>
+</div>
+<div class="flex items-center gap-space-sm">
+<button class="text-secondary hover:text-primary transition-colors underline cursor-pointer" id="instantRevealBtn">
+                  QUICK REVEAL ALL
+                </button>
+<span>•</span>
+<button class="hover:text-primary transition-colors cursor-pointer" id="resetScratchBtn">
+                  RESET FOIL
+                </button>
+</div>
+</div>
+</div>
+</div>
+<!-- Confetti Canvas overlay for celebration -->
+<canvas class="absolute inset-0 pointer-events-none z-40 w-full h-full" id="confettiCanvas"></canvas>
+</div>
+<!-- Quick Action Alert Notification (Hidden by default, triggered on copy / apply) -->
+<div class="fixed bottom-8 left-1/2 -translate-x-1/2 z-50 bg-primary text-on-primary px-6 py-3 rounded-full shadow-2xl flex items-center gap-3 transition-all duration-300 opacity-0 translate-y-6 pointer-events-none" id="toastNotification">
+<span class="material-symbols-outlined text-secondary-fixed text-[20px]">check_circle</span>
+<span class="font-label-md text-label-md" id="toastMessage">Voucher code copied to clipboard</span>
+</div>
+<!-- Section: 3-Step Redemption Editorial -->
+<div class="mt-space-xl mb-space-xl">
+<div class="text-center max-w-xl mx-auto mb-space-lg">
+<span class="font-label-uppercase text-label-uppercase tracking-[0.24em] text-secondary uppercase block mb-space-xs">
+            Seamless Privilège Protocol
+          </span>
+<h2 class="font-headline-md text-headline-md text-primary font-normal">
+            How to Redeem Your Atelier Credit
+          </h2>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Step 1 -->
+<div class="p-space-lg rounded-xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-md flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-headline-sm text-headline-sm mb-space-md">
+                01
+              </div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs font-normal">
+                Reserve Fitting or Curate Online
+              </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Select your silhouette from the Permanent Haute Collection online, or request a private 90-minute champagne appointment at our Florence or Milan salons.
+              </p>
+</div>
+<div class="mt-space-md pt-space-sm font-label-uppercase text-[11px] text-secondary tracking-widest">
+              STEP I • SALON OR DIGITAL
+            </div>
+</div>
+<!-- Step 2 -->
+<div class="p-space-lg rounded-xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-md flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-full bg-secondary-container flex items-center justify-center text-on-secondary-fixed font-headline-sm text-headline-sm mb-space-md">
+                02
+              </div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs font-normal">
+                Present Code or 1-Click Deduct
+              </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Apply <code class="bg-surface-container-highest px-1.5 py-0.5 rounded text-primary font-semibold">ELORA-AURELIA-500</code> in your digital bag or present this authenticated pass to your Private Hostess upon arrival.
+              </p>
+</div>
+<div class="mt-space-md pt-space-sm font-label-uppercase text-[11px] text-secondary tracking-widest">
+              STEP II • INSTANT €500 ENDOWMENT
+            </div>
+</div>
+<!-- Step 3 -->
+<div class="p-space-lg rounded-xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-md flex flex-col justify-between">
+<div>
+<div class="w-12 h-12 rounded-full bg-surface-container-highest flex items-center justify-center text-primary font-headline-sm text-headline-sm mb-space-md">
+                03
+              </div>
+<h3 class="font-headline-sm text-headline-sm text-primary mb-space-xs font-normal">
+                24K Gold Leaf Customization
+              </h3>
+<p class="font-body-md text-body-md text-on-surface-variant">
+                Master artisans hand-press your personalized initials in 24K gold foil along the arch sole, accompanied by custom wooden cedar shoe trees and silk dust cases.
+              </p>
+</div>
+<div class="mt-space-md pt-space-sm font-label-uppercase text-[11px] text-secondary tracking-widest">
+              STEP III • BESPOKE FINISH
+            </div>
+</div>
+</div>
+</div>
+<!-- Section: Recommended Bespoke Silhouettes Matching The Voucher -->
+<div class="my-space-xl">
+<div class="flex flex-col md:flex-row md:items-end justify-between mb-space-lg gap-space-xs">
+<div>
+<span class="font-label-uppercase text-label-uppercase tracking-[0.24em] text-secondary uppercase block mb-space-xs">
+              Curated for Beatrice Moreau
+            </span>
+<h2 class="font-headline-md text-headline-md text-primary font-normal">
+              Recommended Bespoke Commissions
+            </h2>
+</div>
+<p class="font-body-sm text-body-sm text-on-surface-variant max-w-md">
+            Prices displayed reflect standard atelier commission, alongside your exclusive subsidized rate when utilizing the €500 endowment.
+          </p>
+</div>
+<div class="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+<!-- Shoe 1 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+<div class="relative aspect-[3/4] w-full overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" data-alt="High luxury champagne silk satin stiletto with gold leaf heel sculpture, shot on minimal alabaster pedestal with soft cinematic warm lighting, ultra high-end fashion magazine editorial style." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDDbcMrMmO_sc227kZyTUEBVwu7thfRdDMx8qXcerbtDGQ5iPhTMmuv-vqho4iuoGjdTJhLjCw0z2Wu_cXRsKXp0M1nfQnt0xH1_zCemDFEGZGRR8GD26kbGh7ugzjqZjp2NrCEFIZnsbTSmIzp231eZ2zupZBNi4mjA11gjn61VQ7COb4hvscl5VLJxB2shLO2cUzojvHSz2aAqgtcdXxMRRTPXFu0FkfSbHA8f3k"/>
+<div class="absolute top-4 left-4">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur text-primary font-label-uppercase text-[10px] tracking-wider shadow-sm">
+                  85MM STILETTO
+                </span>
+</div>
+</div>
+<div class="p-space-md space-y-space-xs flex-1 flex flex-col justify-between">
+<div>
+<span class="font-label-uppercase text-[10px] tracking-widest text-secondary block">CHAMPAGNE SILK SATIN</span>
+<h3 class="font-headline-sm text-headline-sm text-primary font-normal">The Aurelia Stiletto</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-1">
+                  Sculpted arch in Milanese nappa lining with delicate crystalline buckle and hand-buffed leather sole.
+                </p>
+</div>
+<div class="pt-space-sm flex items-center justify-between">
+<div>
+<span class="font-body-sm text-body-sm text-outline line-through block">€980</span>
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-primary font-semibold">€480</span>
+<span class="font-label-uppercase text-[10px] text-secondary font-semibold bg-secondary-container/50 px-1.5 py-0.5 rounded">WITH VOUCHER</span>
+</div>
+</div>
+<button class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-secondary transition-colors" title="Select for Fitting">
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Shoe 2 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+<div class="relative aspect-[3/4] w-full overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" data-alt="Espresso Tuscan nappa architectural mule with sculptural brushed brass heel on parchment background, high fashion luxury editorial studio photography, clean lines and warm shadows." src="https://lh3.googleusercontent.com/aida-public/AB6AXuATcrHd1spburGMDSxPzVxOUyp1ObZXs-rspFkUhqoEb3Y3sguj_Alkredt_B9LAGKJYpV8fQ8Ovz9d9Yezk_vBh0tmBIXyyxU-SxA6vtfTN04gGm2rNmiQ60pORF5B7WzPdc1rjuxaK8sj4Ay5SBASKQAXaRDS1dYwQT6NMJSEgzBqyKLmqjXMTlSU4BDqSyYCStE6pm9gCWn9fqITKDz6WOGNDRZWEdsyGAvyToc"/>
+<div class="absolute top-4 left-4">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur text-primary font-label-uppercase text-[10px] tracking-wider shadow-sm">
+                  65MM ARCHITECTURAL MULE
+                </span>
+</div>
+</div>
+<div class="p-space-md space-y-space-xs flex-1 flex flex-col justify-between">
+<div>
+<span class="font-label-uppercase text-[10px] tracking-widest text-secondary block">ESPRESSO TUSCAN NAPPA</span>
+<h3 class="font-headline-sm text-headline-sm text-primary font-normal">Sienna Sculpted Mule</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-1">
+                  Vegetable-tanned full-grain Tuscan calf with signature concave gold heel and padded anatomical footbed.
+                </p>
+</div>
+<div class="pt-space-sm flex items-center justify-between">
+<div>
+<span class="font-body-sm text-body-sm text-outline line-through block">€850</span>
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-primary font-semibold">€350</span>
+<span class="font-label-uppercase text-[10px] text-secondary font-semibold bg-secondary-container/50 px-1.5 py-0.5 rounded">WITH VOUCHER</span>
+</div>
+</div>
+<button class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-secondary transition-colors" title="Select for Fitting">
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+<!-- Shoe 3 -->
+<div class="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
+<div class="relative aspect-[3/4] w-full overflow-hidden bg-surface-container-low">
+<img class="w-full h-full object-cover object-center group-hover:scale-105 transition-transform duration-700" data-alt="Deep chocolate brown polished calfskin pointed luxury loafer with delicate gold chain bit on cream marble, Vogue Italia footwear styling, warm lighting and rich leather textures." src="https://lh3.googleusercontent.com/aida-public/AB6AXuDK9K8zGsewX6N5WAAl7nykuVqu06acU_jzjMRiRS-H4fvbyRHYWTEfPSBnNG3qpMrr-fYKLhsT7ki96iSZllemMx7bKG6RMkWZDeiMYuXrVu8YOVVimH4wvCpSmyTJygZOD-OQj4kr2ijEypUO9cmI_RdDJcGHNpCBhTmmV1F-5Y3Ih9I25u4_lV3awpewqYBRUL8jOSdioc2YWrSn2BTc4E6BC4vspZMBiUTXTu8"/>
+<div class="absolute top-4 left-4">
+<span class="px-2.5 py-1 rounded-full bg-surface-container-lowest/90 backdrop-blur text-primary font-label-uppercase text-[10px] tracking-wider shadow-sm">
+                  FLAT COUTURE LOAFER
+                </span>
+</div>
+</div>
+<div class="p-space-md space-y-space-xs flex-1 flex flex-col justify-between">
+<div>
+<span class="font-label-uppercase text-[10px] tracking-widest text-secondary block">DEEP CHOCOLATE CALFSKIN</span>
+<h3 class="font-headline-sm text-headline-sm text-primary font-normal">Elise Pointed Loafer</h3>
+<p class="font-body-sm text-body-sm text-on-surface-variant line-clamp-2 mt-1">
+                  Ultra-tapered silhouette with antique gold chain ornament, Goodyear-welted construction, hand-dyed patina.
+                </p>
+</div>
+<div class="pt-space-sm flex items-center justify-between">
+<div>
+<span class="font-body-sm text-body-sm text-outline line-through block">€720</span>
+<div class="flex items-center gap-1.5">
+<span class="font-headline-sm text-headline-sm text-primary font-semibold">€220</span>
+<span class="font-label-uppercase text-[10px] text-secondary font-semibold bg-secondary-container/50 px-1.5 py-0.5 rounded">WITH VOUCHER</span>
+</div>
+</div>
+<button class="w-10 h-10 rounded-full bg-primary text-on-primary flex items-center justify-center hover:bg-secondary transition-colors" title="Select for Fitting">
+<span class="material-symbols-outlined text-[18px]">arrow_forward</span>
+</button>
+</div>
+</div>
+</div>
+</div>
+</div>
+<!-- Section: VIP Concierge Direct Desk & Bottega Map Link -->
+<div class="my-space-xl p-6 lg:p-10 rounded-xl bg-surface-container-low shadow-sm" id="conciergeDesk">
+<div class="grid grid-cols-1 lg:grid-cols-12 gap-gutter items-center">
+<div class="lg:col-span-5 flex items-center gap-space-md">
+<div class="w-24 h-24 rounded-full overflow-hidden bg-surface-container-highest shrink-0 shadow-md">
+<img class="w-full h-full object-cover" data-alt="Distinguished Italian master shoemaker in his 50s wearing tailored linen shirt and leather artisan apron in a Florence wood-paneled atelier, warm daylight, gentle smile, portrait." src="https://lh3.googleusercontent.com/aida-public/AB6AXuBIx4SNjBVgLSgOHVl8jLrNMj6Ig0cJouMZxYMWaAa7xmLRq82_hUcvopj6z_2c7dBHs_dlEEgtRUvEs_LNf4WRNT18wOjffg8Pw-zlGTka17D0m0T5_E6Z5ORc5MfD_BFgl4DRrWDdnu_obcUmmv8-jzcLP_Jzac_8A6zzAhtq2S5M1_v5EZ8VFAayC2SyQwGjgRJyB-bx5Z72hXyQxHUrHiBBPQs61um51-qh8Tw"/>
+</div>
+<div>
+<div class="flex items-center gap-2">
+<span class="font-headline-sm text-headline-sm text-primary font-normal">Maestro Renzo Falchi</span>
+<span class="material-symbols-outlined text-secondary text-[18px]" title="Lead Cordwainer">verified</span>
+</div>
+<span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block">Chief Master Cordwainer • Florence</span>
+<p class="font-body-sm text-body-sm text-on-surface-variant mt-1">
+                "It will be my distinct pleasure to prepare the wooden lasts for Madame Moreau's feet and oversee your 24K sole dedication."
+              </p>
+</div>
+</div>
+<div class="lg:col-span-7 flex flex-col sm:flex-row items-center justify-end gap-space-md">
+<div class="bg-surface-container-lowest p-space-md rounded-lg shadow-sm w-full sm:w-auto">
+<span class="font-label-uppercase text-[10px] text-outline tracking-wider block">PRIVATE VIP LINE</span>
+<span class="font-body-md text-body-md text-primary font-semibold block">+39 055 287 4410</span>
+<span class="font-body-sm text-body-sm text-on-surface-variant text-[12px]">Florence Bottega Salon Desk</span>
+</div>
+<a class="w-full sm:w-auto inline-flex items-center justify-center gap-2 px-space-lg py-3.5 rounded-full bg-primary text-on-primary hover:bg-secondary transition-all font-label-uppercase text-label-uppercase tracking-widest shadow-md" href="https://wa.me/390552874410" rel="noopener noreferrer" target="_blank">
+<span class="material-symbols-outlined text-[18px]">chat</span>
+<span>MESSAGE MAESTRO ON WHATSAPP</span>
+</a>
+</div>
+</div>
+</div>
+</div>
+</div>
+</div>
+<script>
+  (function () {
+    const canvas = document.getElementById('scratchCanvas');
+    if (!canvas) return;
+    const ctx = canvas.getContext('2d', { willReadFrequently: true });
+    const progressBar = document.getElementById('scratchProgressBar');
+    const progressText = document.getElementById('scratchProgressText');
+    const helperBadge = document.getElementById('scratchHelperBadge');
+    const copyBtn = document.getElementById('copyVoucherBtn');
+    const copyText = document.getElementById('copyText');
+    const copyIcon = document.getElementById('copyIcon');
+    const applyCartBtn = document.getElementById('applyCartBtn');
+    const applyCartText = document.getElementById('applyCartText');
+    const instantRevealBtn = document.getElementById('instantRevealBtn');
+    const resetScratchBtn = document.getElementById('resetScratchBtn');
+    const downloadPdfBtn = document.getElementById('downloadPdfBtn');
+    const toast = document.getElementById('toastNotification');
+    const toastMsg = document.getElementById('toastMessage');
+    const confettiCanvas = document.getElementById('confettiCanvas');
+
+    let isDrawing = false;
+    let lastPoint = null;
+    let isFullyRevealed = false;
+    let isInitialized = false;
+
+    // Toast utility
+    function showToast(message) {
+      if (!toast) return;
+      toastMsg.textContent = message;
+      toast.classList.remove('opacity-0', 'translate-y-6', 'pointer-events-none');
+      toast.classList.add('opacity-100', 'translate-y-0');
+      setTimeout(() => {
+        toast.classList.add('opacity-0', 'translate-y-6', 'pointer-events-none');
+        toast.classList.remove('opacity-100', 'translate-y-0');
+      }, 3200);
+    }
+
+    // High DPI sizing & Initial Canvas Gilded Rendering
+    function resizeAndDrawFoil() {
+      const rect = canvas.getBoundingClientRect();
+      const dpr = window.devicePixelRatio || 1;
+      canvas.width = rect.width * dpr;
+      canvas.height = rect.height * dpr;
+      ctx.scale(dpr, dpr);
+      renderGoldFoil(rect.width, rect.height);
+      isInitialized = true;
+    }
+
+    function renderGoldFoil(width, height) {
+      ctx.globalCompositeOperation = 'source-over';
+      ctx.clearRect(0, 0, width, height);
+
+      // 1. Opulent Metallic Gold Foil Gradient
+      const goldGrad = ctx.createLinearGradient(0, 0, width, height);
+      goldGrad.addColorStop(0.0, '#b8860b');
+      goldGrad.addColorStop(0.2, '#dfbe76');
+      goldGrad.addColorStop(0.4, '#f5e4b3');
+      goldGrad.addColorStop(0.55, '#d4af37');
+      goldGrad.addColorStop(0.75, '#aa771c');
+      goldGrad.addColorStop(0.9, '#f3d994');
+      goldGrad.addColorStop(1.0, '#996515');
+
+      ctx.fillStyle = goldGrad;
+      ctx.fillRect(0, 0, width, height);
+
+      // 2. Foil Brushed Texture Specks
+      ctx.fillStyle = 'rgba(255, 255, 255, 0.08)';
+      for (let i = 0; i < 700; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const radius = Math.random() * 1.5;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      ctx.fillStyle = 'rgba(33, 27, 25, 0.08)';
+      for (let i = 0; i < 400; i++) {
+        const x = Math.random() * width;
+        const y = Math.random() * height;
+        const radius = Math.random() * 1.2;
+        ctx.beginPath();
+        ctx.arc(x, y, radius, 0, Math.PI * 2);
+        ctx.fill();
+      }
+
+      // 3. Delicate Guilloché & Florentine Monogram Crest debossed
+      ctx.save();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.35)';
+      ctx.lineWidth = 1;
+      ctx.strokeRect(16, 16, width - 32, height - 32);
+
+      ctx.strokeStyle = 'rgba(40, 25, 10, 0.25)';
+      ctx.strokeRect(20, 20, width - 40, height - 40);
+
+      // Monogram Medal Center
+      const cx = width / 2;
+      const cy = height / 2;
+
+      ctx.beginPath();
+      ctx.arc(cx, cy, 64, 0, Math.PI * 2);
+      ctx.fillStyle = 'rgba(255, 245, 220, 0.15)';
+      ctx.fill();
+      ctx.strokeStyle = 'rgba(255, 255, 255, 0.4)';
+      ctx.lineWidth = 1.5;
+      ctx.stroke();
+
+      // Debossed typography
+      ctx.shadowColor = 'rgba(255, 255, 255, 0.4)';
+      ctx.shadowOffsetX = 0;
+      ctx.shadowOffsetY = 1;
+      ctx.shadowBlur = 2;
+
+      ctx.fillStyle = '#4a3311';
+      ctx.font = 'bold 36px "Playfair Display", Georgia, serif';
+      ctx.textAlign = 'center';
+      ctx.textBaseline = 'middle';
+      ctx.fillText('ÉLORA', cx, cy - 8);
+
+      ctx.font = '600 9px "Plus Jakarta Sans", sans-serif';
+      ctx.letterSpacing = '5px';
+      ctx.fillStyle = '#3a250b';
+      ctx.fillText('PRIVILÈGE SEAL', cx, cy + 22);
+
+      // Instruction Overline
+      ctx.font = '600 11px "Plus Jakarta Sans", sans-serif';
+      ctx.letterSpacing = '3px';
+      ctx.fillStyle = '#2c1906';
+      ctx.fillText('✦ SCRATCH TO UNVEIL BESPOKE PRIVILÈGE ✦', cx, height - 42);
+
+      ctx.font = '400 10px "Plus Jakarta Sans", sans-serif';
+      ctx.letterSpacing = '1px';
+      ctx.fillStyle = '#5c3a10';
+      ctx.fillText('Touch or Drag Cursor Across The Golden Seal', cx, height - 26);
+      ctx.restore();
+    }
+
+    // Scratch coordinate mapping
+    function getPointerPos(e) {
+      const rect = canvas.getBoundingClientRect();
+      const clientX = e.touches ? e.touches[0].clientX : e.clientX;
+      const clientY = e.touches ? e.touches[0].clientY : e.clientY;
+      return {
+        x: clientX - rect.left,
+        y: clientY - rect.top
+      };
+    }
+
+    // Erase foil with realistic soft edge brush
+    function scratchAt(x, y) {
+      ctx.save();
+      ctx.globalCompositeOperation = 'destination-out';
+      ctx.beginPath();
+      ctx.arc(x, y, 28, 0, Math.PI * 2);
+      ctx.fill();
+
+      // Smooth path join if moving fast
+      if (lastPoint) {
+        ctx.lineWidth = 56;
+        ctx.lineCap = 'round';
+        ctx.lineJoin = 'round';
+        ctx.beginPath();
+        ctx.moveTo(lastPoint.x, lastPoint.y);
+        ctx.lineTo(x, y);
+        ctx.stroke();
+      }
+      ctx.restore();
+      lastPoint = { x, y };
+
+      if (helperBadge) {
+        helperBadge.style.opacity = '0';
+      }
+    }
+
+    // Calculate scratched area percentage
+    let lastCheckTime = 0;
+    function calculateScratchPercentage() {
+      const now = Date.now();
+      if (now - lastCheckTime < 180) return; // Throttled performance
+      lastCheckTime = now;
+
+      const dpr = window.devicePixelRatio || 1;
+      const w = canvas.width;
+      const h = canvas.height;
+      
+      // Sample 32x32 pixel grid
+      const sampleStepX = Math.floor(w / 32);
+      const sampleStepY = Math.floor(h / 32);
+      const imgData = ctx.getImageData(0, 0, w, h);
+      const data = imgData.data;
+
+      let transparentSamples = 0;
+      let totalSamples = 0;
+
+      for (let y = 0; y < h; y += sampleStepY) {
+        for (let x = 0; x < w; x += sampleStepX) {
+          const index = (y * w + x) * 4 + 3; // alpha channel
+          if (data[index] < 128) {
+            transparentSamples++;
+          }
+          totalSamples++;
+        }
+      }
+
+      const percent = Math.min(100, Math.round((transparentSamples / totalSamples) * 100));
+      updateProgressDisplay(percent);
+
+      if (percent >= 45 && !isFullyRevealed) {
+        completeUnveil();
+      }
+    }
+
+    function updateProgressDisplay(pct) {
+      if (progressBar) progressBar.style.width = pct + '%';
+      if (progressText) progressText.textContent = pct + '% Scratched';
+    }
+
+    // Trigger complete graceful reveal + celebratory burst
+    function completeUnveil() {
+      isFullyRevealed = true;
+      updateProgressDisplay(100);
+
+      // Smoothly fade remaining canvas out
+      canvas.classList.add('opacity-0');
+      setTimeout(() => {
+        canvas.style.pointerEvents = 'none';
+      }, 700);
+
+      triggerGoldenConfetti();
+      showToast('✦ Privilège Unveiled: €500 Endowment & 24K Sole Monogram Activated ✦');
+    }
+
+    // Confetti Engine for haute golden sparkles
+    function triggerGoldenConfetti() {
+      if (!confettiCanvas) return;
+      const cCtx = confettiCanvas.getContext('2d');
+      const rect = confettiCanvas.getBoundingClientRect();
+      confettiCanvas.width = rect.width;
+      confettiCanvas.height = rect.height;
+
+      const particles = [];
+      const colors = ['#d4af37', '#f5e4b3', '#ffffff', '#aa771c', '#e4e2df'];
+
+      for (let i = 0; i < 90; i++) {
+        particles.push({
+          x: rect.width / 2,
+          y: rect.height / 2,
+          vx: (Math.random() - 0.5) * 14,
+          vy: (Math.random() - 0.7) * 16,
+          size: Math.random() * 5 + 3,
+          color: colors[Math.floor(Math.random() * colors.length)],
+          rotation: Math.random() * 360,
+          vRot: (Math.random() - 0.5) * 12,
+          life: 1.0,
+          decay: Math.random() * 0.015 + 0.01
+        });
+      }
+
+      function drawParticles() {
+        cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        let active = 0;
+
+        particles.forEach(p => {
+          if (p.life > 0) {
+            active++;
+            p.x += p.vx;
+            p.y += p.vy;
+            p.vy += 0.28; // gravity
+            p.rotation += p.vRot;
+            p.life -= p.decay;
+
+            cCtx.save();
+            cCtx.translate(p.x, p.y);
+            cCtx.rotate((p.rotation * Math.PI) / 180);
+            cCtx.fillStyle = p.color;
+            cCtx.globalAlpha = Math.max(0, p.life);
+            cCtx.fillRect(-p.size / 2, -p.size / 2, p.size, p.size * 0.7);
+            cCtx.restore();
+          }
+        });
+
+        if (active > 0) {
+          requestAnimationFrame(drawParticles);
+        } else {
+          cCtx.clearRect(0, 0, confettiCanvas.width, confettiCanvas.height);
+        }
+      }
+
+      requestAnimationFrame(drawParticles);
+    }
+
+    // Canvas Events Handlers
+    function startScratching(e) {
+      if (isFullyRevealed) return;
+      isDrawing = true;
+      const pos = getPointerPos(e);
+      scratchAt(pos.x, pos.y);
+    }
+
+    function moveScratching(e) {
+      if (!isDrawing || isFullyRevealed) return;
+      e.preventDefault();
+      const pos = getPointerPos(e);
+      scratchAt(pos.x, pos.y);
+      calculateScratchPercentage();
+    }
+
+    function stopScratching() {
+      isDrawing = false;
+      lastPoint = null;
+      if (!isFullyRevealed) {
+        calculateScratchPercentage();
+      }
+    }
+
+    // Pointer & Touch Listeners
+    canvas.addEventListener('mousedown', startScratching);
+    window.addEventListener('mousemove', moveScratching);
+    window.addEventListener('mouseup', stopScratching);
+
+    canvas.addEventListener('touchstart', startScratching, { passive: false });
+    window.addEventListener('touchmove', moveScratching, { passive: false });
+    window.addEventListener('touchend', stopScratching);
+
+    // Instant Reveal Button
+    if (instantRevealBtn) {
+      instantRevealBtn.addEventListener('click', () => {
+        completeUnveil();
+      });
+    }
+
+    // Reset Foil
+    if (resetScratchBtn) {
+      resetScratchBtn.addEventListener('click', () => {
+        isFullyRevealed = false;
+        canvas.classList.remove('opacity-0');
+        canvas.style.pointerEvents = 'auto';
+        if (helperBadge) helperBadge.style.opacity = '1';
+        resizeAndDrawFoil();
+        updateProgressDisplay(0);
+        showToast('Atelier Golden Foil Restored.');
+      });
+    }
+
+    // Copy Voucher Action
+    if (copyBtn) {
+      copyBtn.addEventListener('click', () => {
+        const code = 'ELORA-AURELIA-500';
+        navigator.clipboard.writeText(code).then(() => {
+          copyText.textContent = 'COPIED TO CLIPBOARD';
+          copyIcon.textContent = 'check';
+          copyBtn.classList.remove('bg-primary');
+          copyBtn.classList.add('bg-secondary');
+          showToast('Voucher ELORA-AURELIA-500 copied.');
+
+          setTimeout(() => {
+            copyText.textContent = 'COPY CODE';
+            copyIcon.textContent = 'content_copy';
+            copyBtn.classList.remove('bg-secondary');
+            copyBtn.classList.add('bg-primary');
+          }, 3000);
+        }).catch(() => {
+          showToast('Code: ELORA-AURELIA-500');
+        });
+      });
+    }
+
+    // Apply Cart Action
+    if (applyCartBtn) {
+      applyCartBtn.addEventListener('click', () => {
+        applyCartText.textContent = '€500 APPLIED';
+        applyCartBtn.classList.remove('bg-secondary-container');
+        applyCartBtn.classList.add('bg-secondary', 'text-on-secondary');
+        showToast('€500 Privilège credit activated in your Élora bag.');
+      });
+    }
+
+    // Download PDF Action
+    if (downloadPdfBtn) {
+      downloadPdfBtn.addEventListener('click', () => {
+        showToast('Preparing your Florentine Atelier Seal Certificate PDF...');
+      });
+    }
+
+    // Initial Layout Setup
+    window.addEventListener('resize', () => {
+      if (!isFullyRevealed) {
+        resizeAndDrawFoil();
+      }
+    });
+
+    // Run on load
+    setTimeout(resizeAndDrawFoil, 80);
+  })();
+</script></main><footer class="w-full bg-surface-container-low text-on-surface"><div class="w-full px-margin-mobile lg:px-margin py-space-xl"><div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-12 gap-gutter"><div class="lg:col-span-4 flex flex-col justify-between pr-space-lg"><div class="space-y-space-sm"><span class="font-headline-md text-headline-md tracking-[0.2em] text-primary block uppercase">ÉLORA</span><span class="font-label-uppercase text-label-uppercase text-secondary tracking-widest block">Haute Cordonnerie &amp; Atelier Privé</span><p class="font-body-md text-body-md text-on-surface-variant max-w-sm pt-space-xs">Every Step, A Statement. Crafting exceptional made-to-measure footwear and curated salon experiences for our global patrons.</p></div><div class="pt-space-md"><span class="font-label-uppercase text-label-uppercase text-outline block mb-space-xs">SALON CONCIERGE</span><p class="font-body-sm text-body-sm text-on-surface">concierge@maison-elora.com</p><p class="font-body-sm text-body-sm text-on-surface">+33 1 42 68 55 00 • Place Vendôme, Paris</p></div></div><div class="lg:col-span-2 space-y-space-sm"><span class="font-label-uppercase text-label-uppercase text-primary font-semibold tracking-wider block">MAISON PRIVILÈGE</span><ul class="space-y-space-xs font-body-sm text-body-sm text-on-surface-variant"><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="vip-circle" href="#">VIP Tier Benefits</a></li><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="exclusive-bespoke-invitations" href="#">Private Salon Access</a></li><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="vip-circle" href="#">Points &amp; Privilège Vault</a></li><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="exclusive-bespoke-invitations" href="#">Exclusive Pre-Orders</a></li><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="bespoke-atelier" href="#">Patron Commissions</a></li></ul></div><div class="lg:col-span-2 space-y-space-sm"><span class="font-label-uppercase text-label-uppercase text-primary font-semibold tracking-wider block">ATELIER SERVICES</span><ul class="space-y-space-xs font-body-sm text-body-sm text-on-surface-variant"><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="bespoke-atelier" href="#">Bespoke Measurement</a></li><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="bespoke-atelier" href="#">Nappa &amp; Exotic Finishes</a></li><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="shop" href="#">Shoe Care &amp; Restoration</a></li><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="maison-elora" href="#">Artisanal Heritage</a></li><li><a class="hover:text-on-surface transition-colors block py-0.5" data-path="vip-circle" href="#">Personal Shopper</a></li></ul></div><div class="lg:col-span-4 space-y-space-sm pl-0 lg:pl-space-md"><span class="font-label-uppercase text-label-uppercase text-primary font-semibold tracking-wider block">PRIVATE DISPATCH</span><p class="font-body-sm text-body-sm text-on-surface-variant">Receive confidential previews of upcoming runway capsules, private Trunk Show dates, and limited atelier slots.</p><div class="flex items-center gap-space-xs pt-space-xs"><div class="relative flex-1"><input class="w-full h-12 bg-surface-container-lowest text-on-surface px-space-md font-body-sm text-body-sm focus:outline-none placeholder:text-outline" placeholder="Enter your VIP email address" type="email"/></div><button class="h-12 px-space-lg bg-primary text-on-primary hover:bg-secondary hover:text-on-secondary transition-colors font-label-uppercase text-label-uppercase tracking-widest whitespace-nowrap">JOIN</button></div><div class="pt-space-xs flex items-center gap-space-sm text-outline"><span class="font-label-uppercase text-[10px] tracking-wider">CONFIDENTIALITY GUARANTEED</span><span class="text-[10px]">•</span><span class="font-label-uppercase text-[10px] tracking-wider">BY INVITATION ONLY</span></div></div></div><div class="mt-space-xl pt-space-md flex flex-col md:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-uppercase text-label-uppercase text-[10px] tracking-widest"><p>© 2025 ÉLORA MAISON DE HAUTE CORDONNERIE. ALL RIGHTS RESERVED.</p><div class="flex items-center gap-space-md"><a class="hover:text-on-surface transition-colors" href="#">PRIVACY CHARTER</a><a class="hover:text-on-surface transition-colors" href="#">CLIENT CARE</a><a class="hover:text-on-surface transition-colors" href="#">LEGAL NOTICES</a><a class="hover:text-on-surface transition-colors" href="#">COOKIES PREFERENCES</a></div></div></div></footer></body></html>

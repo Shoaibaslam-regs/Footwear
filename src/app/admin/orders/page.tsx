@@ -78,7 +78,7 @@ export default async function AdminOrders({
             className="input"
             defaultValue={q}
             name="q"
-            placeholder="Order number, name, email or phone"
+            placeholder="Order number, name, email, phone or coupon"
             type="search"
           />
         </label>

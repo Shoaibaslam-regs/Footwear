@@ -11,6 +11,8 @@ export type CartDoc = {
   _id: ObjectId; // = user id
   bag: { slug: string; size: number; quantity: number; addedAt: Date }[];
   wishlist: { slug: string; addedAt: Date }[];
+  /** Coupon code the customer applied (checked again when the order is placed). */
+  coupon?: string | null;
   updatedAt: Date;
 };
 
@@ -35,6 +37,7 @@ function toCartItem(p: Listing, size: number, quantity: number): CartItem {
     name: p.name,
     drawerName: p.name,
     price: salePrice(p),
+    discountPercent: p.discountPercent,
     material: p.material,
     size: `EU ${size}`,
     color: p.material,
@@ -44,7 +47,7 @@ function toCartItem(p: Listing, size: number, quantity: number): CartItem {
     stockNote: soldOut ? "This size has just sold out" : "In stock",
     stockNoteClass: soldOut ? "text-error" : "text-on-surface-variant",
     stockDotClass: soldOut ? "bg-error" : "bg-primary",
-    packaging: { title: "ÉLORA Gift Box:", text: "Comes with a silk shoe bag with our logo." },
+    packaging: { title: "Ŕose Atelier Gift Box:", text: "Comes with a silk shoe bag with our logo." },
     quantity,
     image: p.image,
     alt: p.alt,

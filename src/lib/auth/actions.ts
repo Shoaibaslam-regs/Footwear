@@ -62,7 +62,7 @@ export async function register(_: AuthState, formData: FormData): Promise<AuthSt
 
   const db = await getDb();
   const users = db.collection<Omit<UserDoc, "_id">>("users");
-  // The very first account becomes the Maison administrator.
+  // The very first account becomes the store administrator.
   const role = (await users.estimatedDocumentCount()) === 0 ? "admin" : "customer";
 
   let id: string;
@@ -130,7 +130,7 @@ export async function requestPasswordReset(_: ResetState, formData: FormData): P
     const token = await createResetToken(user._id);
     if (token) {
       const link = `${await siteUrl()}/reset-password?token=${token}`;
-      await sendMail(user.email, "Reset your ÉLORA password", "Reset your password", [
+      await sendMail(user.email, "Reset your Ŕose Atelier password", "Reset your password", [
         `Hello ${user.name.split(" ")[0]}, we received a request to reset your password.`,
         "This link works once and expires in 1 hour. If you didn't ask for it, you can ignore this email.",
       ], { label: "Choose a new password", href: link });

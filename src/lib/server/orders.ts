@@ -77,7 +77,7 @@ export async function listOrders(opts: {
   if (opts.payment) filter["payment.status"] = opts.payment;
   if (opts.q) {
     const rx = new RegExp(opts.q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
-    filter.$or = [{ number: rx }, { "customer.email": rx }, { "customer.name": rx }, { "customer.phone": rx }];
+    filter.$or = [{ number: rx }, { "customer.email": rx }, { "customer.name": rx }, { "customer.phone": rx }, { "coupon.code": rx }];
   }
   const docs = await (await orders()).find(filter).sort({ createdAt: -1 }).limit(500).toArray();
   return docs.map(toOrder);

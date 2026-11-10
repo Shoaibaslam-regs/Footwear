@@ -10,7 +10,7 @@ import AdminNav, { AdminNavFallback } from "@/components/admin/AdminNav";
 import "./admin.css";
 
 export const metadata: Metadata = {
-  title: { default: "Admin — ÉLORA", template: "%s — ÉLORA Admin" },
+  title: { default: "Admin — Ŕose Atelier", template: "%s — Ŕose Atelier Admin" },
   robots: { index: false, follow: false },
 };
 
@@ -57,7 +57,7 @@ export default function AdminLayout({
                 src="/icon.png"
                 width={24}
               />
-              <span className="a-brand">ÉLORA</span>
+              <span className="a-brand">ŔOSE ATELIER</span>
             </Link>
             <span aria-hidden="true" className="h-5 w-px bg-[var(--a-line)]" />
             <span className="muted">Admin</span>

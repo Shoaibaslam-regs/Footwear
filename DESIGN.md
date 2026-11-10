@@ -1,13 +1,15 @@
-# ÉLORA Maison — Design System
+# Ŕose Atelier — Design System
 
 How the storefront looks and reads, and the patterns to reuse when building new screens. How the code works (data, auth, caching) lives in `CLAUDE.md`.
 
 ## 1. Brand Voice
 
 - **Positioning:** Italian luxury women's shoes, sold in Pakistan with prices in PKR. The look stays premium; the **words stay simple**, for shoppers with basic English.
+- **Brand name:** **Ŕose Atelier**. The R carries an acute accent (Ŕ), as the old É did; the logo shows it uppercase as ŔOSE ATELIER. The fonts load `latin-ext` for it. Handles and hashtags have no accent: #RoseAtelier, @RoseAtelier.
+- **Place and time:** the workshop is in **Karachi**; don't name other cities. Never show a year in marketing text (no "2025", "SS25", "©" year). Order and review dates keep their year.
 - **Plain English rules:**
   - Short sentences and everyday words, like a good local shopping site.
-  - No fancy or foreign words: atelier, maison (except in the brand name "ÉLORA Maison"), bespoke, curated, silhouette, concierge, couture, complimentary, acquisition, grazie.
+  - No fancy or foreign words: maison, bespoke, curated, silhouette, concierge, couture, complimentary, acquisition, grazie. "Atelier" appears only inside the brand name "Ŕose Atelier".
   - Don't translate into Urdu or Roman Urdu.
   - British spelling (colour, favourite).
 - **Use these words, the same everywhere:**
@@ -90,7 +92,7 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
 
 ### Admin panel
 - **Layout** (`src/app/admin/layout.tsx`):
-  - A white top bar: the emblem, "ÉLORA" in the accent colour, a divider, "Admin", and the admin's first name with **Log out** on the right.
+  - A white top bar: the emblem, "Ŕose Atelier" in the accent colour, a divider, "Admin", and the admin's first name with **Log out** on the right.
   - A left sidebar (`components/admin/AdminNav.tsx`, `.a-side-link`; the current page is a white card with a soft shadow). On phones it becomes a row that scrolls sideways.
   - Content sits on a light grey page in white rounded cards (`.panel`). The panel uses the full desktop width (capped at 1920px), so build pages as responsive grids rather than one narrow column.
 - **Overview dashboard** (`src/app/admin/page.tsx`, data from `lib/server/dashboard.ts`):
@@ -147,7 +149,7 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
 4. Prices are stored in PKR and always rendered with `<Price>` / `<SalePrice>`, never formatted by hand.
 5. Never use `window.confirm`, `alert` or `prompt`. Use the shared dialogs. Destructive actions use `tone: "danger"`, so focus starts on Cancel.
 6. Shared class strings become a `const` at the top of the file (see `iconBtn` and `chipBase`).
-7. Every new page exports `metadata` (or `generateMetadata`) titled `"<Page> — ÉLORA Maison"`.
+7. Every new page exports `metadata` (or `generateMetadata`) titled `"<Page> — Ŕose Atelier"`.
 
 ## 4. Open Design Work
 

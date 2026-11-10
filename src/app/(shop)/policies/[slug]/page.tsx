@@ -12,7 +12,7 @@ export function generateStaticParams() {
 export async function generateMetadata({ params }: PageProps<"/policies/[slug]">): Promise<Metadata> {
   const { slug } = await params;
   const page = POLICY_PAGES.find((p) => p.slug === slug);
-  return page ? { title: `${page.title} — ÉLORA Maison` } : {};
+  return page ? { title: `${page.title} — Ŕose Atelier` } : {};
 }
 
 export default async function PolicyPage({ params }: PageProps<"/policies/[slug]">) {

@@ -26,8 +26,8 @@ export async function generateMetadata({
   const listing = await getPublishedProduct(slug);
   if (!listing) return {};
   return {
-    title: `${listing.name} — ÉLORA Maison`,
-    description: listing.description || `${listing.name}, handmade in Florence. ${listing.material}.`,
+    title: `${listing.name} — Ŕose Atelier`,
+    description: listing.description || `${listing.name}, handmade in Karachi. ${listing.material}.`,
   };
 }
 

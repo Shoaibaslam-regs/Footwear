@@ -4,8 +4,8 @@ import AuthForm from "@/components/auth/AuthForm";
 import AuthShell from "@/components/auth/AuthShell";
 
 export const metadata: Metadata = {
-  title: "Create Account — ÉLORA Maison",
-  description: "Create your free ÉLORA account.",
+  title: "Create Account — Ŕose Atelier",
+  description: "Create your free Ŕose Atelier account.",
 };
 
 async function RegisterForm({ searchParams }: PageProps<"/register">) {

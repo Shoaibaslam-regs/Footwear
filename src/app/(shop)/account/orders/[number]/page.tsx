@@ -11,7 +11,7 @@ import { getOrderForUser, statusDates } from "@/lib/server/orders";
 import Price from "@/components/Price";
 import CancelOrderButton from "@/components/account/CancelOrderButton";
 
-export const metadata: Metadata = { title: "My Order — ÉLORA Maison", robots: { index: false } };
+export const metadata: Metadata = { title: "My Order — Ŕose Atelier", robots: { index: false } };
 
 const date = (iso: string) =>
   new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Karachi" });
@@ -24,7 +24,7 @@ async function OrderDetail({ params }: PageProps<"/account/orders/[number]">) {
   if (!order) notFound();
   const reached = statusDates(order);
   const stepIndex = fulfilmentSteps.indexOf(order.status);
-  const help = `${whatsappUrl}?text=${encodeURIComponent(`Hello ÉLORA, I have a question about my order #${order.number}.`)}`;
+  const help = `${whatsappUrl}?text=${encodeURIComponent(`Hello Ŕose Atelier, I have a question about my order #${order.number}.`)}`;
   const country = countries.find((c) => c.code === order.address.country)?.label ?? order.address.country;
 
   return (
@@ -114,6 +114,18 @@ async function OrderDetail({ params }: PageProps<"/account/orders/[number]">) {
                 <dt>Discount</dt>
                 <dd className="text-right text-error">
                   −<Price amount={order.discountTotal} />
+                </dd>
+              </>
+            )}
+            {order.coupon && (
+              <>
+                <dt>Coupon {order.coupon.code}</dt>
+                <dd className="text-right text-secondary">
+                  {order.coupon.type === "free_delivery" ? (
+                    <>Free delivery (saved <Price amount={order.coupon.discount} />)</>
+                  ) : (
+                    <>−<Price amount={order.coupon.discount} /></>
+                  )}
                 </dd>
               </>
             )}

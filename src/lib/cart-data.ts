@@ -8,6 +8,8 @@ export type CartItem = {
   drawerName: string;
   /** Unit price in PKR. */
   price: number;
+  /** The listing's own sale discount (0 = full price). Coupons can be full-price only. */
+  discountPercent: number;
   material: string;
   size: string;
   color: string;

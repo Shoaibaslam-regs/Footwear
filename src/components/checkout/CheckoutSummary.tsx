@@ -8,6 +8,10 @@ import Price from "@/components/Price";
 import { formatPrice } from "@/lib/currency";
 import { lineProductId, removeFromBag, toggleWishlist, useCurrency } from "@/lib/store";
 import { showToast } from "@/lib/toast";
+import type { CouponResult, CouponTerms } from "@/lib/coupons";
+import CouponBox from "./CouponBox";
+import OfferStripView from "@/components/offers/OfferStripView";
+import type { OfferSummary } from "@/lib/coupons";
 
 const divider = "border-t border-surface-container-high";
 
@@ -32,7 +36,21 @@ export default function CheckoutSummary({
   shipping,
   deliveryName,
   total,
+  coupon,
+  couponNote,
+  couponResult,
+  itemDiscount,
+  deliveryDiscount,
+  onCouponChange,
+  offers,
 }: {
+  offers: OfferSummary[];
+  coupon: CouponTerms | null;
+  couponNote?: string;
+  couponResult: CouponResult | null;
+  itemDiscount: number;
+  deliveryDiscount: number;
+  onCouponChange: (terms: CouponTerms | null) => void;
   items: CartItem[];
   pieces: number;
   subtotal: number;
@@ -123,6 +141,17 @@ export default function CheckoutSummary({
           ))}
         </ul>
 
+        {/* Coupon */}
+        <div className={`mt-space-md pt-space-md ${divider} space-y-space-xs`}>
+          {couponNote && !coupon && (
+            <p className="font-body-sm text-body-sm text-error" role="status">
+              {couponNote}
+            </p>
+          )}
+          {!coupon && <OfferStripView compact offers={offers} />}
+          <CouponBox onChange={onCouponChange} result={couponResult} terms={coupon} />
+        </div>
+
         {/* Financial Breakdown */}
         <div className={`mt-space-md pt-space-md ${divider} space-y-2`}>
           <div className="flex justify-between font-body-md text-body-md text-on-surface-variant">
@@ -131,9 +160,22 @@ export default function CheckoutSummary({
             </span>
             <span className="text-primary font-medium"><Price amount={subtotal} /></span>
           </div>
+          {itemDiscount > 0 && coupon && (
+            <div className="flex justify-between font-body-md text-body-md text-on-surface-variant">
+              <span>Coupon {coupon.code}</span>
+              <span className="text-secondary font-medium">
+                −<Price amount={itemDiscount} />
+              </span>
+            </div>
+          )}
           <div className="flex justify-between font-body-md text-body-md text-on-surface-variant">
             <span>{deliveryName}</span>
-            {shipping === 0 ? (
+            {deliveryDiscount > 0 ? (
+              <span className="text-secondary font-medium">
+                <span className="line-through text-outline mr-1.5"><Price amount={shipping} /></span>
+                Free with coupon
+              </span>
+            ) : shipping === 0 ? (
               <span className="text-secondary font-medium uppercase tracking-wider">
                 Free
               </span>

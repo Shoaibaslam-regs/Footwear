@@ -158,7 +158,7 @@ function DialogPanel({ req }: { req: Request }) {
             </span>
           )}
           <div className="flex flex-col gap-1 min-w-0">
-            {req.variant === "brand" && <span className={s.eyebrow}>Maison ÉLORA</span>}
+            {req.variant === "brand" && <span className={s.eyebrow}>Ŕose Atelier</span>}
             <h2 className={s.title} id="dialog-title">
               {req.title}
             </h2>

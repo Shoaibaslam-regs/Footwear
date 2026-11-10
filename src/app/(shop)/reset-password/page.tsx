@@ -6,7 +6,7 @@ import AuthShell from "@/components/auth/AuthShell";
 import { ResetPasswordForm } from "@/components/auth/ResetForms";
 import { peekResetToken } from "@/lib/server/password-reset";
 
-export const metadata: Metadata = { title: "Choose a New Password — ÉLORA Maison", robots: { index: false } };
+export const metadata: Metadata = { title: "Choose a New Password — Ŕose Atelier", robots: { index: false } };
 
 async function ResetBody({ searchParams }: PageProps<"/reset-password">) {
   await connection(); // token expiry is checked against the current time, so never prerender

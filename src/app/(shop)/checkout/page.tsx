@@ -3,17 +3,27 @@ import { Suspense } from "react";
 import Checkout from "@/components/checkout/Checkout";
 import { getSavedAddress, requireUser } from "@/lib/auth/dal";
 import { getSiteSettings } from "@/lib/server/settings";
+import { appliedCouponFor, publicCouponsFor } from "@/lib/server/coupons";
 
 export const metadata: Metadata = {
-  title: "Checkout — ÉLORA Maison",
-  description: "Place your ÉLORA order securely.",
+  title: "Checkout — Ŕose Atelier",
+  description: "Place your Ŕose Atelier order securely.",
 };
 
 /** Checkout is for signed-in clients only (proxy.ts redirects others first). */
 async function CheckoutForUser() {
   const [user, { deliveryOptions }] = await Promise.all([requireUser("/checkout"), getSiteSettings()]);
-  const saved = await getSavedAddress(user.id);
-  return <Checkout deliveryOptions={deliveryOptions} saved={saved} user={{ name: user.name, email: user.email }} />;
+  const [saved, applied, offers] = await Promise.all([getSavedAddress(user.id), appliedCouponFor(user.id), publicCouponsFor(user.id)]);
+  return (
+    <Checkout
+      coupon={applied.terms}
+      couponNote={applied.dropped}
+      offers={offers}
+      deliveryOptions={deliveryOptions}
+      saved={saved}
+      user={{ name: user.name, email: user.email }}
+    />
+  );
 }
 
 export default function CheckoutPage() {

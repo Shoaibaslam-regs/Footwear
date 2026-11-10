@@ -4,8 +4,8 @@ import AuthForm from "@/components/auth/AuthForm";
 import AuthShell from "@/components/auth/AuthShell";
 
 export const metadata: Metadata = {
-  title: "Log In — ÉLORA Maison",
-  description: "Log in to your ÉLORA account.",
+  title: "Log In — Ŕose Atelier",
+  description: "Log in to your Ŕose Atelier account.",
 };
 
 async function LoginForm({ searchParams }: PageProps<"/login">) {

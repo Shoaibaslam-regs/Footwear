@@ -9,6 +9,8 @@ import type { SavedAddress } from "@/lib/auth/dal";
 import { paymentMethodLabel } from "@/lib/orders";
 import { clearBag, useBag } from "@/lib/store";
 import Price from "@/components/Price";
+import { applyCoupon, type CouponTerms } from "@/lib/coupons";
+import type { OfferSummary } from "@/lib/coupons";
 import CheckoutSteps, { type StepTarget } from "./CheckoutSteps";
 import ContactCard from "./ContactCard";
 import ShippingForm from "./ShippingForm";
@@ -26,21 +28,36 @@ export default function Checkout({
   user,
   deliveryOptions,
   saved,
+  coupon: initialCoupon,
+  couponNote,
+  offers,
 }: {
   user: { name: string; email: string } | null;
   deliveryOptions: DeliveryOption[];
   saved: SavedAddress | null;
+  coupon: CouponTerms | null;
+  /** Why a previously applied coupon was removed, if it was. */
+  couponNote?: string;
+  /** Public coupons this customer can still use (for the "You have a coupon" strip). */
+  offers: OfferSummary[];
 }) {
   const items = useBag();
   const [state, formAction, pending] = useActionState(placeOrder, undefined);
   const [step, setStep] = useState(2);
   const [delivery, setDelivery] = useState(deliveryOptions[0].id);
+  const [coupon, setCoupon] = useState<CouponTerms | null>(initialCoupon);
 
   const pieces = items.reduce((n, i) => n + i.quantity, 0);
   const subtotal = items.reduce((n, i) => n + i.price * i.quantity, 0);
   const option = deliveryOptions.find((o) => o.id === delivery) ?? deliveryOptions[0];
   const shipping = option.fee;
-  const total = subtotal + shipping;
+  // Live coupon maths for display; the server recomputes it when the order is placed.
+  const couponResult = coupon
+    ? applyCoupon(coupon, items.map((i) => ({ unitPrice: i.price, quantity: i.quantity, discountPercent: i.discountPercent })), shipping)
+    : null;
+  const itemDiscount = couponResult?.ok ? couponResult.itemDiscount : 0;
+  const deliveryDiscount = couponResult?.ok ? couponResult.deliveryDiscount : 0;
+  const total = subtotal - itemDiscount + shipping - deliveryDiscount;
   const placed = state?.ok ? state.order : null;
   const errors = state && !state.ok ? state.errors : undefined;
 
@@ -102,6 +119,13 @@ export default function Checkout({
           />
         </form>
         <CheckoutSummary
+          coupon={coupon}
+          couponNote={couponNote}
+          couponResult={couponResult}
+          offers={offers}
+          deliveryDiscount={deliveryDiscount}
+          itemDiscount={itemDiscount}
+          onCouponChange={setCoupon}
           items={items}
           pieces={pieces}
           subtotal={subtotal}
@@ -173,6 +197,20 @@ function OrderConfirmation({ order, signedIn }: { order: PlacedOrder; signedIn: 
             <span>Delivery</span>
             <span>{order.shippingFee === 0 ? "Free" : <Price amount={order.shippingFee} />}</span>
           </div>
+          {order.coupon && (
+            <div className="flex justify-between">
+              <span>Coupon {order.coupon.code}</span>
+              {order.coupon.type === "free_delivery" ? (
+                <span className="text-secondary">
+                  Free delivery (saved <Price amount={order.coupon.discount} />)
+                </span>
+              ) : (
+                <span className="text-secondary">
+                  −<Price amount={order.coupon.discount} />
+                </span>
+              )}
+            </div>
+          )}
         </div>
         <div className="pt-space-md mt-space-sm border-t-2 border-primary flex items-baseline justify-between">
           <span className="font-headline-sm text-headline-sm text-primary">Total</span>

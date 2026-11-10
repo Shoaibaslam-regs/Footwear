@@ -8,7 +8,7 @@ export default function ResetLinkButton({ userId, name }: { userId: string; name
   const [state, action, pending] = useActionState<ResetLinkState, FormData>(createUserResetLink, undefined);
   const [copied, setCopied] = useState(false);
   const message = state?.link
-    ? `Hello ${name.split(" ")[0]}, here is your ÉLORA password reset link (valid for 1 hour): ${state.link}`
+    ? `Hello ${name.split(" ")[0]}, here is your Ŕose Atelier password reset link (valid for 1 hour): ${state.link}`
     : "";
   return (
     <div className="flex flex-col items-end gap-1">

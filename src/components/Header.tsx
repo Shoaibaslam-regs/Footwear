@@ -44,12 +44,12 @@ export default async function Header() {
           <MobileMenu />
           <div className="flex items-center justify-center">
             <Link className="flex items-center group" href="/">
-              <span className="font-headline-md text-headline-md tracking-[0.25em] uppercase text-primary font-normal">
-                ÉLORA
+              <span className="font-headline-md text-[15px] leading-none tracking-[0.12em] min-[380px]:text-[17px] min-[380px]:tracking-[0.14em] sm:text-headline-md sm:tracking-[0.22em] uppercase text-primary font-normal whitespace-nowrap">
+                R&apos;ose
               </span>
             </Link>
           </div>
-          <div className="flex items-center gap-space-md">
+          <div className="flex items-center gap-1 sm:gap-space-md">
             <HeaderActions searchIndex={searchIndex} />
           </div>
         </div>
