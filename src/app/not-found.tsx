@@ -1,10 +1,16 @@
 import Link from "next/link";
-import ShopLayout from "./(shop)/layout";
 
+/** 404: a standalone page (no header or footer), just the brand and two ways back. */
 export default function NotFound() {
   return (
-    <ShopLayout>
-      <section className="w-full max-w-[1536px] mx-auto px-margin-mobile lg:px-margin py-space-xl flex flex-col items-center text-center gap-space-md">
+    <main id="not-found" className="min-h-dvh bg-surface flex flex-col items-center justify-center px-margin-mobile py-space-xl">
+      <Link
+        className="mb-space-xl font-headline-md text-[20px] sm:text-headline-md tracking-[0.22em] uppercase text-primary hover:text-secondary transition-colors"
+        href="/"
+      >
+        Ŕose Atelier
+      </Link>
+      <section className="w-full max-w-xl flex flex-col items-center text-center gap-space-md">
         <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.25em]">
           Error 404 · Page Not Found
         </span>
@@ -29,6 +35,6 @@ export default function NotFound() {
           </Link>
         </div>
       </section>
-    </ShopLayout>
+    </main>
   );
 }

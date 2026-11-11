@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useCallback, useState } from "react";
+import { Suspense, useCallback, useState } from "react";
 import { useBagCount, useWishlist } from "@/lib/store";
+import ActiveMark from "./ActiveMark";
 import CurrencySwitch from "./CurrencySwitch";
 import dynamic from "next/dynamic";
 
@@ -55,11 +56,9 @@ export default function HeaderActions({
             {wishCount}
           </span>
         )}
-      </Link>
-      <Link aria-label="Account" className={iconBtn} href="/account">
-        <span className="material-symbols-outlined text-[20px]">
-          account_circle
-        </span>
+        <Suspense fallback={null}>
+          <ActiveMark href="/wishlist" />
+        </Suspense>
       </Link>
       <Link
         aria-label={`Shopping Bag (${bagCount} items)`}
@@ -74,6 +73,17 @@ export default function HeaderActions({
             {bagCount}
           </span>
         )}
+        <Suspense fallback={null}>
+          <ActiveMark href="/cart" />
+        </Suspense>
+      </Link>
+      <Link aria-label="Account" className={`${iconBtn} relative`} href="/account">
+        <span className="material-symbols-outlined text-[20px]">
+          account_circle
+        </span>
+        <Suspense fallback={null}>
+          <ActiveMark href="/account" />
+        </Suspense>
       </Link>
       {searchUsed && <SearchPanel index={searchIndex} open={searchOpen} onClose={closeSearch} />}
     </>

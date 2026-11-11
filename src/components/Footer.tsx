@@ -7,7 +7,7 @@ const payments = ["CASH ON DELIVERY", "EASYPAISA", "JAZZCASH", "BANK TRANSFER", 
 
 export default function Footer() {
   return (
-    <footer className="w-full bg-surface-container-low text-on-surface mt-space-xl border-t border-outline-variant/30">
+    <footer className="shop-chrome w-full bg-surface-container-low text-on-surface mt-space-xl border-t border-outline-variant/30">
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg">
         <div className="pb-space-xl mb-space-xl border-b border-outline-variant/20 flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
           <div className="max-w-xl">

@@ -12,7 +12,7 @@ export default function ShopLayout({ children }: { children: React.ReactNode }) 
   return (
     <>
       <Header />
-      <main className="w-full pt-28 bg-surface min-h-[calc(100vh-28rem)]">
+      <main className="shop-main w-full pt-28 bg-surface min-h-[calc(100vh-28rem)]">
         {children}
       </main>
       <Footer />

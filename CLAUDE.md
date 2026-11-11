@@ -48,7 +48,7 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - `setUserRole` returns to the page in its `back` field, but only to `/admin/users` or `/admin/users/<id>`.
   - Charts are client SVG components in `components/admin/charts/`. They take a serialisable `unit` prop (`"pkr"` or `"count"`), not a formatter function, because server pages render them.
 - `src/app/layout.tsx` (root): fonts only, plus `DialogHost` and `CartSync` (both app-wide).
-- `src/app/not-found.tsx` wraps itself in the shop layout. `src/app/api/` holds `cart`, `session` and `admin/images`.
+- `src/app/not-found.tsx` is a standalone page (no header or footer): the brand name and two links back. A `notFound()` inside the shop (e.g. a missing product) still renders within the shop layout, so `globals.css` hides `.shop-chrome` (header, footer) while `#not-found` is on the page. `src/app/api/` holds `cart`, `session` and `admin/images`.
 
 ### Auth (`src/lib/auth/`)
 - `jwt.ts` (jose HS256, cookie `elora_session`, payload `{sub, role}`) is shared by the server and `src/proxy.ts`.

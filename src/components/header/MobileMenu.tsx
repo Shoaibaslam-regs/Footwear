@@ -6,6 +6,7 @@ import { useCallback, useState } from "react";
 import { createPortal } from "react-dom";
 import { navLinks } from "@/lib/data";
 import CurrencySwitch from "./CurrencySwitch";
+import { onPath, useActiveNav } from "./useActiveNav";
 import { useDialog } from "./useDialog";
 
 export default function MobileMenu() {
@@ -31,6 +32,7 @@ export default function MobileMenu() {
 
 function MenuPanel({ onClose }: { onClose: () => void }) {
   const pathname = usePathname();
+  const current = useActiveNav();
   const panelRef = useDialog<HTMLDivElement>(true, onClose);
 
   return (
@@ -63,19 +65,22 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
 
         <nav className="flex-1 overflow-y-auto px-margin-mobile pt-space-lg flex flex-col gap-space-md">
           {navLinks.map((link) => {
-            const prefixes: readonly string[] =
-              "activePrefixes" in link ? (link.activePrefixes ?? []) : [];
-            const active = prefixes.some((p) => pathname.startsWith(p));
+            const active = current === link.href;
             return (
               <Link
                 key={link.label}
                 aria-current={active ? "page" : undefined}
-                className={`font-headline-md text-headline-md transition-colors hover:text-secondary-fixed ${
+                className={`relative flex items-center gap-space-sm font-headline-md text-headline-md transition-colors hover:text-secondary-fixed ${
                   active ? "text-secondary-fixed" : "text-surface-container-lowest"
                 }`}
                 href={link.href}
                 onClick={onClose}
               >
+                {/* Gold marker beside the current page */}
+                <span
+                  aria-hidden="true"
+                  className={`h-6 w-0.5 rounded-full bg-secondary-fixed transition-opacity ${active ? "opacity-100" : "opacity-0"}`}
+                />
                 {link.label}
               </Link>
             );
@@ -84,17 +89,24 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
           {[
             { label: "Wishlist", href: "/wishlist", icon: "favorite" },
             { label: "Shopping Bag", href: "/cart", icon: "shopping_bag" },
-          ].map((l) => (
-            <Link
-              key={l.href}
-              className="flex items-center gap-space-sm font-label-uppercase text-label-uppercase uppercase tracking-widest hover:text-secondary-fixed transition-colors"
-              href={l.href}
-              onClick={onClose}
-            >
-              <span className="material-symbols-outlined text-[18px]">{l.icon}</span>
-              {l.label}
-            </Link>
-          ))}
+            { label: "Account", href: "/account", icon: "account_circle" },
+          ].map((l) => {
+            const active = onPath(pathname, l.href);
+            return (
+              <Link
+                key={l.href}
+                aria-current={active ? "page" : undefined}
+                className={`flex items-center gap-space-sm font-label-uppercase text-label-uppercase uppercase tracking-widest hover:text-secondary-fixed transition-colors ${
+                  active ? "text-secondary-fixed" : ""
+                }`}
+                href={l.href}
+                onClick={onClose}
+              >
+                <span className={`material-symbols-outlined text-[18px] ${active ? "icon-filled" : ""}`}>{l.icon}</span>
+                {l.label}
+              </Link>
+            );
+          })}
         </nav>
 
         <div className="px-margin-mobile py-space-lg flex items-center justify-between">

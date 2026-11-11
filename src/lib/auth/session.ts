@@ -1,4 +1,5 @@
 import "server-only";
+import { io } from "next/cache";
 import { cookies } from "next/headers";
 import {
   SESSION_COOKIE,
@@ -23,7 +24,15 @@ export async function deleteSession() {
   (await cookies()).delete(SESSION_COOKIE);
 }
 
-/** Reads and verifies the JWT from the request cookie. */
+/**
+ * Reads and verifies the JWT from the request cookie.
+ * jwtVerify checks the expiry against the clock (`new Date()`), so `io()` goes
+ * first: it marks the read as request-time during prerendering, and resolves
+ * at once during a real request, a server action or a route handler.
+ */
 export async function readSession(): Promise<SessionPayload | null> {
-  return verifySession((await cookies()).get(SESSION_COOKIE)?.value);
+  const token = (await cookies()).get(SESSION_COOKIE)?.value;
+  if (!token) return null;
+  await io();
+  return verifySession(token);
 }

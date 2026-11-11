@@ -465,3 +465,10 @@ html[data-scrolled] .site-bar {
 @media (prefers-reduced-motion: reduce) {
   .notice-timer { animation: none; }
 }
+
+/*
+ * 404s have no header or footer. A missing product calls notFound() inside the
+ * shop layout, so the layout's chrome is hidden whenever the not-found page shows.
+ */
+body:has(#not-found) .shop-chrome { display: none; }
+body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }

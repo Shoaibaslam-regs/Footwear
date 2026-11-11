@@ -29,7 +29,7 @@ export default async function Header() {
   const [listings, { announcements }] = await Promise.all([getPublishedProducts(), getSiteSettings()]);
   const searchIndex = listings.map(toSearchEntry);
   return (
-    <header className="fixed top-0 inset-x-0 z-50 transition-all duration-300">
+    <header className="shop-chrome fixed top-0 inset-x-0 z-50 transition-all duration-300">
       <div className="w-full bg-primary text-on-primary py-space-xs overflow-hidden select-none">
         <div className="animate-marquee items-center gap-space-xl font-label-uppercase text-label-uppercase uppercase text-primary-fixed">
           <AnnouncementGroup announcements={announcements} />
