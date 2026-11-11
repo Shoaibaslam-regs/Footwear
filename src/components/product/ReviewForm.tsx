@@ -1,6 +1,7 @@
 "use client";
 
 import { useActionState, useState } from "react";
+import { tryAgainIn, useCooldown } from "@/lib/use-cooldown";
 import { submitReview, deleteMyReview, type ReviewFormState } from "@/app/(shop)/products/actions";
 import ConfirmButton from "@/components/ConfirmButton";
 import Image from "next/image";
@@ -37,6 +38,7 @@ export default function ReviewForm({
   verified: boolean;
 }) {
   const [state, action, pending] = useActionState<ReviewFormState, FormData>(submitReview, undefined);
+  const wait = useCooldown(state?.retryAfter, state);
   const [rating, setRating] = useState(existing?.rating ?? 0);
   const [hover, setHover] = useState(0);
   const [editing, setEditing] = useState(!existing);
@@ -233,10 +235,10 @@ export default function ReviewForm({
           )}
           <button
             className="h-12 px-8 rounded-full bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed disabled:opacity-60 transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest shadow-md"
-            disabled={pending || uploading}
+            disabled={pending || uploading || wait > 0}
             type="submit"
           >
-            {pending ? "Posting…" : existing ? "Update Review" : "Post Review"}
+            {wait > 0 ? <span className="tabular-nums">{tryAgainIn(wait)}</span> : pending ? "Posting…" : existing ? "Update Review" : "Post Review"}
           </button>
         </div>
       </div>

@@ -118,6 +118,9 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
   - Exception: chart marks use `--a-chart`.
 - Flex or grid children holding wide tables or `<fieldset>`s need `min-w-0` so they scroll inside their card on phones.
 
+### Rate-limited buttons
+- When the server says to wait (`retryAfter`), don't show a message. The button that was refused locks (`disabled`) and its label becomes the countdown: "Try again in 14:32" on full-width buttons, "Wait 14:32" on small ones, and just "51:46" with a clock icon on the phone Place Order bar. Use `useCooldown(retryAfter, state)` and `tryAgainIn()` / `clock()` from `lib/use-cooldown.ts`, with `tabular-nums` so the digits don't jump. It unlocks by itself at 0:00. Locked buttons don't change on hover (`enabled:hover:`).
+
 ### Feedback: toasts and the top notification
 - **Checkout on phones:** the order summary is a collapsible bar at the top (total always visible, coupon box under it), and Place Order is fixed at the bottom.
 - **Toast** (`showToast()` → `components/ActionToast.tsx`): short confirmations such as "Added to Wishlist".

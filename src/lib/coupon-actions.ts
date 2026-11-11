@@ -6,11 +6,12 @@ import { getCurrentUser } from "./auth/dal";
 import { CODE_RX, normaliseCode, type CouponTerms } from "./coupons";
 import { carts } from "./server/carts";
 import { appliedCouponFor, coupons, couponState, getCouponByCode, markRevealed, toTerms, unavailableReason } from "./server/coupons";
+import { RULES, blocked, hit } from "./server/rate-limit";
 
 export type CouponActionResult =
   | { ok: true; terms: CouponTerms }
   /** `cardUrl`: the code is a surprise campaign; the customer gets their own code by scratching this card. */
-  | { ok: false; error: string; cardUrl?: string };
+  | { ok: false; error: string; cardUrl?: string; retryAfter?: number };
 
 /**
  * Saves a coupon on the customer's bag. Coupon-wide rules (active, dates,
@@ -21,9 +22,16 @@ export type CouponActionResult =
 export async function applyCouponCode(raw: string): Promise<CouponActionResult> {
   const user = await getCurrentUser();
   if (!user) return { ok: false, error: "Please log in to use a coupon." };
+  // Wrong codes are limited, so link-only codes can't be found by guessing.
+  const wait = await blocked(RULES.couponUser, user.id);
+  if (wait) return { ok: false, error: "", retryAfter: wait };
   const code = normaliseCode(String(raw ?? ""));
-  if (!CODE_RX.test(code)) return { ok: false, error: "This code is not valid." };
-  const c = await getCouponByCode(code);
+  const c = CODE_RX.test(code) ? await getCouponByCode(code) : null;
+  // Someone else's surprise card counts as a wrong code too: it is not theirs to find.
+  if (!c || (c.ownerId && c.ownerId.toHexString() !== user.id)) {
+    await hit(RULES.couponUser, user.id);
+    if (!c) return { ok: false, error: "This code is not valid." };
+  }
   if (c?.type === "random") {
     // Never applied directly: send them to their own scratch card (it stays hidden until scratched).
     if (couponState(c) === "active" || (await (await coupons()).countDocuments({ campaignId: c._id, ownerId: new ObjectId(user.id) })) > 0) {

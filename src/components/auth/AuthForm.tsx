@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useActionState } from "react";
+import { tryAgainIn, useCooldown } from "@/lib/use-cooldown";
 import { login, register, type AuthState } from "@/lib/auth/actions";
 
 const label =
@@ -63,6 +64,8 @@ export default function AuthForm({
   );
   const isLogin = mode === "login";
   const e = state?.errors;
+  // Too many tries: the button locks and counts down (no message).
+  const wait = useCooldown(state?.retryAfter, state);
   const otherHref = `${isLogin ? "/register" : "/login"}${next ? `?next=${encodeURIComponent(next)}` : ""}`;
 
   return (
@@ -118,11 +121,11 @@ export default function AuthForm({
       )}
 
       <button
-        className="h-[52px] mt-space-xs rounded-full bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed disabled:opacity-60 transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest shadow-md"
-        disabled={pending}
+        className="h-[52px] mt-space-xs rounded-full bg-primary text-on-primary enabled:hover:bg-secondary-fixed enabled:hover:text-on-secondary-fixed disabled:opacity-60 transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest shadow-md disabled:cursor-not-allowed tabular-nums"
+        disabled={pending || wait > 0}
         type="submit"
       >
-        {pending ? "Please wait…" : isLogin ? "Log In" : "Create Account"}
+        {wait > 0 ? tryAgainIn(wait) : pending ? "Please wait…" : isLogin ? "Log In" : "Create Account"}
       </button>
 
       <p className="font-body-sm text-body-sm text-on-surface-variant text-center">

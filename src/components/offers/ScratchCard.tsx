@@ -4,6 +4,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { applyCouponCode, markCouponRevealed } from "@/lib/coupon-actions";
+import { clock, useCooldown } from "@/lib/use-cooldown";
 import { useReveal } from "./Reveal";
 import { requireLogin } from "@/lib/require-login";
 import { showToast } from "@/lib/toast";
@@ -54,6 +55,9 @@ export default function ScratchCard({
   const [copied, setCopied] = useState(false);
   const [applied, setApplied] = useState(false);
   const [applying, setApplying] = useState(false);
+  // Too many wrong codes on this account: Apply to Bag locks and counts down.
+  const [limited, setLimited] = useState<{ s: number } | null>(null);
+  const applyWait = useCooldown(limited?.s, limited);
 
   /* ---------- Foil ---------- */
 
@@ -335,6 +339,10 @@ export default function ScratchCard({
     setApplying(true);
     const r = await applyCouponCode(code);
     setApplying(false);
+    if (!r.ok && r.retryAfter) {
+      setLimited({ s: r.retryAfter });
+      return;
+    }
     if (!r.ok) {
       await alertDialog({ title: "Can't use this coupon", message: r.error });
       return;
@@ -450,12 +458,12 @@ export default function ScratchCard({
                     </button>
                     <button
                       className={`w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full ${applied ? "bg-secondary text-on-secondary" : "bg-secondary-container text-on-secondary-fixed"} hover:bg-secondary hover:text-on-secondary transition-all font-label-uppercase text-label-uppercase tracking-wider disabled:opacity-60`}
-                      disabled={!revealed || applying}
+                      disabled={!revealed || applying || applyWait > 0}
                       onClick={applyToBag}
                       type="button"
                     >
-                      <span className="material-symbols-outlined text-[16px]">shopping_bag</span>
-                      <span>{applied ? "ADDED TO BAG" : applying ? "ADDING…" : "APPLY TO BAG"}</span>
+                      <span className="material-symbols-outlined text-[16px]">{applyWait > 0 ? "schedule" : "shopping_bag"}</span>
+                      <span className="tabular-nums">{applied ? "ADDED TO BAG" : applyWait > 0 ? `TRY AGAIN IN ${clock(applyWait)}` : applying ? "ADDING…" : "APPLY TO BAG"}</span>
                     </button>
                   </div>
                 </div>

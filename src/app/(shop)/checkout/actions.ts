@@ -18,12 +18,15 @@ import { orderPlacedLines, sendMail, siteUrl } from "@/lib/server/mail";
 import { updateTag } from "next/cache";
 import { applyCoupon } from "@/lib/coupons";
 import { claimCoupon, coupons, getCouponByCode, releaseCoupon, toTerms, unavailableReason } from "@/lib/server/coupons";
+import { MAX_PENDING_ORDERS, RULES, blocked, hit } from "@/lib/server/rate-limit";
 
 export type PlaceOrderState =
   | {
       ok?: false;
       errors?: Record<string, string[] | undefined>;
       message?: string;
+      /** The hourly order limit was reached: seconds until Place Order works again. */
+      retryAfter?: number;
     }
   | {
       ok: true;
@@ -55,6 +58,18 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
   // Orders are only taken from signed-in clients (checked against the DB, not just the cookie).
   const user = await getCurrentUser();
   if (!user) return { message: "Please log in to place your order." };
+
+  // Limits against fake orders: a few per hour, and only a few waiting to be confirmed.
+  const orderWait = await blocked(RULES.orderUser, user.id);
+  if (orderWait) return { retryAfter: orderWait };
+  const pendingOrders = await (await getDb())
+    .collection("orders")
+    .countDocuments({ userId: new ObjectId(user.id), status: "pending" });
+  if (pendingOrders >= MAX_PENDING_ORDERS) {
+    return {
+      message: `You already have ${pendingOrders} orders waiting for us to confirm. Please wait until we confirm them, or message us on WhatsApp.`,
+    };
+  }
 
   const parsed = schema.safeParse({
     name: fd.get("name") ?? "",
@@ -182,6 +197,8 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
     if (coupon) await releaseCoupon(coupon.code, user.id);
     throw e;
   }
+  // Only orders that were really placed count towards the hourly limit.
+  await hit(RULES.orderUser, user.id);
 
   // Remember delivery details for next time, and confirm by email (if set up).
   await (await getDb())

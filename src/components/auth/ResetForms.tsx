@@ -3,12 +3,13 @@
 import Link from "next/link";
 import { useActionState } from "react";
 import { requestPasswordReset, resetPassword, type ResetState } from "@/lib/auth/actions";
+import { tryAgainIn, useCooldown } from "@/lib/use-cooldown";
 
 const label = "font-label-uppercase text-label-uppercase uppercase tracking-wider text-on-surface-variant";
 const input =
   "h-12 w-full px-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-lg ring-1 ring-outline-variant/60 focus:ring-2 focus:ring-secondary focus:outline-none aria-invalid:ring-error";
 const button =
-  "h-[52px] rounded-full bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed disabled:opacity-60 transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest shadow-md";
+  "h-[52px] rounded-full bg-primary text-on-primary enabled:hover:bg-secondary-fixed enabled:hover:text-on-secondary-fixed disabled:opacity-60 transition-all duration-300 font-label-uppercase text-label-uppercase uppercase tracking-widest shadow-md disabled:cursor-not-allowed tabular-nums";
 
 function Notice({ state }: { state: ResetState }) {
   if (state?.ok)
@@ -28,6 +29,7 @@ function Notice({ state }: { state: ResetState }) {
 
 export function ForgotPasswordForm() {
   const [state, action, pending] = useActionState(requestPasswordReset, undefined);
+  const wait = useCooldown(state?.retryAfter, state);
   return (
     <form action={action} className="flex flex-col gap-space-md" noValidate>
       <div className="flex flex-col gap-space-xs">
@@ -38,8 +40,8 @@ export function ForgotPasswordForm() {
         {state?.errors?.email && <p className="font-body-sm text-body-sm text-error">{state.errors.email.join(" ")}</p>}
       </div>
       <Notice state={state} />
-      <button className={button} disabled={pending} type="submit">
-        {pending ? "Sending…" : "Send Reset Link"}
+      <button className={button} disabled={pending || wait > 0} type="submit">
+        {wait > 0 ? tryAgainIn(wait) : pending ? "Sending…" : "Send Reset Link"}
       </button>
       <p className="font-body-sm text-body-sm text-on-surface-variant text-center">
         Remembered it?{" "}
@@ -54,6 +56,7 @@ export function ForgotPasswordForm() {
 export function ResetPasswordForm({ token }: { token: string }) {
   const [state, action, pending] = useActionState(resetPassword, undefined);
   const e = state?.errors;
+  const wait = useCooldown(state?.retryAfter, state);
   return (
     <form action={action} className="flex flex-col gap-space-md" noValidate>
       <input name="token" type="hidden" value={token} />
@@ -67,8 +70,8 @@ export function ResetPasswordForm({ token }: { token: string }) {
         </div>
       ))}
       <Notice state={state} />
-      <button className={button} disabled={pending} type="submit">
-        {pending ? "Saving…" : "Save New Password"}
+      <button className={button} disabled={pending || wait > 0} type="submit">
+        {wait > 0 ? tryAgainIn(wait) : pending ? "Saving…" : "Save New Password"}
       </button>
     </form>
   );

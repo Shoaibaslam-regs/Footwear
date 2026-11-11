@@ -5,6 +5,7 @@ import { useBottomBar } from "@/lib/use-bottom-bar";
 import { paymentMethods, type PaymentMethod } from "@/lib/orders";
 import { formatPrice as formatIn } from "@/lib/currency";
 import { FieldError, fieldInput, fieldLabel, type FieldErrors } from "./fields";
+import { clock, tryAgainIn } from "@/lib/use-cooldown";
 
 const methodIcon: Record<PaymentMethod, string> = {
   cod: "payments",
@@ -20,9 +21,12 @@ export default function PaymentSection({
   errors,
   message,
   phone,
+  wait = 0,
 }: {
   total: number;
   pending: boolean;
+  /** Seconds until Place Order works again (rate limit), 0 when free. */
+  wait?: number;
   errors?: FieldErrors;
   message?: string;
   /** Prefill for the wallet number. */
@@ -113,12 +117,12 @@ export default function PaymentSection({
         )}
         <button
           className="max-lg:hidden w-full h-14 bg-primary hover:bg-secondary-fixed text-on-primary hover:text-on-secondary-fixed rounded-none font-label-uppercase text-label-uppercase uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-space-sm shadow-md disabled:opacity-75 disabled:cursor-wait"
-          disabled={pending}
+          disabled={pending || wait > 0}
           type="submit"
         >
-          <span className="material-symbols-outlined text-[20px]">lock</span>
-          <span aria-live="polite">
-            {pending ? "Placing order…" : `Place Order (${formatPKR(total)})`}
+          <span className="material-symbols-outlined text-[20px]">{wait > 0 ? "schedule" : "lock"}</span>
+          <span aria-live="polite" className="tabular-nums">
+            {wait > 0 ? tryAgainIn(wait) : pending ? "Placing order…" : `Place Order (${formatPKR(total)})`}
           </span>
         </button>
         <p className="mt-space-sm text-center font-body-sm text-body-sm text-on-surface-variant">
@@ -136,12 +140,12 @@ export default function PaymentSection({
       </div>
 
       {/* Phones/tablets: Place Order always in reach (inside the form, so it submits it). */}
-      <PlaceOrderBar message={message} pending={pending} total={formatPKR(total)} />
+      <PlaceOrderBar message={message} pending={pending} total={formatPKR(total)} wait={wait} />
     </div>
   );
 }
 
-function PlaceOrderBar({ total, pending, message }: { total: string; pending: boolean; message?: string }) {
+function PlaceOrderBar({ total, pending, message, wait }: { total: string; pending: boolean; message?: string; wait: number }) {
   useBottomBar(message ? 112 : 76);
   return (
     <div className="lg:hidden fixed inset-x-0 bottom-0 z-40 bg-surface/95 backdrop-blur-xl border-t border-outline-variant/40 shadow-[0_-6px_20px_rgba(0,0,0,0.06)] pb-[env(safe-area-inset-bottom)]">
@@ -157,11 +161,11 @@ function PlaceOrderBar({ total, pending, message }: { total: string; pending: bo
         </div>
         <button
           className="h-12 px-space-lg shrink-0 bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed rounded-full font-label-uppercase text-label-uppercase uppercase tracking-widest font-semibold flex items-center gap-2 transition-colors shadow-md disabled:opacity-75 disabled:cursor-wait"
-          disabled={pending}
+          disabled={pending || wait > 0}
           type="submit"
         >
-          <span aria-hidden="true" className="material-symbols-outlined text-[18px]">lock</span>
-          <span aria-live="polite">{pending ? "Placing…" : "Place Order"}</span>
+          <span aria-hidden="true" className="material-symbols-outlined text-[18px]">{wait > 0 ? "schedule" : "lock"}</span>
+          <span aria-live="polite" className="tabular-nums">{wait > 0 ? clock(wait) : pending ? "Placing…" : "Place Order"}</span>
         </button>
       </div>
     </div>

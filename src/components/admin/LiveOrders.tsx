@@ -50,6 +50,8 @@ export default function LiveOrders() {
   const [live, setLive] = useState(false);
   const [popups, setPopups] = useState<NewOrder[]>([]);
   const unseen = useRef(0);
+  /** Orders already announced: a reconnect's catch-up may send one again. */
+  const announced = useRef(new Set<string>());
   const baseTitle = useRef<string | null>(null);
   const path = useRef(pathname);
   const refreshTimer = useRef<ReturnType<typeof setTimeout> | null>(null);
@@ -79,6 +81,8 @@ export default function LiveOrders() {
     es.onerror = () => setLive(false); // EventSource retries by itself.
     es.addEventListener("new", (e) => {
       const o = JSON.parse((e as MessageEvent).data) as NewOrder;
+      if (announced.current.has(o.id)) return;
+      announced.current.add(o.id);
       setPopups((p) => [o, ...p.filter((x) => x.id !== o.id)].slice(0, 3));
       chime();
       if (!document.hasFocus()) {

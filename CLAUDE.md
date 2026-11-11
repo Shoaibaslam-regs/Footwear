@@ -44,7 +44,7 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - `/admin/users` and `/admin/products` read per-row figures from `lib/server/insights.ts`: orders, spend, bag and wishlist counts per user, and sold, revenue, rating, wishlists and restock requests per listing. They filter, sort and page in memory with `components/admin/Pager.tsx` (`?page=`, `?per=25|50|100`).
   - `/admin/users/[id]` shows one customer: profile, saved address, orders, live bag and wishlist, reviews and restock requests. `/admin/products/[id]/insights` shows one listing's performance; `ListingTabs` switches between it and the edit form.
   - `/admin/orders/[id]/slip` is the printable order slip for receipt printers (80 or 58 mm, `?w=58`; `?print=1` opens the print dialog, used by "Print slip" on the order page). Print CSS takes the admin chrome out of the layout, since merely hiding it makes Chrome shrink the slip, and `PrintButton` sizes `@page` to the slip's measured height.
-  - Live orders: `GET /api/admin/orders/stream` is a Server-Sent Events stream (admin only), not a WebSocket, because Next route handlers can't upgrade connections without a custom server. `lib/server/order-events.ts` keeps one MongoDB change stream per server process for all tabs, and falls back to polling `updatedAt` every 5 s when the database has no replica set. `components/admin/LiveOrders.tsx` (admin top bar) shows a popup, a chime and a `(n)` tab-title count for `new` orders, and calls `router.refresh()` on order pages for `new`/`change`. Order writes must keep setting `updatedAt` for the polling fallback.
+  - Live orders: `GET /api/admin/orders/stream` is a Server-Sent Events stream (admin only), not a WebSocket, because Next route handlers can't upgrade connections without a custom server. `lib/server/order-events.ts` keeps one MongoDB change stream per server process for all tabs, and falls back to polling `updatedAt` every 5 s when the database has no replica set. `components/admin/LiveOrders.tsx` (admin top bar) shows a popup, a chime and a `(n)` tab-title count for `new` orders, and calls `router.refresh()` on order pages for `new`/`change`. Order writes must keep setting `updatedAt` for the polling fallback. On Vercel the route has `maxDuration = 300` and closes itself after 270 s. Every ping carries `id: <time>`, so on reconnect the browser sends `Last-Event-ID` and the route first replays orders created since then (minus 5 s; `LiveOrders` skips ids it already announced).
   - `setUserRole` returns to the page in its `back` field, but only to `/admin/users` or `/admin/users/<id>`.
   - Charts are client SVG components in `components/admin/charts/`. They take a serialisable `unit` prop (`"pkr"` or `"count"`), not a formatter function, because server pages render them.
 - `src/app/layout.tsx` (root): fonts only, plus `DialogHost` and `CartSync` (both app-wide).
@@ -104,6 +104,14 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
     - `applyCouponCode` / `removeCouponCode` call `revalidatePath` on `/checkout` and `/cart`.
     - `Checkout` re-reads the bag's coupon on open (`currentCoupon()`).
 - `meta`: seed and migration markers.
+- `rate_limits`: counters (`{_id: "<rule>:<key>", n, expiresAt}`, TTL index on `expiresAt`) used by `lib/server/rate-limit.ts`. Each window starts at the first attempt, so a lockout always lasts until that window ends. Actions answer a reached limit with `retryAfter` (seconds), never a message: the button locks and counts down via `useCooldown` (`lib/use-cooldown.ts`), e.g. "Try again in 14:32". The limits are listed in `RULES`:
+  - Login: 5 failed tries per email and 20 per IP in 15 min. Only failures count, and the check runs before the password.
+  - Register: 5 per IP per hour.
+  - Reset emails: 3 per address per hour (silent cap, same answer), plus 10 per IP. Bad reset links: 10 per IP per hour.
+  - Orders: 5 placed per account per hour, and at most `MAX_PENDING_ORDERS` (3) still `pending`.
+  - Wrong coupon codes: 10 per account in 15 min (someone else's surprise card counts as wrong).
+  - "Notify me": 20 per account per day. Reviews: 20 per account per hour.
+  - Per-IP keys come from `x-real-ip` or the last `x-forwarded-for` entry. The site is hosted on Vercel, which sets both headers itself, so they can be trusted there. Elsewhere, without a proxy, they can be faked, and the per-email and per-account limits are the ones that hold.
 
 ### Money paths never trust the client
 - `placeOrder` (`app/(shop)/checkout/actions.ts`) builds orders from the account's `carts` document and re-prices from listings, then clears the bag after insert.
@@ -173,6 +181,5 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
 - Real payment gateway (PayFast, or EasyPaisa/JazzCash merchant APIs).
 - SMTP credentials, so emails actually send.
 - WhatsApp Business API, for automatic order messages (today they are one-click from the admin panel).
-- Rate limiting on login, register and checkout.
 - Cleanup of uploads that were never saved to a listing.
 

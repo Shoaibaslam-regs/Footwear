@@ -9,12 +9,15 @@ import type { UserDoc } from "./dal";
 import { createSession, deleteSession } from "./session";
 import { mailConfigured, sendMail, siteUrl } from "../server/mail";
 import { createResetToken, consumeResetToken } from "../server/password-reset";
+import { RULES, blocked, clientIp, firstBlocked, hit } from "../server/rate-limit";
 
 export type AuthState =
   | {
       errors?: Partial<Record<"name" | "email" | "password" | "confirm", string[]>>;
       message?: string;
       values?: { name?: string; email?: string };
+      /** A rate limit was reached: seconds until the button works again. */
+      retryAfter?: number;
     }
   | undefined;
 
@@ -59,6 +62,8 @@ export async function register(_: AuthState, formData: FormData): Promise<AuthSt
   if (!parsed.success) {
     return { errors: z.flattenError(parsed.error).fieldErrors, values };
   }
+  const registerWait = await hit(RULES.registerIp, await clientIp());
+  if (registerWait) return { retryAfter: registerWait, values };
 
   const db = await getDb();
   const users = db.collection<Omit<UserDoc, "_id">>("users");
@@ -93,11 +98,17 @@ export async function login(_: AuthState, formData: FormData): Promise<AuthState
   if (!parsed.success) {
     return { errors: z.flattenError(parsed.error).fieldErrors, values };
   }
+  // Checked before the password, and the same answer whether or not the account exists.
+  const ip = await clientIp();
+  const wait = await firstBlocked([RULES.loginEmail, parsed.data.email], [RULES.loginIp, ip]);
+  if (wait) return { retryAfter: wait, values };
 
   const db = await getDb();
   const user = await db.collection<UserDoc>("users").findOne({ email: parsed.data.email });
   const ok = user ? await verifyPassword(parsed.data.password, user.passwordHash) : false;
   if (!user || !ok) {
+    // Only failed attempts count.
+    await Promise.all([hit(RULES.loginEmail, parsed.data.email), hit(RULES.loginIp, ip)]);
     return { message: "Email or password is incorrect.", values };
   }
 
@@ -113,7 +124,7 @@ export async function logout() {
 
 /* ---------- Password reset ---------- */
 
-export type ResetState = { ok?: string; message?: string; errors?: Record<string, string[] | undefined> } | undefined;
+export type ResetState = { ok?: string; message?: string; errors?: Record<string, string[] | undefined>; retryAfter?: number } | undefined;
 
 export async function requestPasswordReset(_: ResetState, formData: FormData): Promise<ResetState> {
   const parsed = email.safeParse(formData.get("email") ?? "");
@@ -124,8 +135,13 @@ export async function requestPasswordReset(_: ResetState, formData: FormData): P
         "Email isn't set up for this store yet. Please message us on WhatsApp (0314 8428115) from your registered number and we'll send you a reset link.",
     };
   }
+  const ipWait = await hit(RULES.resetIp, await clientIp());
+  if (ipWait) return { retryAfter: ipWait };
+  // Per address the cap is silent: the answer below stays the same, so it can't
+  // reveal which emails have accounts, and the inbox gets at most 3 emails an hour.
+  const overForEmail = (await hit(RULES.resetEmail, parsed.data)) !== null;
   const db = await getDb();
-  const user = await db.collection<UserDoc>("users").findOne({ email: parsed.data });
+  const user = overForEmail ? null : await db.collection<UserDoc>("users").findOne({ email: parsed.data });
   if (user) {
     const token = await createResetToken(user._id);
     if (token) {
@@ -155,8 +171,14 @@ const newPassword = z
 export async function resetPassword(_: ResetState, formData: FormData): Promise<ResetState> {
   const parsed = newPassword.safeParse({ password: formData.get("password") ?? "", confirm: formData.get("confirm") ?? "" });
   if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors };
+  const ip = await clientIp();
+  const wait = await blocked(RULES.resetTokenIp, ip);
+  if (wait) return { retryAfter: wait };
   const userId = await consumeResetToken(String(formData.get("token") ?? ""));
-  if (!userId) return { message: "This reset link has expired or was already used. Please request a new one." };
+  if (!userId) {
+    await hit(RULES.resetTokenIp, ip);
+    return { message: "This reset link has expired or was already used. Please request a new one." };
+  }
   const db = await getDb();
   const users = db.collection<UserDoc>("users");
   const now = new Date();

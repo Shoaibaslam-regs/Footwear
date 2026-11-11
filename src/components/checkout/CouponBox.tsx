@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useState, useTransition } from "react";
 import { applyCouponCode, removeCouponCode } from "@/lib/coupon-actions";
+import { clock, useCooldown } from "@/lib/use-cooldown";
 import type { CouponResult, CouponTerms } from "@/lib/coupons";
 import { couponHeadline } from "@/lib/coupons";
 import Price from "@/components/Price";
@@ -24,6 +25,9 @@ export default function CouponBox({
   const [error, setError] = useState<string | null>(null);
   const [cardUrl, setCardUrl] = useState<string | null>(null);
   const [pending, start] = useTransition();
+  // Too many wrong codes: Apply locks and counts down.
+  const [limited, setLimited] = useState<{ s: number } | null>(null);
+  const wait = useCooldown(limited?.s, limited);
 
   const apply = () =>
     start(async () => {
@@ -31,6 +35,7 @@ export default function CouponBox({
       setCardUrl(null);
       const r = await applyCouponCode(code);
       if (!r.ok) {
+        if (r.retryAfter) return setLimited({ s: r.retryAfter });
         setCardUrl(r.cardUrl ?? null);
         return setError(r.error);
       }
@@ -112,7 +117,7 @@ export default function CouponBox({
           onKeyDown={(e) => {
             if (e.key === "Enter") {
               e.preventDefault();
-              if (code.trim()) apply();
+              if (code.trim() && wait === 0) apply();
             }
           }}
           placeholder="e.g. EID20"
@@ -120,11 +125,11 @@ export default function CouponBox({
         />
         <button
           className="h-11 px-space-md bg-primary text-on-primary hover:bg-secondary font-label-uppercase text-label-uppercase uppercase tracking-widest disabled:opacity-50 transition-colors"
-          disabled={pending || !code.trim()}
+          disabled={pending || !code.trim() || wait > 0}
           onClick={apply}
           type="button"
         >
-          {pending ? "…" : "Apply"}
+          {wait > 0 ? <span className="tabular-nums">Wait {clock(wait)}</span> : pending ? "…" : "Apply"}
         </button>
       </div>
       {error && (

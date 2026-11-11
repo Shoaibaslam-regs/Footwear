@@ -10,9 +10,10 @@ import { getDb } from "@/lib/server/db";
 import { getPublishedProduct } from "@/lib/server/products";
 import { hasPurchased, REVIEWS_TAG, reviewsTag, type ReviewDoc } from "@/lib/server/reviews";
 import { addStockAlert } from "@/lib/server/stock-alerts";
+import { RULES, hit } from "@/lib/server/rate-limit";
 
 export type ReviewFormState =
-  | { ok?: string; message?: string; errors?: Record<string, string[] | undefined> }
+  | { ok?: string; message?: string; errors?: Record<string, string[] | undefined>; retryAfter?: number }
   | undefined;
 
 const schema = z.object({
@@ -50,6 +51,8 @@ export async function submitReview(_: ReviewFormState, fd: FormData): Promise<Re
     return { errors: z.flattenError(parsed.error).fieldErrors, message: "Please check the highlighted fields." };
   }
   const d = parsed.data;
+  const reviewWait = await hit(RULES.reviewUser, user.id);
+  if (reviewWait) return { retryAfter: reviewWait };
   if (!(await getPublishedProduct(d.slug))) return { message: "This product is no longer available." };
 
   const now = new Date();
@@ -108,12 +111,14 @@ export async function deleteMyReview(fd: FormData) {
 
 /* ---------- Back-in-stock alerts ---------- */
 
-export async function requestStockAlert(slugValue: string, size: number): Promise<{ ok?: string; error?: string }> {
+export async function requestStockAlert(slugValue: string, size: number): Promise<{ ok?: string; error?: string; retryAfter?: number }> {
   const user = await getCurrentUser();
   if (!user) return { error: "Please log in first." };
   const p = await getPublishedProduct(String(slugValue));
   if (!p || !p.sizes.includes(size)) return { error: "This size isn't offered." };
   if (!p.soldOutSizes.includes(size) && p.stock[String(size)] !== 0) return { error: "Good news: this size is in stock now." };
+  const alertWait = await hit(RULES.stockAlertUser, user.id);
+  if (alertWait) return { retryAfter: alertWait };
   await addStockAlert(p.slug, size, user.id, user.email);
   return { ok: `We'll email ${user.email} when EU ${size} is back.` };
 }

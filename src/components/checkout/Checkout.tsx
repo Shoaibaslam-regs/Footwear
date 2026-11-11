@@ -3,6 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useEffect, useState } from "react";
+import { useCooldown } from "@/lib/use-cooldown";
 import { placeOrder, type PlaceOrderState } from "@/app/(shop)/checkout/actions";
 import type { DeliveryOption } from "@/lib/site";
 import type { SavedAddress } from "@/lib/auth/dal";
@@ -44,6 +45,8 @@ export default function Checkout({
 }) {
   const items = useBag();
   const [state, formAction, pending] = useActionState(placeOrder, undefined);
+  // Hourly order limit: Place Order locks and counts down.
+  const orderWait = useCooldown(state && !state.ok ? state.retryAfter : undefined, state);
   const [step, setStep] = useState(2);
   const [delivery, setDelivery] = useState(deliveryOptions[0].id);
   const [coupon, setCoupon] = useState<CouponTerms | null>(initialCoupon);
@@ -133,6 +136,7 @@ export default function Checkout({
             message={state && !state.ok ? state.message : undefined}
             pending={pending}
             total={total}
+            wait={orderWait}
           />
         </form>
         <CheckoutSummary
