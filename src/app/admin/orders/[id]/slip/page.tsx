@@ -86,7 +86,7 @@ async function SlipContent({ params, searchParams }: PageProps<"/admin/orders/[i
           <p className="muted">For a receipt printer. Pick your paper roll width, then print.</p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <nav aria-label="Paper width" className="flex gap-1 rounded-full bg-[var(--a-panel)] border border-[var(--a-line)] p-1">
+          <nav aria-label="Paper width" className="a-seg">
             {(Object.keys(WIDTHS) as (keyof typeof WIDTHS)[]).map((k) => (
               <Link key={k} aria-current={k === w ? "page" : undefined} className="pill" href={k === "80" ? base : `${base}?w=${k}`} replace scroll={false}>
                 {k} mm

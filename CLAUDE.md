@@ -39,7 +39,7 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 
 ### Route groups
 - `src/app/(shop)/`: the storefront. Its layout renders `Header`, `Footer` and `ActionToast`.
-- `src/app/admin/`: the admin panel. Its own layout uses deliberately plain styling (`admin.css`, system font). Do not use brand tokens there.
+- `src/app/admin/`: the admin panel. Its own layout is a plain Microsoft-style layout in the website's colours (`admin.css`, `--a-*` variables mapped to the theme tokens, inside `@layer components`; no blue; see DESIGN.md).
   - The overview reads `getDashboard(range)` from `lib/server/dashboard.ts`. It is uncached, and its days are Pakistan calendar days (Asia/Karachi), comparing the current period with the one before.
   - `/admin/users` and `/admin/products` read per-row figures from `lib/server/insights.ts`: orders, spend, bag and wishlist counts per user, and sold, revenue, rating, wishlists and restock requests per listing. They filter, sort and page in memory with `components/admin/Pager.tsx` (`?page=`, `?per=25|50|100`).
   - `/admin/users/[id]` shows one customer: profile, saved address, orders, live bag and wishlist, reviews and restock requests. `/admin/products/[id]/insights` shows one listing's performance; `ListingTabs` switches between it and the edit form.

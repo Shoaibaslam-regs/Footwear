@@ -93,7 +93,7 @@ export default function TrendChart({
       {a && active !== null && (
         <div
           aria-live="polite"
-          className="absolute top-2 pointer-events-none rounded-lg border border-[var(--a-line)] bg-[var(--a-panel)] px-3 py-2 shadow-md text-xs"
+          className="absolute top-2 pointer-events-none rounded border border-[var(--a-line)] bg-[var(--a-panel)] px-3 py-2 shadow-md text-xs"
           style={{ left: Math.min(Math.max(x(active) - 70, 0), width - 150), width: 140 }}
         >
           <div className="text-sm font-semibold text-[var(--a-text)]">{format(a.value)}</div>

@@ -23,7 +23,7 @@ export default function ChartCard({
       {table && table.rows.length > 0 && (
         <details className="text-[13px]">
           <summary className="muted cursor-pointer select-none hover:text-[var(--a-text)]">View as table</summary>
-          <div className="mt-2 max-h-64 overflow-auto rounded-lg border border-[var(--a-line)]">
+          <div className="mt-2 max-h-64 overflow-auto rounded border border-[var(--a-line)]">
             <table>
               <thead>
                 <tr>

@@ -1,129 +1,181 @@
 /*
- * Admin panel: clean dashboard layout (a top bar, a left sidebar, white cards).
- * Colours come from the store's own theme tokens (globals.css @theme), so the
- * admin always matches the website. System sans-serif; no decorative motion.
+ * Admin panel: a simple, Microsoft-style layout (an app bar, a navigation pane,
+ * flat cards, 4px corners) in the website's own colours: the --color-* theme
+ * tokens from globals.css (espresso, champagne, warm brown, ivory).
+ *
+ * Everything sits in the `components` layer, so Tailwind utilities on an
+ * element (text-right, w-full…) win over these defaults, as they should.
  */
+@layer components {
 .admin {
-  --a-bg: var(--color-surface-container-low); /* ivory */
-  --a-panel: var(--color-surface-container-lowest); /* white */
-  --a-text: var(--color-on-surface); /* ink */
+  --a-bg: var(--color-surface-container-low); /* ivory page */
+  --a-pane: var(--color-surface); /* navigation pane */
+  --a-panel: var(--color-surface-container-lowest); /* white cards */
+  --a-text: var(--color-on-surface);
   --a-muted: var(--color-on-surface-variant);
-  --a-line: var(--color-outline-variant); /* warm blush-grey */
-  --a-accent: var(--color-primary-container); /* espresso */
-  --a-accent-hover: var(--color-secondary); /* warm brown */
+  --a-line: color-mix(in srgb, var(--color-outline-variant) 60%, white); /* dividers */
+  --a-stroke: var(--color-outline-variant); /* control borders */
+  --a-hover: var(--color-surface-container-low);
+  --a-selected: var(--color-surface-container);
+  --a-pressed: var(--color-surface-container-high);
+  --a-accent: var(--color-primary-container); /* espresso: app bar, main buttons */
+  --a-accent-hover: #3b302c;
+  --a-accent-pressed: var(--color-primary);
   --a-accent-soft: var(--color-secondary-fixed); /* champagne */
-  --a-gold: var(--color-secondary);
+  --a-gold: var(--color-secondary); /* warm brown: links, selection bar, focus */
   --a-danger: #b42318;
   --a-ok: #067647;
   /* Charts: one validated series hue (passes chroma + contrast on white), hairline grid. */
   --a-chart: #9c6a2a;
-  --a-grid: color-mix(in srgb, var(--color-outline-variant) 60%, transparent);
+  --a-grid: color-mix(in srgb, var(--color-outline-variant) 50%, transparent);
   --a-axis: var(--color-outline);
-  font-family: ui-sans-serif, system-ui, -apple-system, "Segoe UI", Roboto, Arial, sans-serif;
+  --a-radius: 4px;
+  --a-shadow: 0 0 2px rgba(0, 0, 0, 0.12), 0 2px 4px rgba(0, 0, 0, 0.14);
+  --a-shadow-lg: 0 0 2px rgba(0, 0, 0, 0.12), 0 8px 16px rgba(0, 0, 0, 0.14);
+  font-family: "Segoe UI Variable Text", "Segoe UI", -apple-system, BlinkMacSystemFont, system-ui, Roboto, "Helvetica Neue", Arial, sans-serif;
   font-size: 14px;
-  line-height: 1.5;
+  line-height: 20px;
   color: var(--a-text);
   background: var(--a-bg);
   min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
 }
-.admin h1 { font-size: 24px; font-weight: 700; letter-spacing: -0.01em; margin: 0; }
-.admin h2 { font-size: 16px; font-weight: 600; margin: 0; }
+.admin h1 { font-size: 24px; line-height: 32px; font-weight: 600; margin: 0; }
+.admin h2 { font-size: 16px; line-height: 22px; font-weight: 600; margin: 0; }
 .admin .muted { color: var(--a-muted); }
 
-/* Layout */
-.admin .a-topbar { background: var(--a-panel); border-bottom: 1px solid var(--a-line); }
-.admin .a-brand { color: var(--a-accent); font-weight: 700; font-size: 17px; letter-spacing: 0.18em; }
-.admin .a-side-link {
-  display: block; padding: 8px 12px; border-radius: 8px; color: #4b5563; white-space: nowrap;
-  transition: background-color 0.15s, color 0.15s;
+/* ---------- App bar (top) ---------- */
+.admin .a-topbar { background: var(--a-accent); color: var(--color-surface); }
+.admin .a-topbar .muted, .admin .a-topbar a.link.muted { color: rgba(255, 255, 255, 0.86); }
+.admin .a-topbar a.link { color: #fff; text-decoration-color: rgba(255, 255, 255, 0.5); }
+.admin .a-topbar .btn-text { color: #fff; }
+.admin .a-topbar .btn-text:hover { color: #fff; text-decoration: underline; }
+.admin .a-brand { color: var(--a-accent-soft); font-weight: 600; font-size: 15px; letter-spacing: 0.04em; }
+.admin .a-appicon {
+  width: 28px; height: 28px; border-radius: var(--a-radius); background: #fff;
+  display: flex; align-items: center; justify-content: center;
 }
-.admin .a-side-link:hover { color: var(--a-text); background: rgba(33, 27, 25, 0.04); }
-.admin .a-side-link[aria-current="page"] {
-  background: var(--a-panel); color: var(--a-accent); font-weight: 600;
-  box-shadow: inset 3px 0 0 var(--a-gold), 0 1px 2px rgba(33, 27, 25, 0.06), 0 1px 3px rgba(33, 27, 25, 0.08);
+.admin .a-topbar :focus-visible { outline: 2px solid #fff; outline-offset: 2px; }
+
+/* ---------- Navigation pane (left) ---------- */
+.admin .a-pane { background: var(--a-pane); border-right: 1px solid var(--a-line); }
+.admin .a-side-link {
+  position: relative; display: flex; align-items: center; gap: 10px;
+  height: 40px; padding: 0 12px; border-radius: var(--a-radius); color: var(--a-text); white-space: nowrap;
+  transition: background-color 0.1s;
+}
+.admin .a-side-link svg { width: 20px; height: 20px; flex-shrink: 0; color: var(--a-muted); }
+.admin .a-side-link:hover { background: var(--a-hover); }
+.admin .a-side-link:active { background: var(--a-pressed); }
+.admin .a-side-link[aria-current="page"] { background: var(--a-selected); font-weight: 600; }
+.admin .a-side-link[aria-current="page"] svg { color: var(--a-gold); }
+/* The selection bar, as in Windows Settings (warm brown). */
+.admin .a-side-link[aria-current="page"]::before {
+  content: ""; position: absolute; left: 0; top: 10px; bottom: 10px; width: 3px; border-radius: 2px; background: var(--a-gold);
+}
+@media (max-width: 767px) {
+  .admin .a-pane { border-right: 0; border-bottom: 1px solid var(--a-line); }
+  .admin .a-side-link[aria-current="page"]::before { top: auto; bottom: 0; left: 12px; right: 12px; width: auto; height: 3px; }
 }
 
-/* Cards & tables */
+/* ---------- Cards & tables ---------- */
 .admin .panel {
   background: var(--a-panel);
-  border: 1px solid var(--a-line);
-  border-radius: 12px;
-  box-shadow: 0 1px 2px rgba(33, 27, 25, 0.04);
+  border: 0;
+  border-radius: var(--a-radius);
+  box-shadow: var(--a-shadow);
 }
 .admin table { width: 100%; border-collapse: collapse; }
 .admin th {
   text-align: left;
   font-size: 12px;
+  line-height: 16px;
   font-weight: 600;
   color: var(--a-muted);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
   padding: 10px 12px;
   border-bottom: 1px solid var(--a-line);
   white-space: nowrap;
 }
-.admin td { padding: 10px 12px; border-bottom: 1px solid var(--a-line); vertical-align: middle; }
+.admin td { padding: 9px 12px; border-bottom: 1px solid var(--a-line); vertical-align: middle; }
+.admin tbody tr:hover td { background: var(--color-surface); }
 .admin tr:last-child td { border-bottom: 0; }
-.admin a.link { color: var(--a-accent); text-decoration: underline; text-decoration-color: var(--a-gold); text-underline-offset: 3px; }
+.admin a.link { color: var(--a-gold); text-decoration: none; }
+.admin a.link:hover { color: var(--a-accent); text-decoration: underline; text-underline-offset: 2px; }
 .admin a.link.muted { color: var(--a-muted); }
 
-/* Buttons */
+/* ---------- Buttons ---------- */
 .admin .btn {
   display: inline-flex; align-items: center; justify-content: center; gap: 6px;
-  height: 36px; padding: 0 14px; border-radius: 8px; font-weight: 500;
-  border: 1px solid var(--a-line); background: var(--a-panel); color: var(--a-text);
-  transition: background-color 0.15s, border-color 0.15s;
+  height: 32px; padding: 0 12px; min-width: 64px; border-radius: var(--a-radius); font-weight: 600;
+  border: 1px solid var(--a-stroke); background: var(--a-panel); color: var(--a-text); white-space: nowrap;
+  transition: background-color 0.1s, border-color 0.1s;
 }
-.admin .btn:hover { background: var(--color-surface-container); }
-.admin .btn-primary { background: var(--a-accent); border-color: var(--a-accent); color: #fff; }
-.admin .btn-primary:hover { background: var(--a-accent-hover); border-color: var(--a-accent-hover); }
+.admin .btn:hover { background: var(--a-hover); border-color: var(--color-outline); }
+.admin .btn:active { background: var(--a-pressed); }
+.admin .btn-primary { background: var(--a-accent); border-color: transparent; color: var(--a-accent-soft); }
+.admin .btn-primary:hover { background: var(--a-accent-hover); border-color: transparent; }
+.admin .btn-primary:active { background: var(--a-accent-pressed); }
 .admin .btn-danger { color: var(--a-danger); }
-.admin .btn-sm { height: 32px; padding: 0 10px; font-size: 13px; }
-.admin .btn:disabled { opacity: 0.55; cursor: not-allowed; }
-.admin .btn-text { background: none; border: 0; padding: 0; height: auto; font-weight: 500; color: var(--a-text); }
-.admin .btn-text:hover { color: var(--a-gold); background: none; }
+.admin .btn-sm { height: 24px; min-width: 0; padding: 0 8px; font-size: 12px; font-weight: 400; }
+.admin .btn:disabled { background: var(--color-surface-container); border-color: var(--a-line); color: var(--color-outline); cursor: not-allowed; }
+.admin .btn-text { background: none; border: 0; padding: 0; height: auto; min-width: 0; font-weight: 400; color: var(--a-gold); }
+.admin .btn-text:hover { background: none; text-decoration: underline; }
 
-/* Pills (filter tabs) */
+/* ---------- Segmented filters and tabs ---------- */
+.admin .a-seg {
+  display: inline-flex; gap: 2px; padding: 2px; border: 1px solid var(--a-stroke);
+  border-radius: var(--a-radius); background: var(--a-panel);
+}
 .admin .pill {
-  display: inline-flex; align-items: center; height: 32px; padding: 0 14px; border-radius: 999px;
-  color: #4b5563; background: var(--a-panel); border: 1px solid transparent; white-space: nowrap;
+  display: inline-flex; align-items: center; height: 28px; padding: 0 12px; border-radius: 2px;
+  color: var(--a-text); background: transparent; white-space: nowrap;
 }
-.admin .pill:hover { color: var(--a-text); border-color: var(--a-line); }
-.admin .pill[aria-current="page"] { background: var(--a-accent); color: var(--a-accent-soft); }
+.admin .pill:hover { background: var(--a-hover); }
+.admin .pill[aria-current="page"] { background: var(--a-accent); color: var(--a-accent-soft); font-weight: 600; }
 
-/* Forms */
+/* ---------- Forms: the Fluent field with its darker bottom edge ---------- */
 .admin .input, .admin select, .admin textarea {
-  width: 100%; height: 38px; padding: 0 12px; border: 1px solid var(--a-line);
-  border-radius: 8px; background: var(--a-panel); color: var(--a-text); font: inherit;
+  width: 100%; height: 32px; padding: 0 10px; font: inherit; font-weight: 400; color: var(--a-text); background: var(--a-panel);
+  border: 1px solid var(--a-stroke); border-bottom-color: var(--color-outline); border-radius: var(--a-radius);
 }
-.admin textarea { height: auto; padding: 10px 12px; }
-.admin .input:focus, .admin select:focus, .admin textarea:focus, .admin .btn:focus-visible, .admin .pill:focus-visible, .admin .a-side-link:focus-visible {
-  outline: 2px solid var(--a-gold); outline-offset: 1px;
+.admin textarea { height: auto; padding: 6px 10px; }
+.admin .input:hover, .admin select:hover, .admin textarea:hover { border-color: var(--color-outline); border-bottom-color: var(--a-muted); }
+.admin .input:focus, .admin select:focus, .admin textarea:focus {
+  outline: none; border-bottom-color: var(--a-gold); box-shadow: inset 0 -1px 0 var(--a-gold);
 }
-.admin label.field { display: flex; flex-direction: column; gap: 6px; font-weight: 500; }
-.admin .error { color: var(--a-danger); font-size: 13px; font-weight: 400; }
+.admin .btn:focus-visible, .admin .pill:focus-visible, .admin .a-side-link:focus-visible, .admin a:focus-visible {
+  outline: 2px solid var(--a-text); outline-offset: 1px;
+}
+.admin input[type="checkbox"], .admin input[type="radio"] { accent-color: var(--a-accent); }
+.admin label.field { display: flex; flex-direction: column; gap: 4px; font-weight: 600; }
+.admin .error { color: var(--a-danger); font-size: 12px; font-weight: 400; }
+.admin ::placeholder { color: var(--color-outline); font-weight: 400; }
 
-/* Tags & notices */
+/* ---------- Badges & message bars ---------- */
 .admin .tag {
-  display: inline-block; padding: 1px 8px; border-radius: 999px; font-size: 12px;
-  border: 1px solid var(--a-line); white-space: nowrap;
+  display: inline-flex; align-items: center; height: 20px; padding: 0 8px; border-radius: var(--a-radius);
+  font-size: 12px; line-height: 16px; font-weight: 600; white-space: nowrap;
+  color: var(--a-muted); background: var(--color-surface-container); border: 1px solid transparent;
 }
-.admin .tag-ok { color: var(--a-ok); border-color: #abefc6; background: #ecfdf3; }
-.admin .tag-muted { color: var(--a-muted); }
-.admin .tag-warn { color: #93370d; border-color: #fedf89; background: #fffaeb; }
-.admin .tag-info { color: #175cd3; border-color: #b2ddff; background: #eff8ff; }
-.admin .tag-bad { color: var(--a-danger); border-color: #fecdca; background: #fef3f2; }
-.admin .notice { padding: 10px 14px; border-radius: 10px; border: 1px solid var(--a-line); background: var(--a-panel); }
-.admin .notice-ok { border-color: #abefc6; background: #ecfdf3; color: var(--a-ok); }
-.admin .notice-bad { border-color: #fecdca; background: #fef3f2; color: var(--a-danger); }
+.admin .tag-ok { color: #067647; background: #ecfdf3; border-color: #abefc6; }
+.admin .tag-muted { color: var(--a-muted); background: var(--color-surface); border-color: var(--a-line); }
+.admin .tag-warn { color: #93370d; background: #fffaeb; border-color: #fedf89; }
+/* "In progress" states: champagne, the website's accent (no blue). */
+.admin .tag-info { color: var(--color-on-secondary-container); background: color-mix(in srgb, var(--color-secondary-fixed) 45%, white); border-color: var(--color-secondary-fixed-dim); }
+.admin .tag-bad { color: #b42318; background: #fef3f2; border-color: #fecdca; }
+.admin .notice { padding: 8px 12px; border-radius: var(--a-radius); border: 1px solid var(--a-line); background: var(--a-panel); }
+.admin .notice-ok { border-color: #abefc6; background: #ecfdf3; color: #067647; }
+.admin .notice-bad { border-color: #fecdca; background: #fef3f2; color: #b42318; }
 
-/* Empty state: dashed card */
+/* Empty state */
 .admin .empty {
-  border: 1px dashed var(--color-outline); border-radius: 12px; padding: 48px 16px; text-align: center;
-  font-weight: 600; color: var(--a-text); background: rgba(255, 255, 255, 0.5);
+  border: 1px dashed var(--a-stroke); border-radius: var(--a-radius); padding: 48px 16px; text-align: center;
+  font-weight: 600; color: var(--a-text); background: var(--a-panel);
 }
 .admin .empty .muted { font-weight: 400; display: block; margin-top: 4px; }
 
 /* Live order popup: a short slide in from the right. */
 @keyframes a-pop-in { from { opacity: 0; transform: translateX(16px); } to { opacity: 1; transform: none; } }
-@media (prefers-reduced-motion: no-preference) { .admin .a-pop { animation: a-pop-in 0.25s ease-out; } }
+@media (prefers-reduced-motion: no-preference) { .admin .a-pop { animation: a-pop-in 0.2s ease-out; } }
+.admin .a-pop { box-shadow: var(--a-shadow-lg); }
+} /* @layer components */

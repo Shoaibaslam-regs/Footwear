@@ -78,7 +78,7 @@ export default function ColumnChart({
       </svg>
       {a && active !== null && (
         <div
-          className="absolute top-1 pointer-events-none rounded-lg border border-[var(--a-line)] bg-[var(--a-panel)] px-3 py-2 shadow-md text-xs"
+          className="absolute top-1 pointer-events-none rounded border border-[var(--a-line)] bg-[var(--a-panel)] px-3 py-2 shadow-md text-xs"
           style={{ left: Math.min(Math.max(cx(active) - 60, 0), width - 130), width: 120 }}
         >
           <div className="text-sm font-semibold text-[var(--a-text)]">{format(a.value)}</div>

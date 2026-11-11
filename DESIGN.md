@@ -93,9 +93,9 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
 
 ### Admin panel
 - **Layout** (`src/app/admin/layout.tsx`):
-  - A white top bar: the emblem, "Ŕose Atelier" in the accent colour, a divider, "Admin", and the admin's first name with **Log out** on the right.
-  - A left sidebar (`components/admin/AdminNav.tsx`, `.a-side-link`; the current page is a white card with a soft shadow). On phones it becomes a row that scrolls sideways.
-  - Content sits on a light grey page in white rounded cards (`.panel`). The panel uses the full desktop width (capped at 1920px), so build pages as responsive grids rather than one narrow column.
+  - A simple Microsoft-style layout in the website's colours. A 48px espresso app bar (`.a-topbar`, sticky): the emblem on a white tile, "Ŕose Atelier | Admin", "View store", then the Live dot, the admin's first name and **Log out**.
+  - A navigation pane on the left (`components/admin/AdminNav.tsx`, `.a-pane` / `.a-side-link`): 20px line icons drawn inline as SVG, 40px rows; the current page gets a warm grey fill, bold text, a warm-brown icon and a 3px warm-brown bar on its left edge. On phones it becomes a row that scrolls sideways, with the bar underneath.
+  - Content sits on the ivory page in white cards (`.panel`: 4px corners, a soft Fluent shadow, no border), up to 1800px wide, so build pages as responsive grids rather than one narrow column.
 - **Overview dashboard** (`src/app/admin/page.tsx`, data from `lib/server/dashboard.ts`):
   - One filter row at the top: a 7 / 30 / 90-day range (`?range=`, default 30) that every figure below follows.
   - KPI tiles (`components/admin/charts/StatTile.tsx`): label, value, and the change vs the previous period of the same length, shown as an arrow plus text.
@@ -109,11 +109,12 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
   - Line charts: a 2px line, a 10% wash and an end dot with its value. A crosshair and tooltip follow the pointer and the arrow keys. Columns are at most 24px with 4px rounded tops. Ranked or staged data uses horizontal bars (`BarList`).
   - Count axes use whole numbers only. Every chart card (`ChartCard`) offers "View as table", so no figure depends on hovering.
   - A single series has no legend: the card title names it.
-- **Style** (`src/app/admin/admin.css`): the same colours as the store, read from the theme tokens (`--a-*` variables map to `--color-*` from `globals.css`), so the admin changes with the website theme.
-  - Colours: an ivory page, white cards, warm `outline-variant` lines and espresso primary buttons and pills, with a gold-brown hover and focus ring. The current sidebar page gets a gold edge.
-  - System sans-serif (no serif), and no decorative motion.
-  - Classes: `.btn` / `.btn-primary` / `.btn-danger` / `.btn-text`, pill filter tabs (`.pill`, current page = `aria-current="page"`), `.tag-*` (status colours: green, amber, red), `.notice-*`, and dashed empty states (`.empty`).
-  - Never hard-code hex colours in admin components; use the theme classes (`bg-surface-container`, `border-outline`…). Dialogs opened from admin pages pass `variant: "admin"`. Changing anyone's admin access (Make admin / Remove admin) always asks for confirmation first.
+- **Style** (`src/app/admin/admin.css`): the website's own colours, read from the theme tokens (`--a-*` variables map to `--color-*` from `globals.css`), in a plain Microsoft-style layout. **No blue.**
+  - Colours: ivory page, white cards, warm `outline-variant` lines, ink text, espresso (`primary-container`) for the app bar, main buttons and the selected filter, with champagne text on it; warm brown (`secondary`) for links, the selection bar and the input focus edge. Status badges: green, amber, champagne (in progress) and red.
+  - Type: Segoe UI (system fallbacks), 14/20px body, 24px semibold page titles, 16px semibold card titles. 4px corners everywhere. No decorative motion.
+  - Controls: 32px buttons (`.btn`, semibold; `.btn-primary` espresso; `.btn-sm` 24px for row actions), inputs with a darker bottom edge that turns warm brown on focus, filter tabs (`.pill`), segmented choices in a `.a-seg` group, badges `.tag-*`, `.notice-*` message bars and dashed `.empty` states.
+  - The whole file is inside `@layer components`, so Tailwind utilities on an element (`text-right` on a `<th>`, `w-full`…) override it. Number and action columns rely on this to align right.
+  - Never hard-code colours in admin components; use the `--a-*` variables (`bg-[var(--a-panel)]`, `border-[var(--a-line)]`…). Dialogs opened from admin pages pass `variant: "admin"`. Changing anyone's admin access (Make admin / Remove admin) always asks for confirmation first.
   - Exception: chart marks use `--a-chart`.
 - Flex or grid children holding wide tables or `<fieldset>`s need `min-w-0` so they scroll inside their card on phones.
 

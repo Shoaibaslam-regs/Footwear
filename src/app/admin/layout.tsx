@@ -47,26 +47,18 @@ export default function AdminLayout({
 }) {
   return (
     <div className="admin">
-      <header className="a-topbar">
-        <div className="px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between gap-4">
+      <header className="a-topbar sticky top-0 z-40">
+        <div className="px-3 sm:px-4 h-12 flex items-center justify-between gap-4">
           <div className="flex items-center gap-3 min-w-0">
-            <Link className="flex items-center gap-2 shrink-0" href="/admin">
-              <Image
-                alt=""
-                className="w-6 h-6 object-contain"
-                height={24}
-                src="/icon.png"
-                width={24}
-              />
-              <span className="a-brand">ŔOSE ATELIER</span>
+            <Link className="flex items-center gap-2.5 shrink-0" href="/admin">
+              <span className="a-appicon">
+                <Image alt="" className="w-5 h-5 object-contain" height={20} src="/icon.png" width={20} />
+              </span>
+              <span className="a-brand">Ŕose Atelier</span>
             </Link>
-            <span aria-hidden="true" className="h-5 w-px bg-[var(--a-line)]" />
-            <span className="muted">Admin</span>
-            <Link
-              className="link muted hidden md:inline ml-3 text-xs"
-              href="/"
-              target="_blank"
-            >
+            <span aria-hidden="true" className="h-4 w-px bg-white/40" />
+            <span className="font-semibold">Admin</span>
+            <Link className="link muted hidden md:inline ml-2 text-xs" href="/" target="_blank">
               View store ↗
             </Link>
           </div>
@@ -82,13 +74,15 @@ export default function AdminLayout({
         </div>
       </header>
 
-      <div className="max-w-[1920px] mx-auto px-4 sm:px-6 lg:px-8 py-6 md:py-8 grid grid-cols-1 md:grid-cols-[200px_minmax(0,1fr)] xl:grid-cols-[220px_minmax(0,1fr)] gap-4 md:gap-8">
-        <aside className="md:sticky md:top-6 md:self-start">
-          <Suspense fallback={<AdminNavFallback />}>
-            <AdminNav />
-          </Suspense>
+      <div className="grid grid-cols-1 md:grid-cols-[220px_minmax(0,1fr)] min-h-[calc(100vh-48px)]">
+        <aside className="a-pane px-2 py-2 md:py-3">
+          <div className="md:sticky md:top-[60px]">
+            <Suspense fallback={<AdminNavFallback />}>
+              <AdminNav />
+            </Suspense>
+          </div>
         </aside>
-        <main className="min-w-0">
+        <main className="min-w-0 max-w-[1800px] w-full px-4 sm:px-6 lg:px-8 py-5 md:py-6">
           <Suspense fallback={<p className="muted">Loading…</p>}>
             {children}
           </Suspense>

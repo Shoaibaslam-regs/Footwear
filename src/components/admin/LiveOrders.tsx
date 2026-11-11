@@ -116,7 +116,7 @@ export default function LiveOrders() {
       >
         <span
           aria-hidden="true"
-          className={`w-2 h-2 rounded-full ${live ? "bg-[var(--a-ok)] motion-safe:animate-pulse" : "bg-[var(--a-line)]"}`}
+          className={`w-2 h-2 rounded-full ${live ? "bg-[#6ccb5f] ring-2 ring-white/30 motion-safe:animate-pulse" : "bg-white/40"}`}
         />
         {live ? "Live" : "Offline"}
       </span>

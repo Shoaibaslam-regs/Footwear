@@ -75,7 +75,7 @@ async function AdminOverviewContent({ searchParams }: PageProps<"/admin">) {
           </p>
         </div>
         <div className="flex flex-wrap items-center gap-3">
-          <nav aria-label="Date range" className="flex gap-1 rounded-full bg-[var(--a-panel)] border border-[var(--a-line)] p-1">
+          <nav aria-label="Date range" className="a-seg">
             {RANGES.map((r) => (
               <Link
                 key={r}
@@ -251,7 +251,7 @@ async function AdminOverviewContent({ searchParams }: PageProps<"/admin">) {
               { label: "On sale", value: onSale, href: "/admin/products" },
               { label: "Accounts", value: users.length, href: "/admin/users" },
             ].map((s) => (
-              <Link key={s.label} className="rounded-lg border border-[var(--a-line)] p-3 hover:border-[var(--color-outline)]" href={s.href}>
+              <Link key={s.label} className="rounded border border-[var(--a-line)] p-3 hover:bg-[var(--a-hover)]" href={s.href}>
                 <span className="block muted text-[13px]">{s.label}</span>
                 <span className="block text-xl font-semibold">{count(s.value)}</span>
               </Link>
