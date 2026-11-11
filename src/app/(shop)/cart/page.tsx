@@ -6,7 +6,7 @@ import { toSearchEntry } from "@/lib/products";
 import { getPublishedProducts } from "@/lib/server/products";
 
 export const metadata: Metadata = {
-  title: "Your Shopping Bag — Ŕose Atelier",
+  title: "Shopping Bag — Ŕose Atelier",
   description: "See the items in your Ŕose Atelier shopping bag.",
 };
 

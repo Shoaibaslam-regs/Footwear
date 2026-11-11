@@ -148,7 +148,7 @@ export default function ScratchCard({
     ctx.font = `600 ${narrow ? 10 : 11}px ${sans}`;
     spaced.letterSpacing = narrow ? "1.5px" : "3px";
     ctx.fillStyle = "#2c1906";
-    ctx.fillText("✦ SCRATCH TO SEE YOUR COUPON ✦", cx, height - (narrow ? 82 : 78), width - 48);
+    ctx.fillText("✦ SCRATCH TO REVEAL ✦", cx, height - (narrow ? 82 : 78), width - 48);
 
     // On phones the floating hint below says the same, so the second line is desktop-only.
     if (!narrow) {
@@ -340,7 +340,7 @@ export default function ScratchCard({
       return;
     }
     setApplied(true);
-    showNotice({ title: "Coupon added to your bag", message: `${headline} comes off at checkout.`, icon: "shopping_bag" });
+    showNotice({ title: "Coupon added to bag", message: `${headline} comes off at checkout.`, icon: "shopping_bag" });
   };
 
   return (
@@ -348,12 +348,12 @@ export default function ScratchCard({
       {/* Header (from the design): greeting and scratch progress */}
       <div className="text-center max-w-3xl mx-auto pt-space-sm pb-space-lg">
         <span className="font-label-uppercase text-label-uppercase tracking-[0.28em] text-secondary uppercase block mb-space-xs">
-          {surprise ? "Your Surprise Card" : "A Special Offer for You"}
+          {surprise ? "Surprise Card" : "A Special Offer for You"}
         </span>
         <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary tracking-tight font-normal mb-space-xs">
-          {surprise ? "Scratch to See Your Surprise Discount" : "Scratch to Reveal Your Coupon"}
+          {surprise ? "Scratch to See the Discount" : "Scratch to Reveal the Coupon"}
         </h1>
-        <p className="font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">
+        <p className="hidden sm:block font-body-md text-body-md text-on-surface-variant max-w-2xl mx-auto">
           {greetingName ? (
             <>
               Hi <span className="text-primary font-semibold">{greetingName}</span>, rub
@@ -420,7 +420,7 @@ export default function ScratchCard({
                   <div className="space-y-1">
                     <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary text-on-secondary font-label-uppercase text-[10px] tracking-widest">
                       <span className="material-symbols-outlined icon-filled text-[13px]">workspace_premium</span>
-                      {surprise ? "YOUR SURPRISE DISCOUNT" : "YOUR COUPON"}
+                      {surprise ? "SURPRISE DISCOUNT" : "COUPON"}
                     </span>
                     <h2 className="font-headline-lg-mobile text-[34px] leading-tight sm:font-headline-md sm:text-headline-md text-primary pt-space-xs font-normal">{headline}</h2>
                     <p className="font-body-sm text-body-sm sm:font-body-md sm:text-body-md text-secondary font-medium">{conditions}</p>
@@ -435,7 +435,7 @@ export default function ScratchCard({
                 {/* Code with copy / apply */}
                 <div className="p-3 sm:p-4 md:p-5 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-sm sm:gap-space-md">
                   <div className="space-y-0.5 text-center md:text-left">
-                    <span className="font-label-uppercase text-label-uppercase text-outline tracking-wider block">YOUR COUPON CODE</span>
+                    <span className="font-label-uppercase text-label-uppercase text-outline tracking-wider block">COUPON CODE</span>
                     <span className="font-headline-sm text-[20px] sm:text-headline-sm tracking-[0.12em] sm:tracking-[0.18em] text-primary font-bold select-all selection:bg-secondary-container break-all">{code}</span>
                   </div>
                   <div className="grid grid-cols-1 min-[400px]:grid-cols-2 md:flex md:flex-wrap items-center gap-space-xs w-full md:w-auto justify-center">

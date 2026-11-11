@@ -243,7 +243,7 @@ function OrderConfirmation({ order, signedIn }: { order: PlacedOrder; signedIn: 
         </Link>
         {signedIn && (
           <Link className={`${pill} bg-surface-container hover:bg-surface-container-high text-primary`} href="/account">
-            Track Your Order
+            Track Order
           </Link>
         )}
       </div>

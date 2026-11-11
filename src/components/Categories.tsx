@@ -13,10 +13,10 @@ export default function Categories() {
             Shop by Style
           </p>
           <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight">
-            Find Your Perfect Pair
+            Find the Perfect Pair
           </h2>
         </div>
-        <p className="font-body-sm text-body-sm text-on-surface-variant max-w-md">
+        <p className="hidden sm:block font-body-sm text-body-sm text-on-surface-variant max-w-md">
           Balanced heels, soft memory foam cushioning and hand-shaped
           leather from Italy.
         </p>
@@ -53,7 +53,7 @@ export default function Categories() {
               >
                 {c.title}
               </h3>
-              <p className={`font-body-sm text-xs md:text-body-sm text-primary-fixed mt-1 opacity-90 ${i === 0 ? "" : "hidden sm:block"}`}>
+              <p className={`font-body-sm text-xs md:text-body-sm text-primary-fixed mt-1 opacity-90 hidden sm:block`}>
                 {c.subtitle}
               </p>
               <span

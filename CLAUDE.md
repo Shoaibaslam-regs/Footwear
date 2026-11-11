@@ -43,6 +43,8 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - The overview reads `getDashboard(range)` from `lib/server/dashboard.ts`. It is uncached, and its days are Pakistan calendar days (Asia/Karachi), comparing the current period with the one before.
   - `/admin/users` and `/admin/products` read per-row figures from `lib/server/insights.ts`: orders, spend, bag and wishlist counts per user, and sold, revenue, rating, wishlists and restock requests per listing. They filter, sort and page in memory with `components/admin/Pager.tsx` (`?page=`, `?per=25|50|100`).
   - `/admin/users/[id]` shows one customer: profile, saved address, orders, live bag and wishlist, reviews and restock requests. `/admin/products/[id]/insights` shows one listing's performance; `ListingTabs` switches between it and the edit form.
+  - `/admin/orders/[id]/slip` is the printable order slip for receipt printers (80 or 58 mm, `?w=58`; `?print=1` opens the print dialog, used by "Print slip" on the order page). Print CSS takes the admin chrome out of the layout, since merely hiding it makes Chrome shrink the slip, and `PrintButton` sizes `@page` to the slip's measured height.
+  - Live orders: `GET /api/admin/orders/stream` is a Server-Sent Events stream (admin only), not a WebSocket, because Next route handlers can't upgrade connections without a custom server. `lib/server/order-events.ts` keeps one MongoDB change stream per server process for all tabs, and falls back to polling `updatedAt` every 5 s when the database has no replica set. `components/admin/LiveOrders.tsx` (admin top bar) shows a popup, a chime and a `(n)` tab-title count for `new` orders, and calls `router.refresh()` on order pages for `new`/`change`. Order writes must keep setting `updatedAt` for the polling fallback.
   - `setUserRole` returns to the page in its `back` field, but only to `/admin/users` or `/admin/users/<id>`.
   - Charts are client SVG components in `components/admin/charts/`. They take a serialisable `unit` prop (`"pkr"` or `"count"`), not a formatter function, because server pages render them.
 - `src/app/layout.tsx` (root): fonts only, plus `DialogHost` and `CartSync` (both app-wide).
@@ -84,8 +86,8 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - Any coupon can be deleted, used or not (`deleteCoupon`). It also removes a campaign's cards, the `coupon_redemptions` rows, and `carts.coupon` references.
   - Orders keep their own `coupon` copy, so they stay intact and findable. `releaseCoupon` ignores codes that no longer exist.
   - `public` ("Show on website") lists it to customers through `publicCouponsFor(userId)`, which returns only coupons this customer can still use and never includes the code.
-    - "My Coupons" (`components/offers/MyCoupons.tsx`, account page `#my-coupons`) shows them as tickets that open the scratch card.
-    - `OfferStripView` shows a "You have a coupon" strip on the bag page and in the checkout summary. It hides once a coupon is applied. With several coupons, it links to My Coupons.
+    - The "Coupons" section (`components/offers/MyCoupons.tsx`, account page `#my-coupons`) shows them as tickets that open the scratch card.
+    - `OfferStripView` shows a "You have a coupon" strip on the bag page and in the checkout summary. It hides once a coupon is applied. With several coupons, it links to that section.
     - Codes with `public` off are shared by link only.
   - `uses` counts orders that weren't cancelled.
 - Surprise campaigns (`type: "random"`, with `minPercent` / `maxPercent`) are never used directly.

@@ -53,7 +53,7 @@ export default function ProductReviews({
           </div>
 
           {summary.count > 0 && (
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md w-full md:max-w-xl">
+            <div className="grid grid-cols-2 gap-space-sm sm:gap-space-md w-full md:max-w-xl">
               {/* Star distribution */}
               <div className="p-space-md bg-surface-container-low space-y-1">
                 {[5, 4, 3, 2, 1].map((n) => {
@@ -101,7 +101,7 @@ export default function ProductReviews({
         </div>
 
         {reviews.length > 0 && (
-          <ul className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+          <ul className="grid grid-cols-2 md:grid-cols-3 gap-space-sm sm:gap-gutter">
             {reviews.slice(0, VISIBLE).map((r) => (
               <ReviewCard key={r.id} review={r} />
             ))}
@@ -113,7 +113,7 @@ export default function ProductReviews({
               <span className="group-open:hidden">Show all {reviews.length} reviews</span>
               <span className="hidden group-open:inline">Show fewer</span>
             </summary>
-            <ul className="grid grid-cols-1 md:grid-cols-3 gap-gutter mt-space-md">
+            <ul className="grid grid-cols-2 md:grid-cols-3 gap-space-sm sm:gap-gutter mt-space-md">
               {reviews.slice(VISIBLE).map((r) => (
                 <ReviewCard key={r.id} review={r} />
               ))}
@@ -128,17 +128,17 @@ export default function ProductReviews({
 function ReviewCard({ review: r }: { review: PublicReview }) {
   const fit = fitOptions.find((f) => f.value === r.fit)?.label;
   return (
-    <li className="p-space-lg bg-surface-container-lowest flex flex-col justify-between space-y-space-md shadow-sm">
+    <li className="p-space-sm sm:p-space-lg bg-surface-container-lowest flex flex-col justify-between space-y-space-sm sm:space-y-space-md shadow-sm min-w-0">
       <div className="space-y-space-xs">
         <div className="flex items-center justify-between">
-          <Stars className="text-sm" size="text-[16px]" value={r.rating} />
-          <span className="font-label-uppercase text-label-uppercase text-outline text-[10px]">{reviewDate(r.createdAt)}</span>
+          <Stars className="text-sm" size="text-[12px] sm:text-[16px]" value={r.rating} />
+          <span className="hidden sm:inline font-label-uppercase text-label-uppercase text-outline text-[10px]">{reviewDate(r.createdAt)}</span>
         </div>
         <h4 className="font-headline-sm text-headline-sm text-primary font-normal">“{r.title}”</h4>
-        <p className="font-body-sm text-body-sm text-on-surface-variant whitespace-pre-line">{r.body}</p>
+        <p className="font-body-sm text-body-sm text-on-surface-variant whitespace-pre-line line-clamp-5 sm:line-clamp-none">{r.body}</p>
         <ReviewPhotos author={r.name} photos={r.photos} />
       </div>
-      <div className="pt-space-sm flex flex-wrap items-center justify-between gap-2 font-label-uppercase text-label-uppercase text-[11px] text-on-surface-variant uppercase">
+      <div className="pt-space-sm flex flex-wrap items-center justify-between gap-1 sm:gap-2 font-label-uppercase text-label-uppercase text-[9px] sm:text-[11px] text-on-surface-variant uppercase">
         <span className="font-semibold text-primary">{r.name}</span>
         <span className="text-secondary flex items-center gap-1">
           {[r.size ? `EU ${r.size}` : null, fit].filter(Boolean).join(" • ")}

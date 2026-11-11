@@ -20,7 +20,7 @@ export default async function BestSellers() {
               Best Sellers
             </h2>
           </div>
-          <p className="font-body-sm text-body-sm text-on-surface-variant max-w-sm">
+          <p className="hidden sm:block font-body-sm text-body-sm text-on-surface-variant max-w-sm">
             Choose your EU size to check stock straight away. Orders are
             dispatched the same day.
           </p>

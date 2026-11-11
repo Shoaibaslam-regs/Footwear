@@ -56,7 +56,7 @@ export default function HeaderActions({
           </span>
         )}
       </Link>
-      <Link aria-label="My Account" className={iconBtn} href="/account">
+      <Link aria-label="Account" className={iconBtn} href="/account">
         <span className="material-symbols-outlined text-[20px]">
           account_circle
         </span>

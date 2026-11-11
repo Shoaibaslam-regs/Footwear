@@ -52,6 +52,10 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
           </h1>
           <p className="muted">Placed {when(order.createdAt)}</p>
         </div>
+        <div className="flex flex-wrap items-center gap-2">
+        <Link className="btn" href={`/admin/orders/${order.id}/slip?print=1`} target="_blank">
+          Print slip
+        </Link>
         <form action={deleteOrders}>
           <input name="ids" type="hidden" value={order.id} />
           <ConfirmButton
@@ -62,6 +66,7 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
             Delete order
           </ConfirmButton>
         </form>
+        </div>
       </div>
 
       <div className="grid grid-cols-1 lg:grid-cols-[1fr_340px] gap-4 items-start">

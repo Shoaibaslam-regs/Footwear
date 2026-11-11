@@ -86,7 +86,7 @@ export default function BestSellerCard({
               <SalePrice price={item.price} compareAt={item.compareAt} discountPercent={item.discountPercent} />
             </span>
           </div>
-          <p className="font-body-sm text-xs md:text-body-sm text-on-surface-variant mb-space-sm md:mb-space-md line-clamp-1 md:line-clamp-none">
+          <p className="hidden sm:block font-body-sm text-xs md:text-body-sm text-on-surface-variant mb-space-sm md:mb-space-md sm:line-clamp-1 md:line-clamp-none">
             {item.detail}
           </p>
         </div>

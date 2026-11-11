@@ -11,9 +11,9 @@ export default function CraftSection() {
               How It&apos;s Made
             </span>
             <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight font-normal">
-              Comfortable for 8 Hours, Light on Your Feet.
+              Comfortable for 8 Hours, Light on the Feet.
             </h2>
-            <p className="font-body-lg text-body-lg text-on-surface-variant font-light">
+            <p className="hidden sm:block font-body-lg text-body-lg text-on-surface-variant font-light">
               Normal stilettos put 85% of your body weight on the front of your
               foot. The Aurelia moves your balance point 12mm back, using a
               hidden carbon support inside the sole that spreads the weight

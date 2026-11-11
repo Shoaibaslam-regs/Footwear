@@ -28,7 +28,7 @@ export default function CheckoutSteps({
             Checkout
           </span>
           <h1 className="font-headline-sm text-[26px] leading-tight sm:font-headline-md sm:text-headline-md text-primary font-normal tracking-tight mt-space-xs">
-            Complete Your Order
+            Complete Order
           </h1>
         </div>
         <div className="flex items-center gap-space-xs text-on-surface-variant font-label-uppercase text-label-uppercase">

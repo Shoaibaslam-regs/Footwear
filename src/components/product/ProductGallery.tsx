@@ -162,7 +162,7 @@ export default function ProductGallery({
       )}
 
       {/* Editorial Quote Banner */}
-      <div className="mt-space-lg p-space-lg bg-surface-container-low flex flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
+      <div className="hidden sm:flex mt-space-lg p-space-lg bg-surface-container-low flex-col md:flex-row items-start md:items-center justify-between gap-space-md">
         <div className="space-y-1">
           <p className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.16em]">
             Handmade in Karachi

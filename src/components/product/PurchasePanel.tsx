@@ -114,9 +114,9 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         </h1>
         <div className="flex items-baseline gap-space-sm pt-space-xs">
           <span className="font-headline-md text-headline-md text-primary font-normal">
-            <SalePrice price={product.price} compareAt={product.compareAt} discountPercent={product.discountPercent} />
+            <SalePrice chipOnPhones price={product.price} compareAt={product.compareAt} discountPercent={product.discountPercent} />
           </span>
-          <span className="font-body-sm text-body-sm text-on-surface-variant">
+          <span className="hidden sm:inline font-body-sm text-body-sm text-on-surface-variant">
             Tax included
           </span>
         </div>
@@ -138,7 +138,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             Color:{" "}
             <span className="font-normal text-on-surface-variant">{color}</span>
           </span>
-          <span className="font-label-uppercase text-label-uppercase text-secondary uppercase text-[10px] tracking-wider">
+          <span className="hidden sm:inline font-label-uppercase text-label-uppercase text-secondary uppercase text-[10px] tracking-wider">
             Only at Ŕose Atelier
           </span>
         </div>
@@ -178,7 +178,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       <div className="space-y-space-sm pt-space-xs">
         <div className="flex justify-between items-center">
           <span className="font-label-uppercase text-label-uppercase text-primary uppercase tracking-widest text-[11px]">
-            Choose Your Size (EU)
+            Choose Size (EU)
           </span>
           <button
             className="flex items-center gap-1 font-label-uppercase text-label-uppercase text-secondary hover:text-primary transition-colors uppercase text-[11px] underline underline-offset-4"
@@ -193,7 +193,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         </div>
         <div
           aria-label="Shoe Sizes"
-          className="grid grid-cols-5 gap-space-xs"
+          className={`grid ${product.sizes.length === 7 ? "grid-cols-7 sm:grid-cols-5" : "grid-cols-5"} gap-1 sm:gap-space-xs`}
           role="radiogroup"
         >
           {product.sizes.map((s) => {
@@ -204,7 +204,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
                 aria-checked={isActive}
                 aria-disabled={s.soldOut || undefined}
                 aria-label={`EU ${s.size}${s.soldOut ? ", sold out" : s.left ? `, only ${s.left} left` : ""}`}
-                className={`relative h-12 flex flex-col items-center justify-center font-body-sm text-body-sm transition-colors ${
+                className={`relative h-10 sm:h-12 flex flex-col items-center justify-center font-body-sm text-body-sm transition-colors ${
                   s.soldOut
                     ? "bg-surface-container text-outline line-through cursor-not-allowed opacity-50"
                     : isActive
@@ -279,7 +279,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
               {inBag ? "check" : "shopping_bag"}
             </span>
             <span aria-live="polite">
-              {added ? "Added to Bag ✓" : inBag ? "In Your Bag · View" : "Add to Bag"}
+              {added ? "Added to Bag ✓" : inBag ? "In Bag · View" : "Add to Bag"}
             </span>
           </button>
           <button
@@ -346,7 +346,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
           </ul>
         </Accordion>
         <Accordion
-          title="How to Care for Your Shoes"
+          title="Shoe Care"
           className="px-space-md pb-space-md font-body-sm text-body-sm text-on-surface-variant space-y-space-xs"
         >
           {product.care.map((p) => (

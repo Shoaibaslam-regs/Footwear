@@ -561,7 +561,7 @@ function QuickViewStudio({
                   <span className="material-symbols-outlined text-[18px]">
                     {inBag ? "check" : "shopping_bag"}
                   </span>
-                  <span>{inBag ? "In Your Bag · View" : "Add to Bag"}</span>
+                  <span>{inBag ? "In Bag · View" : "Add to Bag"}</span>
                 </button>
                 <button
                   aria-label={

@@ -12,7 +12,7 @@ import Price from "@/components/Price";
 import ConfirmButton from "@/components/ConfirmButton";
 
 export const metadata: Metadata = {
-  title: "My Account — Ŕose Atelier",
+  title: "Account — Ŕose Atelier",
 };
 
 const card = "bg-surface-container-lowest rounded-xl shadow-sm p-space-md sm:p-space-lg flex flex-col gap-space-sm";
@@ -34,7 +34,7 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
     <>
       <div className="flex flex-row items-end justify-between gap-space-sm mb-space-md sm:mb-space-lg">
         <div className="min-w-0">
-          <span className={eyebrow}>My Account</span>
+          <span className={eyebrow}>Account</span>
           <h1 className="font-headline-sm text-[26px] leading-tight sm:font-headline-lg-mobile sm:text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight mt-1 truncate">
             Welcome, {user.name.split(" ")[0]}
           </h1>
@@ -43,7 +43,7 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
           <ConfirmButton
             className="h-9 sm:h-11 px-space-md sm:px-space-lg rounded-full bg-surface-container hover:bg-surface-container-high text-primary font-label-uppercase text-[10px] sm:text-label-uppercase uppercase tracking-widest transition-colors"
             confirm={{
-              title: "Log out of your account?",
+              title: "Log out?",
               message: "Your bag and wishlist stay saved in your account.",
               confirmLabel: "Log Out",
               cancelLabel: "Stay Logged In",
@@ -104,7 +104,7 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
             <div>
               <p className="font-headline-sm text-[16px] sm:text-headline-sm text-primary">Shopping Bag</p>
               <p className="font-body-sm text-[12px] sm:text-body-sm text-on-surface-variant">
-                {bagPairs ? `${bagPairs} ${bagPairs === 1 ? "pair" : "pairs"}` : "Your bag is empty"}
+                {bagPairs ? `${bagPairs} ${bagPairs === 1 ? "pair" : "pairs"}` : "Bag is empty"}
               </p>
             </div>
           </Link>
@@ -115,7 +115,7 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
 
       <div className="mt-space-lg sm:mt-space-xl">
         <span className={eyebrow}>Order History</span>
-        <h2 className="font-headline-sm text-[24px] sm:font-headline-md sm:text-headline-md text-primary mt-1 mb-space-sm sm:mb-space-md">Your Orders</h2>
+        <h2 className="font-headline-sm text-[24px] sm:font-headline-md sm:text-headline-md text-primary mt-1 mb-space-sm sm:mb-space-md">Orders</h2>
         {orders.length === 0 ? (
           <p className="font-body-sm text-body-sm sm:font-body-md sm:text-body-md text-on-surface-variant">
             No orders yet.{" "}

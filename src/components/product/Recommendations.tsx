@@ -15,7 +15,7 @@ export default function Recommendations({ items }: { items: Listing[] }) {
               You May Also Like
             </span>
             <h2 className="font-headline-lg text-headline-lg text-primary font-normal">
-              Complete Your Look
+              Complete the Look
             </h2>
           </div>
           <div className="hidden sm:flex items-center gap-space-xs">
@@ -40,7 +40,7 @@ export default function Recommendations({ items }: { items: Listing[] }) {
           </div>
         </div>
 
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-gutter">
+        <div className="grid grid-cols-2 lg:grid-cols-4 gap-space-sm sm:gap-gutter">
           {items.map((r) => (
             <div key={r.id} className="group relative flex flex-col bg-surface-container-lowest">
               <div className="relative aspect-[3/4] overflow-hidden bg-surface-container-low">
@@ -49,7 +49,7 @@ export default function Recommendations({ items }: { items: Listing[] }) {
                   className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-105"
                   src={r.image}
                   fill
-                  sizes="(min-width: 1024px) 25vw, (min-width: 640px) 50vw, 100vw"
+                  sizes="(min-width: 1024px) 25vw, 50vw"
                 />
                 {r.badge && (
                   <span
@@ -71,11 +71,11 @@ export default function Recommendations({ items }: { items: Listing[] }) {
                   }}
                 />
               </div>
-              <div className="p-space-md space-y-1">
+              <div className="p-space-sm sm:p-space-md space-y-1 min-w-0">
                 <span className="font-label-uppercase text-label-uppercase text-on-surface-variant text-[10px] uppercase">
                   {r.spec}
                 </span>
-                <h4 className="font-headline-sm text-headline-sm text-primary font-normal group-hover:text-secondary transition-colors">
+                <h4 className="font-headline-sm text-headline-sm text-primary font-normal group-hover:text-secondary transition-colors line-clamp-2">
                   <Link href={productHref(r)}>{r.name}</Link>
                 </h4>
                 <p className="font-body-sm text-body-sm text-on-surface font-medium">

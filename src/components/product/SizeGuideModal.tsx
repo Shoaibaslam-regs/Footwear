@@ -120,7 +120,7 @@ function SizeGuidePanel({ onClose }: { onClose: () => void }) {
               </table>
             </div>
 
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-space-md">
+            <div className="grid grid-cols-2 gap-space-sm sm:gap-space-md">
               <div className="p-space-sm bg-surface-container-low">
                 <p className="font-label-uppercase text-label-uppercase uppercase tracking-wider text-primary font-semibold mb-1">
                   How to measure

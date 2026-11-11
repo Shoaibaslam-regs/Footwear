@@ -14,7 +14,7 @@ import Price from "@/components/Price";
 import ScratchCard from "@/components/offers/ScratchCard";
 import { RevealProvider, WhenRevealed } from "@/components/offers/Reveal";
 
-export const metadata: Metadata = { title: "Your Coupon — Ŕose Atelier", robots: { index: false } };
+export const metadata: Metadata = { title: "Coupon — Ŕose Atelier", robots: { index: false } };
 
 const label = "font-label-uppercase text-label-uppercase";
 
@@ -47,7 +47,7 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
             <span className="material-symbols-outlined icon-filled text-[30px]">redeem</span>
           </span>
           <span className={`${label} tracking-[0.28em] text-secondary`}>A Surprise Is Waiting</span>
-          <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary font-normal">Get Your Surprise Card</h1>
+          <h1 className="font-headline-lg-mobile text-headline-lg-mobile md:font-headline-lg md:text-headline-lg text-primary font-normal">Get a Surprise Card</h1>
           <p className="font-body-md text-body-md text-on-surface-variant">
             Log in or create a free account to get your own scratch card. Scratch it to see your discount.
           </p>
@@ -55,7 +55,7 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
             className={`${label} px-space-lg py-3.5 rounded-full bg-primary text-on-primary hover:bg-secondary transition-colors`}
             href={`/login?next=${encodeURIComponent(`/offers/${code}`)}`}
           >
-            Log In to Get My Card
+            Log In to Get the Card
           </Link>
           <Link className="font-body-sm text-body-sm text-on-surface-variant underline underline-offset-4" href={`/register?next=${encodeURIComponent(`/offers/${code}`)}`}>
             New here? Create a free account
@@ -126,7 +126,7 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
           <span>/</span>
           <span>OFFERS</span>
           <span>/</span>
-          <span className="text-primary font-bold">YOUR COUPON</span>
+          <span className="text-primary font-bold">COUPON</span>
         </nav>
         {user ? (
           <div className="flex items-center gap-space-sm bg-surface-container-lowest px-space-md py-1.5 rounded-full shadow-sm self-start">
@@ -159,39 +159,39 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
       <div className="mt-space-xl mb-space-xl">
         <div className="text-center max-w-xl mx-auto mb-space-lg">
           <span className={`${label} tracking-[0.24em] text-secondary uppercase block mb-space-xs`}>How It Works</span>
-          <h2 className="font-headline-md text-headline-md text-primary font-normal">How to Use Your Coupon</h2>
+          <h2 className="font-headline-md text-headline-md text-primary font-normal">How to Use the Coupon</h2>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-gutter">
+        <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm sm:gap-gutter">
           {[
             {
               n: "01",
-              title: "Choose Your Shoes",
+              title: "Choose Shoes",
               text: "Add the shoes you love to your bag. Pick your size, or ask us on WhatsApp if you are not sure.",
               foot: "STEP 1 • SHOP",
               tone: "bg-surface-container-highest text-primary",
             },
             {
               n: "02",
-              title: "Apply Your Code",
+              title: "Apply the Code",
               text: "Tap Apply to Bag on the card above, or type your code at checkout. You will see the saving before you pay.",
               foot: "STEP 2 • SAVE",
               tone: "bg-secondary-container text-on-secondary-fixed",
             },
             {
               n: "03",
-              title: "Place Your Order",
+              title: "Place the Order",
               text: "Pay by Cash on Delivery, EasyPaisa, JazzCash, bank transfer or a card payment link. We deliver across Pakistan.",
               foot: "STEP 3 • RELAX",
               tone: "bg-surface-container-highest text-primary",
             },
           ].map((s) => (
-            <div key={s.n} className="p-space-lg rounded-xl bg-surface-container-low transition-all hover:bg-surface-container-lowest hover:shadow-md flex flex-col justify-between">
+            <div key={s.n} className="p-space-md sm:p-space-lg rounded-xl bg-surface-container-low last:col-span-2 md:last:col-span-1 transition-all hover:bg-surface-container-lowest hover:shadow-md flex flex-col justify-between">
               <div>
-                <div className={`w-12 h-12 rounded-full ${s.tone} flex items-center justify-center font-headline-sm text-headline-sm mb-space-md`}>{s.n}</div>
+                <div className={`w-9 h-9 sm:w-12 sm:h-12 rounded-full ${s.tone} flex items-center justify-center font-headline-sm text-headline-sm mb-space-sm sm:mb-space-md`}>{s.n}</div>
                 <h3 className="font-headline-sm text-headline-sm text-primary mb-space-xs font-normal">{s.title}</h3>
-                <p className="font-body-md text-body-md text-on-surface-variant">{s.text}</p>
+                <p className="hidden sm:block font-body-md text-body-md text-on-surface-variant">{s.text}</p>
               </div>
-              <div className="mt-space-md pt-space-sm font-label-uppercase text-[11px] text-secondary tracking-widest">{s.foot}</div>
+              <div className="hidden sm:block mt-space-md pt-space-sm font-label-uppercase text-[11px] text-secondary tracking-widest">{s.foot}</div>
             </div>
           ))}
         </div>

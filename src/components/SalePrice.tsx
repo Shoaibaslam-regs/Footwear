@@ -9,11 +9,14 @@ export default function SalePrice({
   compareAt,
   discountPercent,
   className = "",
+  chipOnPhones = false,
 }: {
   price: number;
   compareAt?: number;
   discountPercent?: number;
   className?: string;
+  /** Cards already show the percent on the photo, so phones skip the chip unless asked. */
+  chipOnPhones?: boolean;
 }) {
   if (!compareAt || compareAt <= price) return <Price amount={price} />;
   return (
@@ -26,7 +29,7 @@ export default function SalePrice({
         <Price amount={compareAt} />
       </s>
       {discountPercent ? (
-        <span className="font-label-uppercase text-[10px] uppercase tracking-wider text-on-error bg-error rounded-full px-1.5 py-0.5 self-center">
+        <span className={`${chipOnPhones ? "" : "hidden sm:inline "}font-label-uppercase text-[10px] uppercase tracking-wider text-on-error bg-error rounded-full px-1.5 py-0.5 self-center`}>
           −{discountPercent}%
         </span>
       ) : null}

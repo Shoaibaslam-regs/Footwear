@@ -16,7 +16,7 @@ async function RegisterForm({ searchParams }: PageProps<"/register">) {
 export default function RegisterPage(props: PageProps<"/register">) {
   return (
     <AuthShell
-      eyebrow="My Account"
+      eyebrow="Account"
       intro="Create a free account to save your favourites, track orders and check out faster."
       title="Create Account"
     >

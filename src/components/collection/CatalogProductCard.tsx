@@ -104,7 +104,7 @@ export default function CatalogProductCard({
               {p.name}
             </button>
           </h3>
-          <p className="font-body-sm text-xs text-on-surface-variant mt-0.5 line-clamp-1 sm:line-clamp-none">
+          <p className="hidden sm:block font-body-sm text-xs text-on-surface-variant mt-0.5">
             {p.material}
           </p>
           {p.rating && p.rating.count > 0 && (

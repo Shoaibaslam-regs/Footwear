@@ -87,7 +87,7 @@ export default function ReviewForm({
             <input name="slug" type="hidden" value={slug} />
             <ConfirmButton
               className="h-11 px-space-lg rounded-full text-on-surface-variant hover:text-error font-label-uppercase text-label-uppercase uppercase tracking-widest transition-colors"
-              confirm={{ title: "Delete your review?", message: "It will be removed from this product page.", confirmLabel: "Delete", cancelLabel: "Keep Review", tone: "danger" }}
+              confirm={{ title: "Delete this review?", message: "It will be removed from this product page.", confirmLabel: "Delete", cancelLabel: "Keep Review", tone: "danger" }}
             >
               Delete
             </ConfirmButton>

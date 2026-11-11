@@ -118,7 +118,7 @@ export default function PaymentSection({
         >
           <span className="material-symbols-outlined text-[20px]">lock</span>
           <span aria-live="polite">
-            {pending ? "Placing your order…" : `Place Order (${formatPKR(total)})`}
+            {pending ? "Placing order…" : `Place Order (${formatPKR(total)})`}
           </span>
         </button>
         <p className="mt-space-sm text-center font-body-sm text-body-sm text-on-surface-variant">

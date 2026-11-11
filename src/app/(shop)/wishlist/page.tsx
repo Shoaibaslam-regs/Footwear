@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import Wishlist from "@/components/Wishlist";
 
 export const metadata: Metadata = {
-  title: "Your Wishlist — Ŕose Atelier",
+  title: "Wishlist — Ŕose Atelier",
   description: "The items you have saved at Ŕose Atelier.",
 };
 

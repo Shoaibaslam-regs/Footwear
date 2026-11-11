@@ -12,6 +12,7 @@ How the storefront looks and reads, and the patterns to reuse when building new 
   - No fancy or foreign words: maison, bespoke, curated, silhouette, concierge, couture, complimentary, acquisition, grazie. "Atelier" appears only inside the brand name "Ŕose Atelier".
   - Don't translate into Urdu or Roman Urdu.
   - British spelling (colour, favourite).
+  - No "Your" / "My" in front of labels, headings, buttons or page titles: "Account", "Orders", "Coupons", "Shopping Bag", "Choose Size", "In Bag · View", "Track Order". Full sentences may keep "your" ("Your password has been changed.").
 - **Use these words, the same everywhere:**
 
   | Say | Not |

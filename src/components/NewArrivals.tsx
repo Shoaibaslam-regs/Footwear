@@ -116,7 +116,7 @@ export default async function NewArrivals() {
                     p.name
                   )}
                 </h3>
-                <p className="font-body-sm text-xs sm:text-body-sm text-on-surface-variant line-clamp-1 sm:line-clamp-none">
+                <p className="hidden sm:block font-body-sm text-body-sm text-on-surface-variant">
                   {p.material}
                 </p>
                 <div className="hidden sm:flex items-center gap-2 pt-2">

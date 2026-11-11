@@ -172,7 +172,7 @@ export default function CouponForm({ coupon }: { coupon?: CouponRow }) {
             <span>
               Show on website
               <span className="block muted text-xs">
-                Customers see it in &ldquo;My Coupons&rdquo; and on the bag and checkout pages. Leave it off for codes you only share by link or WhatsApp.
+                Customers see it under &ldquo;Coupons&rdquo; on their account page, and on the bag and checkout pages. Leave it off for codes you only share by link or WhatsApp.
               </span>
             </span>
           </label>

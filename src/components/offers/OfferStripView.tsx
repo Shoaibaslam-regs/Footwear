@@ -23,7 +23,7 @@ export default function OfferStripView({ offers, compact = false }: { offers: Of
         </span>
         {/* The discount stays hidden until the card is scratched. */}
         <span className={`block text-primary ${compact ? "font-body-md text-body-md font-semibold" : "font-headline-sm text-headline-sm"}`}>
-          {one ? (one.headline ?? "Scratch to see your discount") : "Scratch to see your discounts"}
+          {one ? (one.headline ?? "Scratch to see the discount") : "Scratch to see the discounts"}
         </span>
         {one && !compact && <span className="block font-body-sm text-body-sm text-on-surface-variant truncate">{one.conditions}</span>}
       </span>

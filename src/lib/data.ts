@@ -350,7 +350,7 @@ export const footerColumns: { title: string; links: FooterLink[] }[] = [
       { label: "Personal Styling", href: "/#appointment" },
       { label: "Delivery & Returns", href: "/policies/shipping-returns" },
       { label: "Size & Fit Guide", sizeGuide: true },
-      { label: "Track Your Order", href: "/account" },
+      { label: "Track Order", href: "/account" },
       { label: "Contact Us (WhatsApp)", href: "https://wa.me/923148428115" },
     ],
   },

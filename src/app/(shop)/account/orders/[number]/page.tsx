@@ -11,7 +11,7 @@ import { getOrderForUser, statusDates } from "@/lib/server/orders";
 import Price from "@/components/Price";
 import CancelOrderButton from "@/components/account/CancelOrderButton";
 
-export const metadata: Metadata = { title: "My Order — Ŕose Atelier", robots: { index: false } };
+export const metadata: Metadata = { title: "Order — Ŕose Atelier", robots: { index: false } };
 
 const date = (iso: string) =>
   new Date(iso).toLocaleString("en-GB", { day: "numeric", month: "short", hour: "2-digit", minute: "2-digit", timeZone: "Asia/Karachi" });
@@ -32,7 +32,7 @@ async function OrderDetail({ params }: PageProps<"/account/orders/[number]">) {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-md mb-space-lg">
         <div>
           <Link className="font-label-uppercase text-label-uppercase uppercase tracking-widest text-on-surface-variant hover:text-primary" href="/account">
-            ← My Account
+            ← Account
           </Link>
           <h1 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight mt-1">
             Order #{order.number}
@@ -59,19 +59,19 @@ async function OrderDetail({ params }: PageProps<"/account/orders/[number]">) {
             This order was cancelled{reached.cancelled ? ` on ${date(reached.cancelled)}` : ""}.
           </p>
         ) : (
-          <ol className="grid grid-cols-1 sm:grid-cols-6 gap-space-sm">
+          <ol className="grid grid-cols-3 sm:grid-cols-6 gap-x-space-xs gap-y-space-sm">
             {fulfilmentSteps.map((s, i) => {
               const done = i <= stepIndex;
               return (
-                <li key={s} aria-current={i === stepIndex ? "step" : undefined} className="flex sm:flex-col items-center sm:items-start gap-space-sm">
+                <li key={s} aria-current={i === stepIndex ? "step" : undefined} className="flex flex-col items-center sm:items-start text-center sm:text-left gap-1 sm:gap-space-sm">
                   <span className={`w-7 h-7 rounded-full flex items-center justify-center shrink-0 ${done ? "bg-secondary text-on-secondary" : "bg-surface-container text-outline"}`}>
                     <span className="material-symbols-outlined text-[16px]">{done ? "check" : "radio_button_unchecked"}</span>
                   </span>
                   <span>
-                    <span className={`block font-label-uppercase text-[11px] uppercase tracking-wider ${done ? "text-primary" : "text-outline"}`}>
+                    <span className={`block font-label-uppercase text-[9px] sm:text-[11px] uppercase tracking-wider ${done ? "text-primary" : "text-outline"}`}>
                       {orderStatusLabel[s]}
                     </span>
-                    {reached[s] && done && <span className="block font-body-sm text-xs text-on-surface-variant">{date(reached[s]!)}</span>}
+                    {reached[s] && done && <span className="block font-body-sm text-[10px] sm:text-xs text-on-surface-variant">{date(reached[s]!)}</span>}
                   </span>
                 </li>
               );
@@ -138,7 +138,7 @@ async function OrderDetail({ params }: PageProps<"/account/orders/[number]">) {
           </dl>
         </section>
 
-        <section className={`${card} flex flex-col gap-space-md`}>
+        <section className={`${card} grid grid-cols-2 lg:grid-cols-1 gap-space-md`}>
           <div>
             <h2 className="font-label-uppercase text-label-uppercase uppercase tracking-widest text-secondary mb-1">Payment</h2>
             <p className="font-body-md text-body-md text-primary">{paymentMethodLabel(order.payment.method)}</p>

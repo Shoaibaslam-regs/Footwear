@@ -7,6 +7,7 @@ import { logout } from "@/lib/auth/actions";
 import ActionToast from "@/components/ActionToast";
 import ConfirmButton from "@/components/ConfirmButton";
 import AdminNav, { AdminNavFallback } from "@/components/admin/AdminNav";
+import LiveOrders from "@/components/admin/LiveOrders";
 import "./admin.css";
 
 export const metadata: Metadata = {
@@ -69,9 +70,15 @@ export default function AdminLayout({
               View store ↗
             </Link>
           </div>
-          <Suspense fallback={null}>
-            <SignedInAs />
-          </Suspense>
+          <div className="flex items-center gap-5">
+            {/* Reads the pathname, so it streams in its own Suspense. */}
+            <Suspense fallback={null}>
+              <LiveOrders />
+            </Suspense>
+            <Suspense fallback={null}>
+              <SignedInAs />
+            </Suspense>
+          </div>
         </div>
       </header>
 

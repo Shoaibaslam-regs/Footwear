@@ -74,11 +74,8 @@ export default function ShoppingBag({
 
           <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md pt-space-xs">
             <div>
-              <span className="font-label-uppercase text-label-uppercase text-secondary tracking-[0.25em] uppercase">
-                My Bag
-              </span>
-              <h1 className="font-headline-lg text-headline-lg text-primary mt-1 tracking-tight">
-                Your Shopping Bag
+              <h1 className="font-headline-lg text-headline-lg text-primary tracking-tight">
+                Shopping Bag
               </h1>
             </div>
           </div>

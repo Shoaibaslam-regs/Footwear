@@ -148,6 +148,39 @@
   }
 }
 
+/*
+ * Phones: a smaller, tighter type scale. Every font-* / text-* token utility reads
+ * these variables, so the whole storefront scales here (unlayered, so it wins over @theme).
+ */
+@media (max-width: 639px) {
+  :root {
+    --text-display-hero: 34px;
+    --text-display-hero--line-height: 40px;
+    --text-headline-lg: 28px;
+    --text-headline-lg--line-height: 34px;
+    --text-display-hero-mobile: 32px;
+    --text-display-hero-mobile--line-height: 38px;
+    --text-headline-lg-mobile: 26px;
+    --text-headline-lg-mobile--line-height: 32px;
+    --text-headline-md: 22px;
+    --text-headline-md--line-height: 28px;
+    --text-headline-sm: 17px;
+    --text-headline-sm--line-height: 22px;
+    --text-body-lg: 15px;
+    --text-body-lg--line-height: 22px;
+    --text-body-md: 13px;
+    --text-body-md--line-height: 20px;
+    --text-body-sm: 12px;
+    --text-body-sm--line-height: 17px;
+    --text-label-md: 12px;
+    --text-label-md--line-height: 16px;
+    --text-label-sm: 11px;
+    --text-label-sm--line-height: 14px;
+    --text-label-uppercase: 10px;
+    --text-label-uppercase--line-height: 13px;
+  }
+}
+
 /* Font families (fonts loaded via next/font in layout.tsx) */
 @theme inline {
   --font-headline-md: var(--font-playfair), serif;

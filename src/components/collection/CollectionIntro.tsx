@@ -37,13 +37,13 @@ export default function CollectionIntro({
           <h1 className="font-headline-lg text-headline-lg text-primary tracking-tight">
             The Spring Collection
           </h1>
-          <p className="font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
+          <p className="hidden sm:block font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
             Shop {total} handmade styles from Karachi. From evening parties to
             summer holidays, every pair combines a well-balanced heel with soft
             Italian leather.
           </p>
         </div>
-        <div className="lg:col-span-4 flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-end gap-space-sm">
+        <div className="hidden lg:col-span-4 sm:flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-end gap-space-sm">
           <div className="flex items-center gap-space-sm bg-surface-container-low px-space-md py-space-sm rounded-full shadow-sm">
             <span className="material-symbols-outlined text-secondary text-[20px]">
               verified
@@ -52,9 +52,6 @@ export default function CollectionIntro({
               Perfect Fit Promise • 100% Leather &amp; Silk
             </span>
           </div>
-          <p className="font-label-uppercase text-label-uppercase text-outline tracking-wider uppercase">
-            Chosen by our Creative Director, Camille Moreau
-          </p>
         </div>
       </div>
 

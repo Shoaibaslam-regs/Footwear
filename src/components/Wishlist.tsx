@@ -17,7 +17,7 @@ export default function Wishlist() {
       <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-md mb-space-lg">
         <div>
           <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-            My Wishlist
+            Wishlist
           </span>
           <h1 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight mt-1">
             Saved Items

@@ -23,7 +23,7 @@ export default function QuickAddButton({
       type="button"
     >
       <span className="material-symbols-outlined text-sm">{inBag ? "check" : "shopping_bag"}</span>
-      {inBag ? "In Your Bag · View" : <>Quick Add • <Price amount={product.price} /></>}
+      {inBag ? "In Bag · View" : <>Quick Add • <Price amount={product.price} /></>}
     </button>
   );
 }

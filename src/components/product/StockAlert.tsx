@@ -13,7 +13,7 @@ export default function StockAlert({ slug, soldOut }: { slug: string; soldOut: s
   return (
     <div className="flex flex-wrap items-center gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
       <span className="material-symbols-outlined text-[18px] text-secondary">notifications</span>
-      <span>Sold out in your size?</span>
+      <span>Size sold out?</span>
       <label className="sr-only" htmlFor="alert-size">
         Size to be notified about
       </label>
