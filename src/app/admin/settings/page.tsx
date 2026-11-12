@@ -1,4 +1,5 @@
 import { Suspense } from "react";
+import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/dal";
 import {
   getSiteSettings,
@@ -16,7 +17,12 @@ async function AdminSettingsContent() {
   const settings = await getSiteSettings();
   return (
     <div className="flex flex-col gap-4 max-w-3xl">
-      <h1>Settings</h1>
+      <div className="flex flex-wrap items-end justify-between gap-3">
+        <h1>Settings</h1>
+        <Link className="btn" href="/admin/settings/storage">
+          Photo storage
+        </Link>
+      </div>
       <SettingsForm
         announcements={settings.announcements}
         heroSlides={settings.heroSlides}

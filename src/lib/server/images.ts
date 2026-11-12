@@ -86,3 +86,33 @@ export async function deleteImages(keys: string[]) {
     console.error("UploadThing delete failed", e);
   }
 }
+
+export type StoredFile = { key: string; name: string; size: number; uploadedAt: number };
+
+/** Every finished upload in the UploadThing app (paged; at most `max` files). */
+export async function listStoredFiles(max = 20_000): Promise<StoredFile[]> {
+  const out: StoredFile[] = [];
+  const page = 500;
+  for (let offset = 0; offset < max; offset += page) {
+    const { files, hasMore } = await utapi().listFiles({ limit: page, offset });
+    for (const f of files) if (f.status === "Uploaded") out.push({ key: f.key, name: f.name, size: f.size, uploadedAt: f.uploadedAt });
+    if (!hasMore || files.length === 0) break;
+  }
+  return out;
+}
+
+/** Storage used by the app, from UploadThing. */
+export async function storageUsage() {
+  const u = await utapi().getUsageInfo();
+  return { usedBytes: u.appTotalBytes, files: u.filesUploaded, limitBytes: u.limitBytes };
+}
+
+/** Deletes files and reports how many went. Throws on failure (unlike deleteImages). */
+export async function deleteStoredFiles(keys: string[]): Promise<number> {
+  let deleted = 0;
+  for (let i = 0; i < keys.length; i += 100) {
+    const r = await utapi().deleteFiles(keys.slice(i, i + 100));
+    deleted += r.deletedCount;
+  }
+  return deleted;
+}

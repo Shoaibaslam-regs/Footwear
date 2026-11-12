@@ -1,7 +1,7 @@
 import "server-only";
 import { headers } from "next/headers";
 import nodemailer, { type Transporter } from "nodemailer";
-import { orderStatusLabel, paymentMethodLabel, type Order } from "../orders";
+import { etaSentence, orderStatusLabel, paymentMethodLabel, type Order } from "../orders";
 
 /**
  * Optional email. Configure in .env to switch on:
@@ -10,8 +10,11 @@ import { orderStatusLabel, paymentMethodLabel, type Order } from "../orders";
  * Without them every send is skipped: the site keeps working, and admins
  * use the WhatsApp buttons instead.
  */
+/** The SMTP password; `SMTP_KEY` is accepted too (Brevo calls it an "SMTP key"). */
+const smtpPassword = () => process.env.SMTP_PASS || process.env.SMTP_KEY;
+
 export const mailConfigured = () =>
-  !!(process.env.SMTP_HOST && process.env.SMTP_USER && process.env.SMTP_PASS && process.env.MAIL_FROM);
+  !!(process.env.SMTP_HOST && process.env.SMTP_USER && smtpPassword() && process.env.MAIL_FROM);
 
 let transport: Transporter | undefined;
 function transporter() {
@@ -19,7 +22,7 @@ function transporter() {
     host: process.env.SMTP_HOST,
     port: Number(process.env.SMTP_PORT ?? 587),
     secure: Number(process.env.SMTP_PORT ?? 587) === 465,
-    auth: { user: process.env.SMTP_USER, pass: process.env.SMTP_PASS },
+    auth: { user: process.env.SMTP_USER, pass: smtpPassword() },
   });
   return transport;
 }
@@ -35,8 +38,11 @@ export async function siteUrl(): Promise<string> {
 
 const escape = (s: string) => s.replace(/[&<>"]/g, (c) => ({ "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;" })[c]!);
 
-function layout(title: string, lines: string[], cta?: { label: string; href: string }) {
-  const body = lines.map((l) => `<p style="margin:0 0 12px">${escape(l)}</p>`).join("");
+function layout(title: string, lines: string[], cta?: { label: string; href: string }, code?: string) {
+  const big = code
+    ? `<p style="margin:8px 0 24px;font-family:'Courier New',monospace;font-size:34px;letter-spacing:.35em;font-weight:700;color:#030101">${escape(code)}</p>`
+    : "";
+  const body = big + lines.map((l) => `<p style="margin:0 0 12px">${escape(l)}</p>`).join("");
   const button = cta
     ? `<p style="margin:24px 0"><a href="${escape(cta.href)}" style="background:#030101;color:#fff;padding:12px 22px;border-radius:999px;text-decoration:none;font-size:13px;letter-spacing:.12em;text-transform:uppercase">${escape(cta.label)}</a></p>`
     : "";
@@ -46,16 +52,20 @@ function layout(title: string, lines: string[], cta?: { label: string; href: str
 <p style="color:#807571;font-size:12px;margin-top:32px">Questions? Reply to this email or message us on WhatsApp 0314 8428115.</p></div>`;
 }
 
-/** Best-effort send; never throws (a failed email must not fail an order). */
-export async function sendMail(to: string, subject: string, title: string, lines: string[], cta?: { label: string; href: string }) {
+/**
+ * Best-effort send; never throws (a failed email must not fail an order).
+ * Returns whether it was handed to the mail server. `code` is shown large
+ * at the top (one-time codes).
+ */
+export async function sendMail(to: string, subject: string, title: string, lines: string[], cta?: { label: string; href: string }, code?: string) {
   if (!mailConfigured()) return false;
   try {
     await transporter().sendMail({
       from: process.env.MAIL_FROM,
       to,
       subject,
-      text: [title, "", ...lines, ...(cta ? ["", `${cta.label}: ${cta.href}`] : [])].join("\n"),
-      html: layout(title, lines, cta),
+      text: [title, "", ...(code ? [code, ""] : []), ...lines, ...(cta ? ["", `${cta.label}: ${cta.href}`] : [])].join("\n"),
+      html: layout(title, lines, cta, code),
     });
     return true;
   } catch (e) {
@@ -77,8 +87,9 @@ export function orderPlacedLines(o: Pick<Order, "number" | "items" | "total" | "
   ];
 }
 
-export function statusLines(o: Pick<Order, "number" | "status" | "trackingNumber">) {
+export function statusLines(o: Pick<Order, "number" | "status" | "trackingNumber" | "eta">) {
   const lines = [`Your order #${o.number} is now: ${orderStatusLabel[o.status]}.`];
+  if (o.eta && o.status !== "delivered" && o.status !== "cancelled") lines.push(etaSentence(o.eta));
   if (o.trackingNumber && (o.status === "shipped" || o.status === "out_for_delivery")) {
     lines.push(`Courier tracking number: ${o.trackingNumber}`);
   }

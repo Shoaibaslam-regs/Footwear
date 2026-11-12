@@ -20,6 +20,8 @@ export const ICON_NAMES = [
   "bookmark",
   "chat",
   "check",
+  "admin_panel_settings",
+  "mark_email_read",
   "check_circle",
   "chevron_left",
   "chevron_right",

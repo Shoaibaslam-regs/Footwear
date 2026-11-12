@@ -20,6 +20,8 @@ export const RULES = {
   loginEmail: { name: "login-email", max: 5, windowSec: 15 * 60 },
   /** Failed logins from one IP: guessing across many accounts. */
   loginIp: { name: "login-ip", max: 20, windowSec: 15 * 60 },
+  /** Things typed into the login email box that aren't emails (guessing the admin secret). */
+  adminGateIp: { name: "admin-gate-ip", max: 10, windowSec: 60 * 60 },
   /** Accounts created from one IP. */
   registerIp: { name: "register-ip", max: 5, windowSec: 60 * 60 },
   /** Reset emails for one address (silently capped, so it can't be used to spam an inbox). */

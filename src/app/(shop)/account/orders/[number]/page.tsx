@@ -6,7 +6,7 @@ import { Suspense } from "react";
 import { requireUser } from "@/lib/auth/dal";
 import { countries } from "@/lib/checkout-data";
 import { whatsappUrl } from "@/lib/data";
-import { fulfilmentSteps, orderStatusLabel, paymentMethodLabel, paymentStatusLabel } from "@/lib/orders";
+import { etaLabel, fulfilmentSteps, orderStatusLabel, paymentMethodLabel, paymentStatusLabel } from "@/lib/orders";
 import { getOrderForUser, statusDates } from "@/lib/server/orders";
 import Price from "@/components/Price";
 import CancelOrderButton from "@/components/account/CancelOrderButton";
@@ -51,6 +51,17 @@ async function OrderDetail({ params }: PageProps<"/account/orders/[number]">) {
           </a>
         </div>
       </div>
+
+      {order.eta && order.status !== "delivered" && order.status !== "cancelled" && (
+        <section className="mb-space-md rounded-xl bg-secondary-container/40 border border-secondary-fixed-dim/60 p-space-md flex items-start gap-space-sm">
+          <span aria-hidden="true" className="material-symbols-outlined text-secondary text-[24px]">local_shipping</span>
+          <div>
+            <p className="font-label-uppercase text-label-uppercase uppercase tracking-widest text-secondary">Expected delivery</p>
+            <p className="font-headline-sm text-headline-sm text-primary">{etaLabel(order.eta)}</p>
+            {order.eta.note && <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5">{order.eta.note}</p>}
+          </div>
+        </section>
+      )}
 
       <section className={`${card} mb-space-md`}>
         <h2 className="font-headline-sm text-headline-sm text-primary mb-space-md">Progress</h2>

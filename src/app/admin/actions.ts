@@ -22,7 +22,7 @@ import {
   SETTINGS_TAG,
 } from "@/lib/server/settings";
 import { REVIEWS_TAG, reviewsTag } from "@/lib/server/reviews";
-import { nextStatuses, orderStatusLabel, orderStatuses, paymentStatusLabel, paymentStatuses } from "@/lib/orders";
+import { etaLabel, etaPresets, etaSentence, nextStatuses, orderStatusLabel, orderStatuses, paymentStatusLabel, paymentStatuses } from "@/lib/orders";
 import { getOrderById, updateOrder } from "@/lib/server/orders";
 import { deleteImages } from "@/lib/server/images";
 import { createResetToken } from "@/lib/server/password-reset";
@@ -288,7 +288,7 @@ export async function setOrderStatus(_: OrderActionState, fd: FormData): Promise
     order.customer.email,
     `Order #${order.number}: ${orderStatusLabel[to.data]} — Ŕose Atelier`,
     orderStatusLabel[to.data],
-    statusLines({ number: order.number, status: to.data, trackingNumber: tracking || order.trackingNumber }),
+    statusLines({ number: order.number, status: to.data, trackingNumber: tracking || order.trackingNumber, eta: order.eta }),
     { label: "View your order", href: `${await siteUrl()}/account/orders/${order.number}` },
   );
   // Cancelling stops an order counting towards "sold" and returns its stock.
@@ -535,4 +535,74 @@ export async function createUserResetLink(_: ResetLinkState, formData: FormData)
   const token = await createResetToken(new ObjectId(id));
   if (!token) return { error: "Too many links requested for this account in the last hour." };
   return { link: `${await siteUrl()}/reset-password?token=${token}` };
+}
+
+/* ---------- Expected delivery ---------- */
+
+/** Today in Pakistan, as YYYY-MM-DD. */
+const pkToday = () => new Intl.DateTimeFormat("en-CA", { timeZone: "Asia/Karachi" }).format(new Date());
+const addDays = (ymd: string, n: number) => {
+  const d = new Date(`${ymd}T00:00:00Z`);
+  d.setUTCDate(d.getUTCDate() + n);
+  return d.toISOString().slice(0, 10);
+};
+const YMD = /^\d{4}-\d{2}-\d{2}$/;
+
+/**
+ * Tells the customer when to expect the parcel: a ready-made range ("4–5 days"
+ * from today) or dates picked on the calendar, with an optional reason. It is
+ * saved on the order, noted in the history and emailed to the customer.
+ * `mode` "clear" removes it.
+ */
+export async function setOrderEta(mode: "save" | "clear", _: OrderActionState, fd: FormData): Promise<OrderActionState> {
+  const me = await requireAdmin();
+  const id = String(fd.get("id") ?? "");
+  const order = await getOrderById(id);
+  if (!order) return { error: "Order not found." };
+  if (order.status === "delivered" || order.status === "cancelled") return { error: "This order is already finished." };
+
+  if (mode === "clear") {
+    const col = (await getDb()).collection("orders");
+    const now = new Date();
+    await col.updateOne(
+      { _id: new ObjectId(id) },
+      { $unset: { eta: "" }, $set: { updatedAt: now }, $push: { history: { kind: "note", text: "Expected delivery removed", by: me.email, at: now } } } as never,
+    );
+    refresh();
+    return { ok: "Expected delivery removed." };
+  }
+
+  const today = pkToday();
+  const preset = etaPresets.find((p) => p.id === String(fd.get("preset") ?? ""));
+  let from: string;
+  let to: string;
+  if (preset) {
+    from = addDays(today, preset.from);
+    to = addDays(today, preset.to);
+  } else {
+    from = String(fd.get("from") ?? "");
+    to = String(fd.get("to") ?? "") || from;
+    if (!YMD.test(from) || !YMD.test(to)) return { error: "Choose a delivery date, or one of the ready-made ranges." };
+    if (from < today) return { error: "The date can't be in the past." };
+    if (to < from) return { error: "The second date must be on or after the first." };
+    if (to > addDays(today, 90)) return { error: "Choose a date within the next 3 months." };
+  }
+  const note = String(fd.get("reason") ?? "").trim().slice(0, 160);
+  const eta = { from, to, ...(note ? { note } : {}), setAt: new Date().toISOString() };
+  const ok = await updateOrder(id, { eta }, { kind: "note", text: `${etaSentence(eta)}`, by: me.email });
+  if (!ok) return { error: "Order not found." };
+
+  const sent = await sendMail(
+    order.customer.email,
+    `Order #${order.number}: arriving ${etaLabel(eta)} — Ŕose Atelier`,
+    `Your order arrives ${etaLabel(eta)}`,
+    [
+      `Thank you for waiting. Your order #${order.number} should reach you ${from === to ? "on" : "between"} ${etaLabel(eta)}.`,
+      ...(note ? [note] : []),
+      "We'll let you know when it's on its way.",
+    ],
+    { label: "View your order", href: `${await siteUrl()}/account/orders/${order.number}` },
+  );
+  refresh();
+  return { ok: `Saved: arriving ${etaLabel(eta)}.${sent ? " The customer was emailed." : ""}` };
 }

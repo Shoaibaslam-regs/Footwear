@@ -1,7 +1,7 @@
 import "server-only";
 import { randomInt } from "node:crypto";
 import { MongoServerError, ObjectId } from "mongodb";
-import { orderStatusLabel } from "../orders";
+import { inQueue, orderStatusLabel, queueStatuses } from "../orders";
 import type {
   Order,
   OrderEvent,
@@ -73,6 +73,11 @@ export async function listOrders(opts: {
   payment?: PaymentStatus;
   /** "any" = used a coupon, "none" = didn't; otherwise these codes (a campaign plus its cards). */
   coupon?: "any" | "none" | string[];
+  /**
+   * "queue" (default): orders still to be sent, oldest first (first come, first
+   * served), then sent and finished orders, newest first. Or plain newest / oldest.
+   */
+  sort?: "queue" | "newest" | "oldest";
 } = {}): Promise<Order[]> {
   const filter: Record<string, unknown> = {};
   const and: Record<string, unknown>[] = [];
@@ -86,8 +91,32 @@ export async function listOrders(opts: {
     and.push({ $or: [{ number: rx }, { "customer.email": rx }, { "customer.name": rx }, { "customer.phone": rx }, { "coupon.code": rx }, { "coupon.campaign": rx }] });
   }
   if (and.length) filter.$and = and;
-  const docs = await (await orders()).find(filter).sort({ createdAt: -1 }).limit(500).toArray();
-  return docs.map(toOrder);
+  const col = await orders();
+  const sort = opts.sort ?? "queue";
+  if (sort !== "queue") {
+    const docs = await col.find(filter).sort({ createdAt: sort === "oldest" ? 1 : -1 }).limit(500).toArray();
+    return docs.map(toOrder);
+  }
+  const waiting = opts.status ? inQueue(opts.status) : true;
+  const done = opts.status ? !inQueue(opts.status) : true;
+  const [open, rest] = await Promise.all([
+    waiting
+      ? col.find({ ...filter, ...(opts.status ? {} : { status: { $in: queueStatuses } }) }).sort({ createdAt: 1 }).limit(1000).toArray()
+      : [],
+    done
+      ? col.find({ ...filter, ...(opts.status ? {} : { status: { $nin: queueStatuses } }) }).sort({ createdAt: -1 }).limit(500).toArray()
+      : [],
+  ]);
+  return [...open, ...rest].map(toOrder);
+}
+
+/** Place in the queue of every order still to be sent (1 = oldest), whatever the list filters. */
+export async function queuePositions(): Promise<{ positions: Map<string, number>; total: number }> {
+  const docs = await (await orders())
+    .find({ status: { $in: queueStatuses } }, { projection: { _id: 1 } })
+    .sort({ createdAt: 1 })
+    .toArray();
+  return { positions: new Map(docs.map((d, i) => [d._id.toHexString(), i + 1])), total: docs.length };
 }
 
 export async function getOrderById(id: string): Promise<Order | null> {
@@ -157,7 +186,7 @@ export function statusDates(o: Pick<Order, "history" | "createdAt">): Partial<Re
 
 export async function updateOrder(
   id: string,
-  set: Partial<{ status: OrderStatus; "payment.status": PaymentStatus; "payment.reference": string; trackingNumber: string }>,
+  set: Partial<{ status: OrderStatus; "payment.status": PaymentStatus; "payment.reference": string; trackingNumber: string; eta: Order["eta"] }>,
   event: Omit<OrderEvent, "at">,
   expectStatus?: OrderStatus,
 ) {

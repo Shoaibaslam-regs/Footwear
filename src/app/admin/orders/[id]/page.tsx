@@ -5,10 +5,10 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/dal";
 import { countries } from "@/lib/checkout-data";
 import { whatsappNumber } from "@/lib/data";
-import { paymentMethodLabel } from "@/lib/orders";
-import { getOrderById } from "@/lib/server/orders";
+import { inQueue, paymentMethodLabel } from "@/lib/orders";
+import { getOrderById, queuePositions } from "@/lib/server/orders";
 import { PaymentTag, StatusTag } from "@/components/admin/OrderTags";
-import { NoteControl, PaymentControl, StatusControl } from "@/components/admin/OrderControls";
+import { EtaControl, NoteControl, PaymentControl, StatusControl } from "@/components/admin/OrderControls";
 import { campaignOfCards } from "@/lib/server/coupons";
 import { pkr } from "@/components/admin/format";
 import { mailConfigured, siteUrl, statusLines } from "@/lib/server/mail";
@@ -39,6 +39,8 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
   const country = countries.find((c) => c.code === order.address.country)?.label ?? order.address.country;
   const wa = whatsappTo(order.customer.phone);
   const base = await siteUrl();
+  const queue = inQueue(order.status) ? await queuePositions() : null;
+  const place = queue?.positions.get(order.id);
 
   return (
     <div className="flex flex-col gap-4">
@@ -49,6 +51,11 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
           </Link>
           <h1 className="mt-1 flex items-center gap-3">
             {order.number} <StatusTag status={order.status} /> <PaymentTag status={order.payment.status} />
+            {place && queue && (
+              <Link className="tag tag-muted hover:underline" href="/admin/orders" title="First come, first served: 1 is the oldest order still to be sent">
+                #{place} of {queue.total} in queue
+              </Link>
+            )}
           </h1>
           <p className="muted">Placed {when(order.createdAt)}</p>
         </div>
@@ -216,6 +223,13 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
             </p>
             <StatusControl key={`${order.status}-${order.updatedAt}`} order={order} />
           </section>
+
+          {order.status !== "delivered" && order.status !== "cancelled" && (
+            <section className="panel p-3 flex flex-col gap-3">
+              <h2>Expected delivery</h2>
+              <EtaControl key={order.updatedAt} order={order} />
+            </section>
+          )}
 
           <section className="panel p-3 flex flex-col gap-3">
             <h2>Payment</h2>

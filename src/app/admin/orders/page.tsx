@@ -1,7 +1,9 @@
-import { Suspense } from "react";
+import { Fragment, Suspense } from "react";
 import Link from "next/link";
 import { requireAdmin } from "@/lib/auth/dal";
 import {
+  etaLabel,
+  inQueue,
   orderStatusLabel,
   orderStatuses,
   paymentMethodLabel,
@@ -10,7 +12,7 @@ import {
   type OrderStatus,
   type PaymentStatus,
 } from "@/lib/orders";
-import { listOrders } from "@/lib/server/orders";
+import { listOrders, queuePositions } from "@/lib/server/orders";
 import { campaignOfCards, couponFilterOptions, orderCodesFor } from "@/lib/server/coupons";
 import { PaymentTag, StatusTag } from "@/components/admin/OrderTags";
 import { pkr } from "@/components/admin/format";
@@ -45,7 +47,15 @@ async function AdminOrdersContent({
   const couponParam = one(sp.coupon)?.trim().toUpperCase() || "";
   const couponFilter =
     couponParam === "ANY" ? "any" : couponParam === "NONE" ? "none" : couponParam ? await orderCodesFor(couponParam) : undefined;
-  const [orders, couponOptions] = await Promise.all([listOrders({ q, status, payment, coupon: couponFilter }), couponFilterOptions()]);
+  const sort = (["queue", "newest", "oldest"] as const).find((v) => v === one(sp.sort)) ?? "queue";
+  const [orders, couponOptions, queue] = await Promise.all([
+    listOrders({ q, status, payment, coupon: couponFilter, sort }),
+    couponFilterOptions(),
+    queuePositions(),
+  ]);
+  // Queue view: a divider row where the orders still to be sent end.
+  const firstDone = sort === "queue" ? orders.findIndex((o) => !inQueue(o.status)) : -1;
+  const waitingShown = sort === "queue" ? orders.filter((o) => inQueue(o.status)).length : 0;
   // Campaign of each surprise card (older orders didn't store it).
   const campaignOf = await campaignOfCards([...new Set(orders.flatMap((o) => (o.coupon && !o.coupon.campaign ? [o.coupon.code] : [])))]);
   const withCoupon = orders.filter((o) => o.coupon && o.status !== "cancelled");
@@ -57,7 +67,10 @@ async function AdminOrdersContent({
       <div>
         <h1>Orders</h1>
         <p className="muted">
-          Confirm, pack, send and track every order. Times are Pakistan time.
+          {sort === "queue"
+            ? `First come, first served: the oldest order still to be sent is at the top, new orders join the bottom. ${queue.total} ${queue.total === 1 ? "order is" : "orders are"} waiting to be sent.`
+            : "Confirm, pack, send and track every order."}{" "}
+          Times are Pakistan time.
         </p>
       </div>
 
@@ -81,7 +94,7 @@ async function AdminOrdersContent({
         ))}
       </div>
 
-      <form className="panel p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_180px_200px_auto] gap-2 items-end">
+      <form className="panel p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_160px_180px_190px_auto] gap-2 items-end">
         {status && <input name="status" type="hidden" value={status} />}
         <label className="field">
           Search
@@ -119,6 +132,14 @@ async function AdminOrdersContent({
                 ))}
               </optgroup>
             )}
+          </select>
+        </label>
+        <label className="field">
+          Order
+          <select defaultValue={sort} name="sort">
+            <option value="queue">Queue (first come)</option>
+            <option value="newest">Newest first</option>
+            <option value="oldest">Oldest first</option>
           </select>
         </label>
         <div className="flex gap-2">
@@ -180,6 +201,7 @@ async function AdminOrdersContent({
                 <th className="w-8">
                   <SelectAll form="bulk-orders" label="Select all orders" />
                 </th>
+                <th className="text-right" title="Place in the queue: 1 is the oldest order still to be sent">Queue</th>
                 <th>Order</th>
                 <th>Placed</th>
                 <th>Customer</th>
@@ -191,8 +213,16 @@ async function AdminOrdersContent({
               </tr>
             </thead>
             <tbody>
-              {orders.map((o) => (
-                <tr key={o.id}>
+              {orders.map((o, i) => (
+                <Fragment key={o.id}>
+                {i === firstDone && i > 0 && (
+                  <tr>
+                    <td className="bg-[var(--a-hover)] text-xs font-semibold muted py-2" colSpan={10}>
+                      Sent and finished orders (newest first)
+                    </td>
+                  </tr>
+                )}
+                <tr>
                   <td>
                     <input
                       aria-label={`Select order ${o.number}`}
@@ -201,6 +231,9 @@ async function AdminOrdersContent({
                       type="checkbox"
                       value={o.id}
                     />
+                  </td>
+                  <td className="text-right tabular-nums">
+                    {queue.positions.has(o.id) ? <span className="tag tag-muted">#{queue.positions.get(o.id)}</span> : <span className="muted">—</span>}
                   </td>
                   <td className="whitespace-nowrap">
                     <Link
@@ -251,6 +284,9 @@ async function AdminOrdersContent({
                   </td>
                   <td>
                     <StatusTag status={o.status} />
+                    {o.eta && o.status !== "delivered" && o.status !== "cancelled" && (
+                      <div className="muted text-xs whitespace-nowrap">Arrives {etaLabel(o.eta)}</div>
+                    )}
                   </td>
                   <td>
                     <div className="flex justify-end gap-1.5 whitespace-nowrap">
@@ -270,6 +306,7 @@ async function AdminOrdersContent({
                     </div>
                   </td>
                 </tr>
+                </Fragment>
               ))}
             </tbody>
           </table>
@@ -277,7 +314,8 @@ async function AdminOrdersContent({
       )}
       <p className="muted">
         {orders.length} order(s)
-        {orders.length === 500 ? " (showing latest 500)" : ""}
+        {sort === "queue" && waitingShown > 0 ? ` · ${waitingShown} waiting to be sent` : ""}
+        {orders.length >= 500 ? " (showing up to 500 sent and finished)" : ""}
       </p>
     </div>
   );

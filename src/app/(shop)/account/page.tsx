@@ -6,7 +6,7 @@ import { requireUser } from "@/lib/auth/dal";
 import MyCoupons from "@/components/offers/MyCoupons";
 import { carts } from "@/lib/server/carts";
 import { logout } from "@/lib/auth/actions";
-import { fulfilmentSteps, orderStatusLabel, paymentMethodLabel, paymentStatusLabel } from "@/lib/orders";
+import { etaLabel, fulfilmentSteps, orderStatusLabel, paymentMethodLabel, paymentStatusLabel } from "@/lib/orders";
 import { listOrdersForUser } from "@/lib/server/orders";
 import Price from "@/components/Price";
 import ConfirmButton from "@/components/ConfirmButton";
@@ -172,6 +172,12 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
                         ))}
                       </ol>
                     </div>
+                  )}
+                  {o.eta && o.status !== "delivered" && o.status !== "cancelled" && (
+                    <p className="flex items-center gap-1 font-body-sm text-[12px] sm:text-body-sm text-primary">
+                      <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-secondary">local_shipping</span>
+                      Arrives <strong className="font-semibold">{etaLabel(o.eta)}</strong>
+                    </p>
                   )}
                   {o.trackingNumber && (
                     <p className="font-body-sm text-[12px] sm:text-body-sm text-on-surface-variant">

@@ -138,7 +138,56 @@ export type Order = {
   };
   status: OrderStatus;
   trackingNumber: string;
+  /** Expected delivery the store told the customer (Pakistan calendar days). */
+  eta?: OrderEta;
   history: OrderEvent[];
   createdAt: string;
   updatedAt: string;
 };
+
+/* ---------- Order queue and expected delivery ---------- */
+
+/**
+ * Orders still waiting to be sent, served first come, first served: the
+ * oldest is at the top of the admin queue and new orders join at the bottom.
+ */
+export const queueStatuses: OrderStatus[] = ["pending", "confirmed", "processing"];
+export const inQueue = (s: OrderStatus) => queueStatuses.includes(s);
+
+/** Expected delivery, as days `YYYY-MM-DD` in Pakistan time. `to` equals `from` for a single day. */
+export type OrderEta = { from: string; to: string; note?: string; setAt: string };
+
+/** Ready-made choices on the admin order page: "arrives in 4–5 days". */
+export const etaPresets = [
+  { id: "1-2", from: 1, to: 2 },
+  { id: "2-3", from: 2, to: 3 },
+  { id: "3-5", from: 3, to: 5 },
+  { id: "4-5", from: 4, to: 5 },
+  { id: "5-7", from: 5, to: 7 },
+  { id: "7-10", from: 7, to: 10 },
+] as const;
+
+/** Reasons the admin can pick; shown to the customer next to the date. */
+export const etaReasons = [
+  "Many orders right now, so it is taking a little longer.",
+  "Your pair is being made by hand.",
+  "Courier delays in your area.",
+  "Public holiday.",
+];
+
+const day = (ymd: string) => new Date(`${ymd}T00:00:00Z`);
+const fmt = (d: Date, o: Intl.DateTimeFormatOptions) => d.toLocaleDateString("en-GB", { ...o, timeZone: "UTC" });
+
+/** "Fri 15 Nov", "15–16 Nov", or "30 Nov – 2 Dec" (no year, as everywhere on the storefront). */
+export function etaLabel(eta: Pick<OrderEta, "from" | "to">): string {
+  const a = day(eta.from);
+  const b = day(eta.to);
+  if (eta.from === eta.to) return fmt(a, { weekday: "short", day: "numeric", month: "short" });
+  if (a.getUTCMonth() === b.getUTCMonth()) return `${a.getUTCDate()}–${fmt(b, { day: "numeric", month: "short" })}`;
+  return `${fmt(a, { day: "numeric", month: "short" })} – ${fmt(b, { day: "numeric", month: "short" })}`;
+}
+
+/** One sentence for emails and WhatsApp: "Expected delivery: 15–16 Nov. Many orders right now, …" */
+export function etaSentence(eta: OrderEta): string {
+  return `Expected delivery: ${etaLabel(eta)}.${eta.note ? ` ${eta.note}` : ""}`;
+}

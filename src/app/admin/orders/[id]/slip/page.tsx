@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/dal";
 import { countries } from "@/lib/checkout-data";
 import { whatsappNumber } from "@/lib/data";
-import { orderStatusLabel, paymentMethodLabel, paymentStatusLabel } from "@/lib/orders";
+import { etaLabel, orderStatusLabel, paymentMethodLabel, paymentStatusLabel } from "@/lib/orders";
 import { getOrderById } from "@/lib/server/orders";
 import { pkr } from "@/components/admin/format";
 import PrintButton from "@/components/admin/PrintButton";
@@ -209,6 +209,12 @@ async function SlipContent({ params, searchParams }: PageProps<"/admin/orders/[i
             <span>Order status</span>
             <span>{orderStatusLabel[order.status]}</span>
           </div>
+          {order.eta && order.status !== "delivered" && order.status !== "cancelled" && (
+            <div className="row">
+              <span>Expected delivery</span>
+              <span style={{ fontWeight: 700 }}>{etaLabel(order.eta)}</span>
+            </div>
+          )}
           {order.trackingNumber && (
             <div className="row">
               <span>Tracking</span>

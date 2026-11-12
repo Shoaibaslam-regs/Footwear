@@ -1,7 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useActionState } from "react";
+import { useActionState, useCallback, useState } from "react";
+import VerifyCode from "./VerifyCode";
+import AdminLogin from "./AdminLogin";
 import { tryAgainIn, useCooldown } from "@/lib/use-cooldown";
 import { login, register, type AuthState } from "@/lib/auth/actions";
 
@@ -68,6 +70,16 @@ export default function AuthForm({
   const wait = useCooldown(state?.retryAfter, state);
   const otherHref = `${isLogin ? "/register" : "/login"}${next ? `?next=${encodeURIComponent(next)}` : ""}`;
 
+  // Sign-up step 2 (code sent), unless the customer went back to change the email.
+  const [left, setLeft] = useState<{ from: AuthState; message?: string } | null>(null);
+  const goBack = useCallback((message?: string) => setLeft({ from: state, message }), [state]);
+  if (!isLogin && state?.step === "verify" && state.email && left?.from !== state) {
+    return <VerifyCode email={state.email} next={next} onBack={goBack} />;
+  }
+  const backNote = left && left.from === state ? left.message : undefined;
+  // The admin secret was typed into the email box: the admin login step.
+  if (isLogin && state?.admin && state.gate) return <AdminLogin gate={state.gate} />;
+
   return (
     <form action={action} className="flex flex-col gap-space-md" noValidate>
       {next && <input name="next" type="hidden" value={next} />}
@@ -111,7 +123,12 @@ export default function AuthForm({
         </Link>
       )}
 
-      {state?.message && (
+      {backNote && (
+        <p className="font-body-sm text-body-sm text-on-error-container bg-error-container rounded-lg px-space-md py-space-sm" role="alert">
+          {backNote}
+        </p>
+      )}
+      {state?.message && !backNote && (
         <p
           className="font-body-sm text-body-sm text-on-error-container bg-error-container rounded-lg px-space-md py-space-sm"
           role="alert"

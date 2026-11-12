@@ -23,7 +23,9 @@ There is no test suite. Verification so far has been ad-hoc end-to-end scripts r
 
 `.env` needs `MONGODB_URI`, `JWT_SECRET` (≥32 chars) and `UPLOADTHING_TOKEN`. Never print the URI: it contains credentials.
 
-Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, `SMTP_PASS` and `MAIL_FROM` switches it on, plus `SITE_URL` for links in emails. Without them, `lib/server/mail.ts` skips every send: order emails, password-reset emails and back-in-stock alerts. Admins then use the WhatsApp buttons, and the "Reset link" button on `/admin/users`.
+`CRON_SECRET` (optional, 16+ chars) switches on the weekly photo cleanup on Vercel. `ADMIN_SECRET` (optional, 12+ chars) switches on the hidden admin login.
+
+Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, `SMTP_PASS` (or `SMTP_KEY`) and `MAIL_FROM` switches it on. The store uses Brevo (`smtp-relay.brevo.com:587`), plus `SITE_URL` for links in emails. Without them, `lib/server/mail.ts` skips every send: order emails, password-reset emails and back-in-stock alerts. Admins then use the WhatsApp buttons, and the "Reset link" button on `/admin/users`.
 
 ## Architecture
 
@@ -45,6 +47,13 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - `/admin/users/[id]` shows one customer: profile, saved address, orders, live bag and wishlist, reviews and restock requests. `/admin/products/[id]/insights` shows one listing's performance; `ListingTabs` switches between it and the edit form.
   - `/admin/orders/[id]/slip` is the printable order slip for receipt printers (80 or 58 mm, `?w=58`; `?print=1` opens the print dialog, used by "Print slip" on the order page). Print CSS takes the admin chrome out of the layout, since merely hiding it makes Chrome shrink the slip, and `PrintButton` sizes `@page` to the slip's measured height.
   - Live orders: `GET /api/admin/orders/stream` is a Server-Sent Events stream (admin only), not a WebSocket, because Next route handlers can't upgrade connections without a custom server. `lib/server/order-events.ts` keeps one MongoDB change stream per server process for all tabs, and falls back to polling `updatedAt` every 5 s when the database has no replica set. `components/admin/LiveOrders.tsx` (admin top bar) shows a popup, a chime and a `(n)` tab-title count for `new` orders, and calls `router.refresh()` on order pages for `new`/`change`. Order writes must keep setting `updatedAt` for the polling fallback. On Vercel the route has `maxDuration = 300` and closes itself after 270 s. Every ping carries `id: <time>`, so on reconnect the browser sends `Last-Event-ID` and the route first replays orders created since then (minus 5 s; `LiveOrders` skips ids it already announced).
+  - The orders list is a first-come-first-served queue by default (`listOrders({sort: "queue"})`).
+    - Orders still to be sent (`queueStatuses`: pending, confirmed, processing) come first, oldest at the top. Sent and finished orders follow, newest first, after a divider row.
+    - `queuePositions()` numbers the waiting orders across all filters (#1 = oldest); the list and the order page ("#2 of 12 in queue") show it.
+    - `?sort=newest|oldest` gives plain date order.
+  - Expected delivery: `order.eta = {from, to, note?, setAt}` (Pakistan calendar days, `YYYY-MM-DD`). It is set on the admin order page (`EtaControl` → `setOrderEta`), from a preset range counted from today in PKT (`etaPresets`, e.g. 4–5 days) or picked dates, with an optional reason the customer sees (`etaReasons` suggestions).
+    - Saving notes it in the history and emails the customer.
+    - It shows on the customer's order page, the account order cards, the order slip and the admin list, and `statusLines` adds it to status emails and the WhatsApp update until delivery. Labels come from `etaLabel` (no year).
   - `setUserRole` returns to the page in its `back` field, but only to `/admin/users` or `/admin/users/<id>`.
   - Charts are client SVG components in `components/admin/charts/`. They take a serialisable `unit` prop (`"pkr"` or `"count"`), not a formatter function, because server pages render them.
 - `src/app/layout.tsx` (root): fonts only, plus `DialogHost` and `CartSync` (both app-wide).
@@ -55,6 +64,11 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 - `proxy.ts` is only an optimistic cookie check for `/admin`, `/account`, `/checkout`, `/login` and `/register`.
 - Real authorization is in `dal.ts`: `getCurrentUser` / `requireUser` / `requireAdmin` re-read the user from MongoDB, so role changes apply immediately. Every admin page and server action calls `requireAdmin()` itself.
 - The first registered account becomes admin. Passwords use scrypt (`lib/server/password.ts`).
+- Hidden admin login (`lib/server/admin-gate.ts`), on when `ADMIN_SECRET` (12+ characters, not an email) is set.
+  - Typing the secret into the login form's email box returns `{admin, gate}`, where `gate` is a 10-minute signed pass, and `AuthForm` shows `AdminLogin`. `adminLogin` then accepts only admin accounts.
+  - While the gate is on, admin accounts are refused on the normal login with the same "incorrect" answer.
+  - Non-email input in the email box counts as a secret guess: `adminGateIp`, 10 per IP per hour, with the countdown on the button.
+  - Without `ADMIN_SECRET`, admins log in normally, so a missing setting can't lock anyone out.
 
 ### Server vs shared modules
 - `src/lib/server/*` is `server-only` (DB access).
@@ -75,6 +89,12 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - `lib/server/stock.ts` reserves atomically in `placeOrder` (rolling back on failure) and releases on cancel.
   - Cart actions cap quantities at stock.
   - `stock_alerts` holds "notify me" requests; restocking a size in the admin form notifies them.
+- `pending_registrations`: sign-ups waiting for their email code (`lib/server/email-otp.ts`). The record is keyed by email, holds the name, password hash and a hash of the code (peppered with `JWT_SECRET`), and expires 1 hour after the first code (TTL).
+  - With email configured, `register` creates no account. It emails a 6-digit code, and `AuthForm` switches to `VerifyCode`.
+  - `verifyRegistration` creates the account (`users.emailVerifiedAt`) and logs in.
+  - Codes work for 10 minutes with 5 tries. "Resend code" is limited to once a minute (countdown on the button) and 5 per sign-up. Re-submitting the form within a minute keeps the code already sent.
+  - Without email configured, sign-up creates the account at once, as before. Accounts made before this have no `emailVerifiedAt`.
+  - To test without sending real email, start the test server with `SMTP_HOST=127.0.0.1 SMTP_PORT=2525` and a local SMTP sink (`--env-file` doesn't override variables already set).
 - `password_resets`: SHA-256 hashes of single-use tokens with a TTL (1 hour). A reset sets `users.passwordChangedAt`, and `getCurrentUser` rejects JWTs issued before it.
 - `users.savedAddress`: the last checkout address, used to prefill the next one.
 - `review_uploads`: ownership of review photos, for the daily cap and so a review can only reference the uploader's own files.
@@ -141,6 +161,11 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 - Admin uploads go to `POST /api/admin/images` with `preset` (`product` fits 1600×2000, `hero` fits 2400×2400). Sharp (`lib/server/images.ts`) applies EXIF rotation, resizes, strips metadata and converts to WebP, then `UTApi` stores it.
 - `components/admin/GalleryUploader.tsx` is the shared photo editor for listing galleries and hero slides.
 - When an image is removed, it is deleted from UploadThing via `releaseImage` (in `app/admin/actions.ts`), but only if no listing, order or hero slide still references it.
+- Unused uploads (uploaded but never saved, or left behind) are cleared by `lib/server/storage-cleanup.ts`. It lists UploadThing files and keeps anything a listing, hero slide, order line or review refers to (by key or `ufs.sh` URL), plus anything newer than the safety age.
+  - `/admin/settings/storage` ("Photo storage", linked from Settings) shows usage and the unused files, with a confirmed Delete button (24 h safety age).
+  - `GET /api/cron/cleanup-uploads` runs weekly via Vercel Cron (`vercel.json`, Saturday 22:00 UTC = Sunday 03:00 PKT) with a 48 h safety age. It needs `CRON_SECRET` (16+ chars) in Vercel; without it the route refuses everyone.
+  - Deletion always rescans on the server. It refuses when the database references none of the stored files, and the automatic run also refuses when more than half would go.
+  - **Never press Delete against a test database:** it shares the UploadThing account with the live site, so every real photo looks unused there.
 
 ### Collection filters
 - `lib/catalog-filters.ts` is a client store synced to the URL with `history.pushState`, which keeps `/collections` static.
@@ -179,7 +204,6 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
 ## Open work
 
 - Real payment gateway (PayFast, or EasyPaisa/JazzCash merchant APIs).
-- SMTP credentials, so emails actually send.
+- Email sends through Brevo with a Gmail sender; a domain of the store's own (with Brevo DKIM) would keep it out of spam.
 - WhatsApp Business API, for automatic order messages (today they are one-click from the admin panel).
-- Cleanup of uploads that were never saved to a listing.
 
