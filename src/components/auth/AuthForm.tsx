@@ -78,7 +78,7 @@ export default function AuthForm({
   }
   const backNote = left && left.from === state ? left.message : undefined;
   // The admin secret was typed into the email box: the admin login step.
-  if (isLogin && state?.admin && state.gate) return <AdminLogin gate={state.gate} />;
+  if (isLogin && state?.admin && state.gate && left?.from !== state) return <AdminLogin gate={state.gate} onBack={() => goBack()} />;
 
   return (
     <form action={action} className="flex flex-col gap-space-md" noValidate>

@@ -140,6 +140,8 @@ export type Order = {
   trackingNumber: string;
   /** Expected delivery the store told the customer (Pakistan calendar days). */
   eta?: OrderEta;
+  /** Cash on Delivery confirmed with an email code before it was placed. */
+  codeConfirmed?: boolean;
   history: OrderEvent[];
   createdAt: string;
   updatedAt: string;

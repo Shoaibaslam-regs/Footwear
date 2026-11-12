@@ -186,13 +186,13 @@ export async function adminLogin(_: AuthState, formData: FormData): Promise<Auth
   const values = { email: String(formData.get("email") ?? "") };
   if (!parsed.success) return { admin: true, gate, errors: z.flattenError(parsed.error).fieldErrors, values };
   const ip = await clientIp();
-  const wait = await firstBlocked([RULES.loginEmail, parsed.data.email], [RULES.loginIp, ip]);
+  const wait = await firstBlocked([RULES.adminLoginIp, ip], [RULES.loginEmail, parsed.data.email], [RULES.loginIp, ip]);
   if (wait) return { admin: true, gate, retryAfter: wait, values };
 
   const user = await (await getDb()).collection<UserDoc>("users").findOne({ email: parsed.data.email });
   const ok = user ? await verifyPassword(parsed.data.password, user.passwordHash) : false;
   if (!user || !ok || user.role !== "admin") {
-    await Promise.all([hit(RULES.loginEmail, parsed.data.email), hit(RULES.loginIp, ip)]);
+    await Promise.all([hit(RULES.adminLoginIp, ip), hit(RULES.loginEmail, parsed.data.email), hit(RULES.loginIp, ip)]);
     return { admin: true, gate, message: "Email or password is incorrect.", values };
   }
   await createSession({ sub: user._id.toHexString(), role: user.role });

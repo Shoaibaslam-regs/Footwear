@@ -234,6 +234,12 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
           <section className="panel p-3 flex flex-col gap-3">
             <h2>Payment</h2>
             <p className="muted">Method: {paymentMethodLabel(order.payment.method)}</p>
+            {order.codeConfirmed && (
+              <p className="text-[13px]">
+                <span className="tag tag-ok">Email confirmed</span>{" "}
+                <span className="muted">The customer entered the emailed code before placing this order.</span>
+              </p>
+            )}
             {order.payment.walletNumber && (
               <p>
                 Wallet account:{" "}

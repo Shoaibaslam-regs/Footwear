@@ -281,6 +281,11 @@ async function AdminOrdersContent({
                     <div className="muted text-xs">
                       {paymentMethodLabel(o.payment.method)}
                     </div>
+                    {o.codeConfirmed && (
+                      <span className="tag tag-ok mt-0.5" title="The customer entered the code we emailed before this Cash on Delivery order was placed">
+                        Email confirmed
+                      </span>
+                    )}
                   </td>
                   <td>
                     <StatusTag status={o.status} />

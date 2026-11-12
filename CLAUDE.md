@@ -19,7 +19,7 @@ npx tsc --noEmit -p .  # type-check
 npx next typegen       # regenerate route types after adding/moving routes (else PageProps<"/x"> errors)
 ```
 
-There is no test suite. Verification so far has been ad-hoc end-to-end scripts run against a throwaway database (see "Testing against another database").
+Tests (see `TESTING.md`): `npm test` runs Vitest unit tests (`tests/unit/`) and integration tests (`tests/integration/`) against `<db>_test`. `npm run build && npm run test:e2e` runs Playwright browser tests (`tests/e2e/`) against `<db>_e2e`, through `tests/e2e/server.mjs`: `next start` on :3457 with a fake SMTP server on :2525, whose messages are listed on :2526. GitHub runs everything on each push (`.github/workflows/test.yml`, with its own MongoDB). Both test databases are wiped on every run; names that don't end in `_test` / `_e2e` are refused. **Add or update tests with every change to money, stock, coupons, codes, auth or the queue.**
 
 `.env` needs `MONGODB_URI`, `JWT_SECRET` (≥32 chars) and `UPLOADTHING_TOKEN`. Never print the URI: it contains credentials.
 
@@ -36,6 +36,7 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 - **Every admin page wraps its content in its own `<Suspense>`** (`XContent` plus a default-export wrapper). `requireAdmin()` verifies the JWT with async crypto, and the admin layout's Suspense doesn't count for navigations: without it, dev logs "uncached data … outside of `<Suspense>`" and navigations aren't instant. `loading.tsx` did not fix it.
 - Code that reads the time after cookies (coupon dates, the dashboard) awaits `io()` from `next/cache` first. Use `io()`, not `connection()`, which blocks prefetching.
 - A button with a function `formAction` can't carry `name`/`value`, because React drops them. Bind the value instead: `formAction={action.bind(null, "hidden")}`.
+- Pages stay alive when the customer navigates away: Next.js hides them with React `<Activity>` (up to 3 routes) and keeps all their state, so forms come back exactly as they were left. Anything showing a one-off result must reset when hidden. `Checkout` does this: after an order is placed, a `useLayoutEffect` cleanup bumps the key of `CheckoutForm`, so the next visit is a fresh checkout instead of the last "Thank you" screen (`tests/e2e/checkout-again.spec.ts`). See `node_modules/next/dist/docs/01-app/02-guides/preserving-ui-state.md`.
 - Storefront data is read through `'use cache'` functions with tags: `products` (`lib/server/products.ts`), `reviews` / `reviews:<slug>` (`lib/server/reviews.ts`), `sales` (`lib/server/sales.ts`), and `settings` (`lib/server/settings.ts`). Any server action that changes that data must call `updateTag(...)` with the matching tag. Admin order actions that only re-render the current page use `refresh()`.
 - `npm run build` executes these cached reads, so it hits MongoDB. The one-time seed (`meta: products-seed`, from the static data in `lib/data.ts` / `collection-data.ts`) and migrations (`meta: gallery-v1`) run at build time against the real DB.
 
@@ -68,6 +69,7 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - Typing the secret into the login form's email box returns `{admin, gate}`, where `gate` is a 10-minute signed pass, and `AuthForm` shows `AdminLogin`. `adminLogin` then accepts only admin accounts.
   - While the gate is on, admin accounts are refused on the normal login with the same "incorrect" answer.
   - Non-email input in the email box counts as a secret guess: `adminGateIp`, 10 per IP per hour, with the countdown on the button.
+  - The admin form has its own stricter limit, `adminLoginIp` (5 failed tries per IP in 15 minutes), on top of the login email and IP limits. "Not an admin? Log in as a customer" returns to the normal form.
   - Without `ADMIN_SECRET`, admins log in normally, so a missing setting can't lock anyone out.
 
 ### Server vs shared modules
@@ -95,6 +97,12 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - Codes work for 10 minutes with 5 tries. "Resend code" is limited to once a minute (countdown on the button) and 5 per sign-up. Re-submitting the form within a minute keeps the code already sent.
   - Without email configured, sign-up creates the account at once, as before. Accounts made before this have no `emailVerifiedAt`.
   - To test without sending real email, start the test server with `SMTP_HOST=127.0.0.1 SMTP_PORT=2525` and a local SMTP sink (`--env-file` doesn't override variables already set).
+- `order_codes`: Cash on Delivery confirmations (`lib/server/order-codes.ts`), one per account, with a TTL of 1 hour.
+  - When email is configured, a COD order from an account with no delivered order is not placed by `placeOrder`. It prices the order, saves the checkout data with a fingerprint of the priced order (lines, prices, coupon, delivery, address, total) and emails a 6-digit code. It returns `{confirm: {email, total}}`, and `Checkout` opens `OrderCodeDialog`.
+  - `confirmCodOrder` checks the code, prices the order again and requires the same fingerprint (otherwise `restart`: "Your bag, prices or details changed…"). Then the shared `finalise` reserves stock, claims the coupon and inserts the order with `codeConfirmed: true`, shown as "Email confirmed" in the admin.
+  - Nothing is reserved before the code is entered. Codes work for 10 minutes with 5 tries; resend once a minute, 5 per hour.
+  - Other payment methods, and customers with a delivered order, place the order directly.
+  - `placeOrder` is split into `orderLimits` → `readForm` → `priceOrder` → `finalise`; keep both paths going through these.
 - `password_resets`: SHA-256 hashes of single-use tokens with a TTL (1 hour). A reset sets `users.passwordChangedAt`, and `getCurrentUser` rejects JWTs issued before it.
 - `users.savedAddress`: the last checkout address, used to prefill the next one.
 - `review_uploads`: ownership of review photos, for the daily cap and so a review can only reference the uploader's own files.

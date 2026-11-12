@@ -122,7 +122,8 @@ export default function ScratchCard({
     const cx = width / 2;
     const cy = height / 2;
     ctx.beginPath();
-    ctx.arc(cx, cy, 64, 0, Math.PI * 2);
+    // Shorter cards (phones) get a smaller emblem, so nothing overlaps.
+    ctx.arc(cx, cy, Math.min(64, height * 0.22), 0, Math.PI * 2);
     ctx.fillStyle = "rgba(255, 245, 220, 0.15)";
     ctx.fill();
     ctx.strokeStyle = "rgba(255, 255, 255, 0.4)";
@@ -152,7 +153,8 @@ export default function ScratchCard({
     ctx.font = `600 ${narrow ? 10 : 11}px ${sans}`;
     spaced.letterSpacing = narrow ? "1.5px" : "3px";
     ctx.fillStyle = "#2c1906";
-    ctx.fillText("✦ SCRATCH TO REVEAL ✦", cx, height - (narrow ? 82 : 78), width - 48);
+    // Phones: just above the floating "Scratch with your finger" hint.
+    ctx.fillText("✦ SCRATCH TO REVEAL ✦", cx, height - (narrow ? 60 : 78), width - 48);
 
     // On phones the floating hint below says the same, so the second line is desktop-only.
     if (!narrow) {
@@ -411,10 +413,10 @@ export default function ScratchCard({
             </div>
 
             {/* Card header strip */}
-            <div className="flex items-center justify-between gap-space-sm pb-space-sm mb-space-sm">
+            <div className="flex items-center justify-between gap-space-sm pb-space-xs sm:pb-space-sm mb-space-xs sm:mb-space-sm">
               <div className="flex items-center gap-space-sm min-w-0">
                 {/* The site icon (src/app/icon.png, served at /icon.png). */}
-                <Image alt="" className="w-10 h-10 shrink-0 object-contain" height={40} src="/icon.png" width={40} />
+                <Image alt="" className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 object-contain" height={40} src="/icon.png" width={40} />
                 <div className="min-w-0">
                   <span className="font-label-uppercase text-label-uppercase tracking-[0.2em] text-primary font-bold block truncate">ŔOSE ATELIER</span>
                   <span className="font-body-sm text-body-sm text-on-surface-variant text-[11px] block">Karachi, Pakistan</span>
@@ -430,16 +432,16 @@ export default function ScratchCard({
             <div ref={stageRef} className="relative w-full rounded-lg overflow-hidden select-none bg-surface-container-low shadow-inner">
               <div
                 aria-hidden={!revealed}
-                className="relative min-h-[340px] md:min-h-[380px] p-3.5 sm:p-6 md:p-8 flex flex-col justify-between gap-space-sm bg-gradient-to-br from-surface-container-lowest via-surface-container-low to-secondary-container/20"
+                className="relative min-h-[250px] sm:min-h-[340px] md:min-h-[380px] p-3 sm:p-6 md:p-8 flex flex-col justify-between gap-space-xs sm:gap-space-sm bg-gradient-to-br from-surface-container-lowest via-surface-container-low to-secondary-container/20"
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-secondary text-on-secondary font-label-uppercase text-[10px] tracking-widest">
-                      <span className="material-symbols-outlined icon-filled text-[13px]">workspace_premium</span>
+                    <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-secondary text-on-secondary font-label-uppercase text-[9px] sm:text-[10px] tracking-widest">
+                      <span className="material-symbols-outlined icon-filled text-[12px] sm:text-[13px]">workspace_premium</span>
                       {surprise ? "SURPRISE DISCOUNT" : "COUPON"}
                     </span>
-                    <h2 className="font-headline-lg-mobile text-[34px] leading-tight sm:font-headline-md sm:text-headline-md text-primary pt-space-xs font-normal">{headline}</h2>
-                    <p className="font-body-sm text-body-sm sm:font-body-md sm:text-body-md text-secondary font-medium">{conditions}</p>
+                    <h2 className="font-headline-md text-[28px] leading-tight sm:text-headline-md text-primary pt-1 sm:pt-space-xs font-normal">{headline}</h2>
+                    <p className="font-body-sm text-[12px] leading-snug sm:text-body-sm md:font-body-md md:text-body-md text-secondary font-medium">{conditions}</p>
                   </div>
                   <div className="hidden sm:flex flex-col items-center justify-center p-3 rounded-md bg-surface-container-highest/60 text-center min-w-[110px]">
                     <span className="material-symbols-outlined text-secondary text-[24px]">verified</span>
@@ -449,14 +451,14 @@ export default function ScratchCard({
                 </div>
 
                 {/* Code with copy / apply */}
-                <div className="p-3 sm:p-4 md:p-5 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col md:flex-row items-center justify-between gap-space-sm sm:gap-space-md">
+                <div className="p-2.5 sm:p-4 md:p-5 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col md:flex-row items-center justify-between gap-2 sm:gap-space-md">
                   <div className="space-y-0.5 text-center md:text-left">
-                    <span className="font-label-uppercase text-label-uppercase text-outline tracking-wider block">COUPON CODE</span>
-                    <span className="font-headline-sm text-[20px] sm:text-headline-sm tracking-[0.12em] sm:tracking-[0.18em] text-primary font-bold select-all selection:bg-secondary-container break-all">{code}</span>
+                    <span className="font-label-uppercase text-[9px] sm:text-label-uppercase text-outline tracking-wider block">COUPON CODE</span>
+                    <span className="font-headline-sm text-[18px] sm:text-headline-sm tracking-[0.12em] sm:tracking-[0.18em] text-primary font-bold select-all selection:bg-secondary-container break-all">{code}</span>
                   </div>
-                  <div className="grid grid-cols-1 min-[400px]:grid-cols-2 md:flex md:flex-wrap items-center gap-space-xs w-full md:w-auto justify-center">
+                  <div className="grid grid-cols-2 md:flex md:flex-wrap items-center gap-1.5 sm:gap-space-xs w-full md:w-auto justify-center">
                     <button
-                      className={`w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full ${copied ? "bg-secondary" : "bg-primary"} text-on-primary hover:bg-secondary transition-all font-label-uppercase text-label-uppercase tracking-wider shadow-sm`}
+                      className={`w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-space-md py-2 sm:py-2.5 rounded-full text-[10px] sm:text-label-uppercase ${copied ? "bg-secondary" : "bg-primary"} text-on-primary hover:bg-secondary transition-all font-label-uppercase tracking-wider shadow-sm`}
                       disabled={!revealed}
                       onClick={copy}
                       type="button"
@@ -465,7 +467,7 @@ export default function ScratchCard({
                       <span>{copied ? "COPIED" : "COPY CODE"}</span>
                     </button>
                     <button
-                      className={`w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-2 px-space-md py-2.5 rounded-full ${applied ? "bg-secondary text-on-secondary" : "bg-secondary-container text-on-secondary-fixed"} hover:bg-secondary hover:text-on-secondary transition-all font-label-uppercase text-label-uppercase tracking-wider disabled:opacity-60`}
+                      className={`w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-space-md py-2 sm:py-2.5 rounded-full text-[10px] sm:text-label-uppercase ${applied ? "bg-secondary text-on-secondary" : "bg-secondary-container text-on-secondary-fixed"} hover:bg-secondary hover:text-on-secondary transition-all font-label-uppercase tracking-wider disabled:opacity-60`}
                       disabled={!revealed || applying || applyWait > 0}
                       onClick={applyToBag}
                       type="button"
@@ -549,13 +551,13 @@ export default function ScratchCard({
             </div>
 
             {/* Bottom ribbon */}
-            <div className="mt-space-md pt-space-sm border-t border-dashed border-outline-variant/60 flex flex-col sm:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-uppercase text-[10px] tracking-widest">
-              <div className="flex flex-wrap items-center justify-center gap-space-md">
+            <div className="mt-space-sm sm:mt-space-md pt-space-xs sm:pt-space-sm border-t border-dashed border-outline-variant/60 flex flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-uppercase text-[9px] sm:text-[10px] tracking-widest">
+              <div className="flex flex-wrap items-center gap-space-md min-w-0">
                 <span className="flex items-center gap-1">
                   <span className="material-symbols-outlined text-[14px] text-secondary">lock</span>
                   {usesNote}
                 </span>
-                <span>ŔOSE ATELIER • KARACHI</span>
+                <span className="hidden sm:inline">ŔOSE ATELIER • KARACHI</span>
               </div>
               <div className="flex items-center gap-space-sm">
                 {!revealed ? (

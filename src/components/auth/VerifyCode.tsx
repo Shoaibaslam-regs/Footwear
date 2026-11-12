@@ -11,7 +11,7 @@ const RESEND_SECONDS = 60;
 const VALID_SECONDS = 10 * 60;
 
 /** "sa•••a@gmail.com": enough to recognise, without spelling it out. */
-function maskEmail(email: string) {
+export function maskEmail(email: string) {
   const [name, domain] = email.split("@");
   if (!domain) return email;
   const shown = name.length <= 3 ? name.slice(0, 1) : name.slice(0, 2);
@@ -23,7 +23,7 @@ function maskEmail(email: string) {
  * previous one, and pasting (or the phone's code autofill) fills them all.
  * The joined code goes in a hidden `code` field.
  */
-function CodeBoxes({ invalid, onComplete }: { invalid: boolean; onComplete: (code: string) => void }) {
+export function CodeBoxes({ invalid, onComplete }: { invalid: boolean; onComplete: (code: string) => void }) {
   const [digits, setDigits] = useState<string[]>(() => Array(DIGITS).fill(""));
   const boxes = useRef<(HTMLInputElement | null)[]>([]);
   const code = digits.join("");
@@ -183,7 +183,8 @@ export default function VerifyCode({
             {validLeft > 0 ? `Valid ${clock(validLeft)}` : "Code expired"}
           </span>
         </div>
-        <CodeBoxes invalid={!!error} onComplete={submitCode} />
+        {/* A new answer (e.g. a wrong code) clears the boxes, so retyping starts fresh. */}
+        <CodeBoxes key={error ?? ""} invalid={!!error} onComplete={submitCode} />
         <div className="flex items-center justify-between gap-space-sm font-body-sm text-[12px] sm:text-body-sm text-on-surface-variant">
           <span className="flex items-center gap-1">
             <span aria-hidden="true" className="material-symbols-outlined text-[15px]">content_paste</span>

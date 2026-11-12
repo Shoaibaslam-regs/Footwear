@@ -28,8 +28,22 @@ function transporter() {
 }
 
 /** Public origin for links: SITE_URL, else the current request's host. */
+/** SITE_URL if it is a real address (https://name.tld or localhost), else null. */
+function configuredSiteUrl(): string | null {
+  const raw = process.env.SITE_URL?.trim();
+  if (!raw) return null;
+  try {
+    const u = new URL(raw);
+    const okHost = u.hostname === "localhost" || /\.[a-z]{2,}$/i.test(u.hostname);
+    if ((u.protocol === "https:" || u.protocol === "http:") && okHost) return `${u.protocol}//${u.host}`;
+  } catch {}
+  console.error(`SITE_URL "${raw}" is not a full web address (e.g. https://footwear-pk.vercel.app); using the request's address instead.`);
+  return null;
+}
+
 export async function siteUrl(): Promise<string> {
-  if (process.env.SITE_URL) return process.env.SITE_URL.replace(/\/$/, "");
+  const configured = configuredSiteUrl();
+  if (configured) return configured;
   const h = await headers();
   const host = h.get("x-forwarded-host") ?? h.get("host") ?? "localhost:3000";
   const proto = h.get("x-forwarded-proto") ?? (host.startsWith("localhost") ? "http" : "https");

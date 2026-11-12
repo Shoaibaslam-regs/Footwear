@@ -19,6 +19,8 @@ import { updateTag } from "next/cache";
 import { applyCoupon } from "@/lib/coupons";
 import { claimCoupon, coupons, getCouponByCode, releaseCoupon, toTerms, unavailableReason } from "@/lib/server/coupons";
 import { MAX_PENDING_ORDERS, RULES, blocked, hit } from "@/lib/server/rate-limit";
+import { mailConfigured } from "@/lib/server/mail";
+import { checkOrderCode, needsOrderCode, orderFingerprint, resendOrderCode, startOrderCode, type CheckoutData } from "@/lib/server/order-codes";
 
 export type PlaceOrderState =
   | {
@@ -27,6 +29,10 @@ export type PlaceOrderState =
       message?: string;
       /** The hourly order limit was reached: seconds until Place Order works again. */
       retryAfter?: number;
+      /** Cash on Delivery from a new customer: a code was emailed; show the code dialog. */
+      confirm?: { email: string; total: number };
+      /** The code dialog should close (expired, or the order changed): place the order again. */
+      restart?: boolean;
     }
   | {
       ok: true;
@@ -54,12 +60,11 @@ const schema = z.object({
 });
 
 
-export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<PlaceOrderState> {
-  // Orders are only taken from signed-in clients (checked against the DB, not just the cookie).
-  const user = await getCurrentUser();
-  if (!user) return { message: "Please log in to place your order." };
+type User = NonNullable<Awaited<ReturnType<typeof getCurrentUser>>>;
+type Failure = Exclude<PlaceOrderState, { ok: true } | undefined>;
 
-  // Limits against fake orders: a few per hour, and only a few waiting to be confirmed.
+/** Account limits against fake orders: a few per hour, and only a few waiting to be confirmed. */
+async function orderLimits(user: User): Promise<Failure | null> {
   const orderWait = await blocked(RULES.orderUser, user.id);
   if (orderWait) return { retryAfter: orderWait };
   const pendingOrders = await (await getDb())
@@ -70,7 +75,11 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
       message: `You already have ${pendingOrders} orders waiting for us to confirm. Please wait until we confirm them, or message us on WhatsApp.`,
     };
   }
+  return null;
+}
 
+/** Reads and checks the checkout form. */
+function readForm(fd: FormData): { ok: true; data: CheckoutData } | { ok: false; state: Failure } {
   const parsed = schema.safeParse({
     name: fd.get("name") ?? "",
     email: fd.get("email") ?? "",
@@ -85,37 +94,42 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
     walletNumber: fd.get("walletNumber") ?? "",
   });
   if (!parsed.success) {
-    const errors = z.flattenError(parsed.error).fieldErrors;
-    return { errors, message: "Please check the highlighted fields." };
+    return { ok: false, state: { errors: z.flattenError(parsed.error).fieldErrors, message: "Please check the highlighted fields." } };
   }
-  const data = parsed.data;
-
+  const data = { ...parsed.data };
   // EasyPaisa / JazzCash need a Pakistani mobile account: 03XXXXXXXXX (or +92 3XXXXXXXXX).
-  let walletNumber = "";
   if (isWalletMethod(data.paymentMethod)) {
     const digits = data.walletNumber.replace(/[\s-]/g, "").replace(/^\+?92/, "0");
     if (!/^03\d{9}$/.test(digits)) {
       return {
-        errors: { walletNumber: ["Enter your wallet's mobile number, e.g. 03XX XXXXXXX."] },
-        message: "Please check the highlighted fields.",
+        ok: false,
+        state: { errors: { walletNumber: ["Enter your wallet's mobile number, e.g. 03XX XXXXXXX."] }, message: "Please check the highlighted fields." },
       };
     }
-    walletNumber = digits;
+    data.walletNumber = digits;
+  } else {
+    data.walletNumber = "";
   }
+  return { ok: true, data };
+}
 
-  // The order is built from the account bag in MongoDB, re-priced from the
-  // current listings: nothing the browser sends about items or prices is trusted.
+/**
+ * Builds the order from the account bag in MongoDB, re-priced from the current
+ * listings (nothing the browser sends about items or prices is trusted), and
+ * checks the coupon against the real bag and fee. Reserves nothing.
+ */
+async function priceOrder(user: User, data: CheckoutData) {
   const cartCol = await carts();
   const cart = await cartCol.findOne({ _id: new ObjectId(user.id) });
   const catalogue = new Map((await getPublishedProducts()).map((p) => [p.slug, p]));
   // Same rule as the bag display: unpublished/removed pieces are not shown, so they are not ordered.
   const available = (cart?.bag ?? []).filter((it) => catalogue.get(it.slug)?.sizes.includes(it.size));
-  if (!cart || available.length === 0) return { message: "Your bag is empty." };
+  if (!cart || available.length === 0) return { ok: false as const, state: { message: "Your bag is empty." } as Failure };
   const lines: OrderItem[] = [];
   for (const it of available) {
     const p = catalogue.get(it.slug)!;
     if (p.soldOutSizes.includes(it.size)) {
-      return { message: `${p.name} in EU ${it.size} is sold out. Please choose another size.` };
+      return { ok: false as const, state: { message: `${p.name} in EU ${it.size} is sold out. Please choose another size.` } as Failure };
     }
     lines.push({
       slug: p.slug,
@@ -131,7 +145,7 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
   }
 
   const option = (await getSiteSettings()).deliveryOptions.find((d) => d.id === data.delivery);
-  if (!option) return { errors: { delivery: ["Choose a delivery option."] }, message: "Please choose a delivery option." };
+  if (!option) return { ok: false as const, state: { errors: { delivery: ["Choose a delivery option."] }, message: "Please choose a delivery option." } as Failure };
   const listTotal = lines.reduce((n, l) => n + l.listPrice * l.quantity, 0);
   const subtotal = lines.reduce((n, l) => n + l.unitPrice * l.quantity, 0);
 
@@ -142,9 +156,9 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
   const couponDoc = cart.coupon ? await getCouponByCode(cart.coupon) : null;
   if (cart.coupon) {
     const why = await unavailableReason(couponDoc, user.id);
-    if (why || !couponDoc) return { message: `Coupon ${cart.coupon}: ${why ?? "This code is not valid."} Remove it to continue.` };
+    if (why || !couponDoc) return { ok: false as const, state: { message: `Coupon ${cart.coupon}: ${why ?? "This code is not valid."} Remove it to continue.` } as Failure };
     const r = applyCoupon(toTerms(couponDoc), lines, option.fee);
-    if (!r.ok) return { message: `Coupon ${couponDoc.code}: ${r.reason} Or remove the coupon to continue.` };
+    if (!r.ok) return { ok: false as const, state: { message: `Coupon ${couponDoc.code}: ${r.reason} Or remove the coupon to continue.` } as Failure };
     itemDiscount = r.itemDiscount;
     deliveryDiscount = r.deliveryDiscount;
     coupon = { code: couponDoc.code, type: couponDoc.type, discount: itemDiscount + deliveryDiscount };
@@ -153,7 +167,21 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
       if (campaign) coupon.campaign = campaign.code;
     }
   }
+  const total = subtotal - itemDiscount + option.fee - deliveryDiscount;
+  // Everything that makes this order what it is: a code confirms exactly this.
+  const fingerprint = orderFingerprint({
+    lines: lines.map((l) => [l.slug, l.size, l.quantity, l.unitPrice]),
+    coupon: coupon ? [coupon.code, coupon.discount] : null,
+    delivery: [option.id, option.fee],
+    total,
+    data,
+  });
+  return { ok: true as const, cart, cartCol, lines, option, listTotal, subtotal, couponDoc, coupon, itemDiscount, deliveryDiscount, total, fingerprint };
+}
 
+/** Reserves stock, claims the coupon, saves the order and empties the bag. */
+async function finalise(user: User, data: CheckoutData, priced: Extract<Awaited<ReturnType<typeof priceOrder>>, { ok: true }>, codeConfirmed: boolean): Promise<PlaceOrderState> {
+  const { cart, cartCol, lines, option, listTotal, subtotal, couponDoc, coupon, deliveryDiscount, total } = priced;
   const reserved = await reserveStock(lines);
   if (!reserved.ok) return { message: reserved.error };
   if (couponDoc && coupon) {
@@ -167,31 +195,32 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
   let order: Awaited<ReturnType<typeof insertOrder>>;
   try {
     order = await insertOrder({
-    userId: new ObjectId(user.id),
-    customer: { name: data.name, email: data.email, phone: data.phone },
-    address: {
-      line1: data.line1,
-      line2: data.line2,
-      city: data.city,
-      postalCode: data.postalCode,
-      country: data.country,
-    },
-    items: lines,
-    listTotal,
-    discountTotal: listTotal - subtotal,
-    shippingFee: option.fee - deliveryDiscount,
-    total: subtotal - itemDiscount + option.fee - deliveryDiscount,
-    ...(coupon ? { coupon } : {}),
-    delivery: { id: option.id, name: option.name },
-    payment: {
-      method: data.paymentMethod,
+      userId: new ObjectId(user.id),
+      customer: { name: data.name, email: data.email, phone: data.phone },
+      address: {
+        line1: data.line1,
+        line2: data.line2,
+        city: data.city,
+        postalCode: data.postalCode,
+        country: data.country,
+      },
+      items: lines,
+      listTotal,
+      discountTotal: listTotal - subtotal,
+      shippingFee: option.fee - deliveryDiscount,
+      total,
+      ...(coupon ? { coupon } : {}),
+      delivery: { id: option.id, name: option.name },
+      payment: {
+        method: data.paymentMethod as Order["payment"]["method"],
+        status: "pending",
+        reference: "",
+        ...(data.walletNumber ? { walletNumber: data.walletNumber } : {}),
+      },
       status: "pending",
-      reference: "",
-      ...(walletNumber ? { walletNumber } : {}),
-    },
-    status: "pending",
-    trackingNumber: "",
-  });
+      trackingNumber: "",
+      ...(codeConfirmed ? { codeConfirmed: true } : {}),
+    });
   } catch (e) {
     await releaseStock(lines);
     if (coupon) await releaseCoupon(coupon.code, user.id);
@@ -235,4 +264,56 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
       coupon: order.coupon,
     },
   };
+}
+
+export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<PlaceOrderState> {
+  // Orders are only taken from signed-in clients (checked against the DB, not just the cookie).
+  const user = await getCurrentUser();
+  if (!user) return { message: "Please log in to place your order." };
+  const limited = await orderLimits(user);
+  if (limited) return limited;
+  const form = readForm(fd);
+  if (!form.ok) return form.state;
+  const priced = await priceOrder(user, form.data);
+  if (!priced.ok) return priced.state;
+
+  // Cash on Delivery from a customer with no delivered order yet: confirm by email code first.
+  if (form.data.paymentMethod === "cod" && mailConfigured() && (await needsOrderCode(user.id))) {
+    const started = await startOrderCode(user.id, form.data, priced.fingerprint, priced.total);
+    if (!started.ok) return "retryAfter" in started ? { retryAfter: started.retryAfter } : { message: started.error };
+    return { confirm: { email: form.data.email, total: priced.total } };
+  }
+  return finalise(user, form.data, priced, false);
+}
+
+const codeSchema = z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code from the email.");
+
+/**
+ * The code from the email. The order is priced again now and must be exactly
+ * the one the code was sent for; then it is placed as normal.
+ */
+export async function confirmCodOrder(_: PlaceOrderState, fd: FormData): Promise<PlaceOrderState> {
+  const user = await getCurrentUser();
+  if (!user) return { message: "Please log in to place your order.", restart: true };
+  const code = codeSchema.safeParse(String(fd.get("code") ?? "").replace(/\s+/g, ""));
+  if (!code.success) return { errors: { code: z.flattenError(code.error).formErrors } };
+  const limited = await orderLimits(user);
+  if (limited) return { ...limited, restart: true };
+  const r = await checkOrderCode(user.id, code.data);
+  if (!r.ok) return { message: r.error, ...(r.expired ? { restart: true } : {}) };
+  const priced = await priceOrder(user, r.data);
+  if (!priced.ok) return { ...priced.state, restart: true };
+  if (priced.fingerprint !== r.fingerprint) {
+    return { restart: true, message: "Your bag, prices or details changed after the code was sent. Please check the order and press Place Order again." };
+  }
+  return finalise(user, r.data, priced, true);
+}
+
+/** "Resend code" in the checkout dialog. */
+export async function resendCodOrderCode(): Promise<{ ok?: true; error?: string; retryAfter?: number }> {
+  const user = await getCurrentUser();
+  if (!user) return { error: "Please log in first." };
+  const r = await resendOrderCode(user.id);
+  if (r.ok) return { ok: true };
+  return "retryAfter" in r ? { retryAfter: r.retryAfter } : { error: r.error };
 }

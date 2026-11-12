@@ -10,7 +10,7 @@ const input =
   "h-12 w-full px-space-md bg-surface-container-lowest text-on-surface font-body-md text-body-md rounded-lg ring-1 ring-outline-variant/60 focus:ring-2 focus:ring-secondary focus:outline-none aria-invalid:ring-error";
 
 /** The admin login step, shown after the admin secret is typed into the login form. */
-export default function AdminLogin({ gate }: { gate: string }) {
+export default function AdminLogin({ gate, onBack }: { gate: string; onBack: () => void }) {
   const [state, action, pending] = useActionState<AuthState, FormData>(adminLogin, undefined);
   const wait = useCooldown(state?.retryAfter, state);
   const e = state?.errors;
@@ -59,6 +59,13 @@ export default function AdminLogin({ gate }: { gate: string }) {
           {wait > 0 ? tryAgainIn(wait) : pending ? "Please wait…" : "Open Admin Panel"}
         </button>
       )}
+      <button
+        className="self-center font-body-sm text-body-sm text-on-surface-variant hover:text-primary underline underline-offset-4 decoration-secondary"
+        onClick={onBack}
+        type="button"
+      >
+        Not an admin? Log in as a customer
+      </button>
     </form>
   );
 }
