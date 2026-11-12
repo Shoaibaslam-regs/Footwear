@@ -386,9 +386,17 @@ export default function ScratchCard({
       </div>
 
       {/* The scratch card */}
+      {/* Same ticket look as "Coupons" on the account page: zigzag edges, grey frame, gold strip. */}
       <div className="relative max-w-4xl mx-auto mb-space-xl">
-        <div className="p-1.5 sm:p-3 lg:p-4 rounded-xl bg-surface-container-highest shadow-xl relative">
-          <div className="bg-surface-container-lowest rounded-lg p-3 sm:p-6 lg:p-10 relative overflow-hidden shadow-sm">
+        {/* The shadow sits on a still layer behind the card: a filter around the
+            scratch canvas itself would be recalculated on every stroke. */}
+        <div aria-hidden="true" className="absolute inset-0 drop-shadow-[0_14px_28px_rgba(33,27,25,0.16)]">
+          <div className="ticket-zigzag ticket-zigzag-lg w-full h-full bg-surface-container-highest" />
+        </div>
+        <div className="ticket-zigzag ticket-zigzag-lg py-1.5 sm:py-3 lg:py-4 bg-surface-container-highest relative">
+          <div className="bg-surface-container-lowest rounded-md p-3 sm:p-6 lg:p-10 pr-5 sm:pr-8 lg:pr-12 relative overflow-hidden shadow-sm">
+            {/* Gold edge, like the tickets */}
+            <span aria-hidden="true" className="absolute inset-y-0 right-0 w-2 sm:w-2.5 bg-gradient-to-b from-[#dfbe76] via-[#d4af37] to-[#aa771c]" />
             {/* Guilloché watermark */}
             <div aria-hidden="true" className="absolute inset-0 pointer-events-none opacity-[0.035] flex items-center justify-center">
               <svg fill="none" height="400" viewBox="0 0 600 400" width="600" xmlns="http://www.w3.org/2000/svg">
@@ -541,7 +549,7 @@ export default function ScratchCard({
             </div>
 
             {/* Bottom ribbon */}
-            <div className="mt-space-md pt-space-sm flex flex-col sm:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-uppercase text-[10px] tracking-widest">
+            <div className="mt-space-md pt-space-sm border-t border-dashed border-outline-variant/60 flex flex-col sm:flex-row items-center justify-between gap-space-sm text-on-surface-variant font-label-uppercase text-[10px] tracking-widest">
               <div className="flex flex-wrap items-center justify-center gap-space-md">
                 <span className="flex items-center gap-1">
                   <span className="material-symbols-outlined text-[14px] text-secondary">lock</span>

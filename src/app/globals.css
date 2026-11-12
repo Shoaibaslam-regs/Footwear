@@ -472,3 +472,39 @@ html[data-scrolled] .site-bar {
  */
 body:has(#not-found) .shop-chrome { display: none; }
 body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
+
+/* Sign-up code step: the code card stands alone, so the page's own heading hides. */
+.auth-card:has(#otp-card) .auth-head {
+  display: none;
+}
+
+/*
+ * Coupon tickets: zigzag left and right edges, like a ticket torn from a book.
+ * A mask cuts the teeth (box-shadow would be clipped, so the ticket's <li>
+ * carries a drop-shadow filter instead).
+ */
+.ticket-zigzag {
+  --zig: 9px;
+  -webkit-mask:
+    linear-gradient(#000 0 0) center / calc(100% - 2 * var(--zig)) 100% no-repeat,
+    conic-gradient(from 45deg at left, #000 90deg, #0000 0) left / var(--zig) calc(2 * var(--zig)) repeat-y,
+    conic-gradient(from -135deg at right, #000 90deg, #0000 0) right / var(--zig) calc(2 * var(--zig)) repeat-y;
+  mask:
+    linear-gradient(#000 0 0) center / calc(100% - 2 * var(--zig)) 100% no-repeat,
+    conic-gradient(from 45deg at left, #000 90deg, #0000 0) left / var(--zig) calc(2 * var(--zig)) repeat-y,
+    conic-gradient(from -135deg at right, #000 90deg, #0000 0) right / var(--zig) calc(2 * var(--zig)) repeat-y;
+  padding-left: calc(var(--zig) + 4px);
+  padding-right: calc(var(--zig) + 4px);
+}
+/* The bigger card on the coupon page: bigger teeth. */
+.ticket-zigzag-lg {
+  --zig: 13px;
+}
+@media (max-width: 639px) {
+  .ticket-zigzag {
+    --zig: 6px;
+  }
+  .ticket-zigzag-lg {
+    --zig: 8px;
+  }
+}

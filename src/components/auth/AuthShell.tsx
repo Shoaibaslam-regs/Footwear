@@ -36,8 +36,8 @@ export default function AuthShell({
           </div>
         </div>
         <div className="lg:col-span-6 flex flex-col justify-center">
-          <div className="w-full max-w-md mx-auto bg-surface-container-lowest rounded-xl shadow-sm p-space-lg sm:p-space-xl flex flex-col gap-space-lg">
-            <div>
+          <div className="auth-card w-full max-w-md mx-auto bg-surface-container-lowest rounded-xl shadow-sm p-space-lg sm:p-space-xl flex flex-col gap-space-lg">
+            <div className="auth-head">
               <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
                 {eyebrow}
               </span>

@@ -15,12 +15,12 @@ export default async function MyCoupons({ userId }: { userId: string }) {
       ) : (
         <ul className="grid grid-cols-2 xl:grid-cols-3 gap-space-sm sm:gap-gutter">
           {offers.map((o) => (
-            <li key={o.code}>
+            <li key={o.code} className="drop-shadow-[0_2px_4px_rgba(33,27,25,0.10)] hover:drop-shadow-[0_10px_18px_rgba(33,27,25,0.18)] transition-[filter] duration-300">
               <Link
-                className="group relative flex h-full rounded-xl bg-surface-container-highest p-1 sm:p-2 shadow-sm hover:shadow-xl transition-shadow"
+                className="ticket-zigzag group relative flex h-full bg-surface-container-highest p-1.5 sm:p-2.5"
                 href={`/offers/${o.code}`}
               >
-                <span className="flex-1 flex flex-col justify-between gap-space-xs sm:gap-space-sm rounded-lg bg-surface-container-lowest p-space-sm sm:p-space-md overflow-hidden relative">
+                <span className="flex-1 flex flex-col justify-between gap-space-xs sm:gap-space-sm rounded-md bg-surface-container-lowest p-space-sm sm:p-space-md overflow-hidden relative">
                   {/* Gold edge, like the scratch card's foil */}
                   <span aria-hidden="true" className="absolute inset-y-0 right-0 w-2 bg-gradient-to-b from-[#dfbe76] via-[#d4af37] to-[#aa771c]" />
                   <span className="flex items-start justify-between gap-space-sm pr-1 sm:pr-space-sm">

@@ -118,6 +118,13 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
   - Exception: chart marks use `--a-chart`.
 - Flex or grid children holding wide tables or `<fieldset>`s need `min-w-0` so they scroll inside their card on phones.
 
+### Code entry and coupon tickets
+- **Email code card** (`components/auth/VerifyCode.tsx`, `#otp-card`): centred, with a lock icon tile, the eyebrow "Ŕose Atelier · Email check", a serif title and the email masked (`sa•••a@gmail.com`).
+  - Six separate digit boxes: each box moves on, Backspace goes back, and paste or autofill fills all six. The last digit submits by itself.
+  - A "Valid 9:42" pill, then the black Verify button and a secondary Resend button with its countdown.
+  - Nothing else: no passkey, help desk or security badges. While it shows, `AuthShell` hides its own heading.
+- **Coupon tickets** (`MyCoupons`) and the **coupon page card** (`ScratchCard`) share one look: zigzag left and right edges (`.ticket-zigzag`, a CSS mask; `.ticket-zigzag-lg` for bigger teeth), a grey frame, a white inner card with the gold strip on the right, and a dashed line above the bottom row. Masks clip box-shadow, so the shadow is a `drop-shadow` filter on a parent. On the coupon page the shadow sits on a still layer behind the card, because a filter around the scratch canvas would be recalculated on every stroke.
+
 ### Rate-limited buttons
 - When the server says to wait (`retryAfter`), don't show a message. The button that was refused locks (`disabled`) and its label becomes the countdown: "Try again in 14:32" on full-width buttons, "Wait 14:32" on small ones, and just "51:46" with a clock icon on the phone Place Order bar. Use `useCooldown(retryAfter, state)` and `tryAgainIn()` / `clock()` from `lib/use-cooldown.ts`, with `tabular-nums` so the digits don't jump. It unlocks by itself at 0:00. Locked buttons don't change on hover (`enabled:hover:`).
 
