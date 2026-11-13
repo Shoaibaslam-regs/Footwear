@@ -11,8 +11,20 @@ import { showToast } from "@/lib/toast";
 import { showNotice } from "@/lib/notice";
 import { alertDialog } from "@/components/Dialogs";
 
-const REVEAL_AT = 45; // % scratched before the rest of the foil falls away
-const BRUSH = 28;
+const REVEAL_AT = 50; // % scratched before the rest of the foil falls away
+/** Brush radius in CSS px: a coin's edge, not a fingertip. */
+const BRUSH = 24;
+/**
+ * Share of the gold one stamp removes. Stamps overlap 3–4 times along a stroke,
+ * so one swipe leaves a thin gold film (it already counts towards the reveal)
+ * and a second rub clears it, like real foil.
+ */
+const ERASE = 0.2;
+/** Distance between stamps along a stroke (they overlap, so one pass leaves a gold film). */
+const STEP = BRUSH * 0.45;
+/** Gold crumbs alive at once, at most. */
+const MAX_FLAKES = 140;
+const FLAKE_COLORS = ["#d4af37", "#e8c766", "#aa771c", "#f5e4b3", "#b8912f"];
 const seenKey = (code: string) => `rose:offer-revealed:${code}`;
 
 /**
@@ -44,6 +56,11 @@ export default function ScratchCard({
 }) {
   const canvasRef = useRef<HTMLCanvasElement>(null);
   const confettiRef = useRef<HTMLCanvasElement>(null);
+  /** Gold crumbs that fall where the foil is scratched (a layer over the foil, never clickable). */
+  const flakesRef = useRef<HTMLCanvasElement>(null);
+  const flakes = useRef<{ x: number; y: number; vx: number; vy: number; size: number; rot: number; vRot: number; life: number; decay: number; color: string }[]>([]);
+  const flakesRunning = useRef(false);
+  const lastBuzz = useRef(0);
   const stageRef = useRef<HTMLDivElement>(null);
   const drawing = useRef(false);
   const last = useRef<{ x: number; y: number } | null>(null);
@@ -263,22 +280,127 @@ export default function ScratchCard({
     return { x: e.clientX - r.left, y: e.clientY - r.top };
   };
 
+  /** One rough scrape: an irregular, ragged blob plus a few nicks around its edge. */
+  const stamp = (ctx: CanvasRenderingContext2D, x: number, y: number) => {
+    const points = 10 + Math.floor(Math.random() * 6);
+    const turn = Math.random() * Math.PI * 2;
+    ctx.beginPath();
+    for (let k = 0; k < points; k++) {
+      const a = turn + (k / points) * Math.PI * 2 + (Math.random() - 0.5) * 0.4;
+      const r = BRUSH * (0.55 + Math.random() * 0.5);
+      const px = x + Math.cos(a) * r;
+      const py = y + Math.sin(a) * r;
+      if (k === 0) ctx.moveTo(px, py);
+      else ctx.lineTo(px, py);
+    }
+    ctx.closePath();
+    ctx.fill();
+    for (let k = 0; k < 3; k++) {
+      const a = Math.random() * Math.PI * 2;
+      const r = BRUSH * (0.8 + Math.random() * 0.45);
+      ctx.beginPath();
+      ctx.arc(x + Math.cos(a) * r, y + Math.sin(a) * r, 1 + Math.random() * 2.5, 0, Math.PI * 2);
+      ctx.fill();
+    }
+  };
+
+  /** Gold crumbs falling off where the foil was scraped. */
+  const runFlakes = () => {
+    const c = flakesRef.current;
+    const cctx = c?.getContext("2d");
+    if (!c || !cctx || flakesRunning.current) return;
+    flakesRunning.current = true;
+    const frame = () => {
+      const dpr = window.devicePixelRatio || 1;
+      cctx.setTransform(dpr, 0, 0, dpr, 0, 0);
+      cctx.clearRect(0, 0, c.width, c.height);
+      const alive = flakes.current.filter((f) => f.life > 0);
+      flakes.current = alive;
+      for (const f of alive) {
+        f.x += f.vx;
+        f.y += f.vy;
+        f.vy += 0.22;
+        f.vx *= 0.98;
+        f.rot += f.vRot;
+        f.life -= f.decay;
+        cctx.save();
+        cctx.translate(f.x, f.y);
+        cctx.rotate(f.rot);
+        cctx.globalAlpha = Math.max(0, f.life);
+        cctx.fillStyle = f.color;
+        cctx.beginPath(); // a little shard, not a square
+        cctx.moveTo(-f.size / 2, -f.size / 3);
+        cctx.lineTo(f.size / 2, -f.size / 2);
+        cctx.lineTo(f.size / 3, f.size / 2);
+        cctx.closePath();
+        cctx.fill();
+        cctx.restore();
+      }
+      if (alive.length) requestAnimationFrame(frame);
+      else {
+        cctx.clearRect(0, 0, c.width, c.height);
+        flakesRunning.current = false;
+      }
+    };
+    requestAnimationFrame(frame);
+  };
+
+  const shedFlakes = (x: number, y: number) => {
+    const c = flakesRef.current;
+    if (!c || matchMedia("(prefers-reduced-motion: reduce)").matches) return;
+    const rect = c.getBoundingClientRect();
+    const dpr = window.devicePixelRatio || 1;
+    if (c.width !== Math.round(rect.width * dpr)) {
+      c.width = Math.round(rect.width * dpr);
+      c.height = Math.round(rect.height * dpr);
+    }
+    const count = 1 + Math.floor(Math.random() * 2);
+    for (let k = 0; k < count && flakes.current.length < MAX_FLAKES; k++) {
+      flakes.current.push({
+        x: x + (Math.random() - 0.5) * BRUSH,
+        y: y + (Math.random() - 0.5) * BRUSH * 0.6,
+        vx: (Math.random() - 0.5) * 2.4,
+        vy: -Math.random() * 1.6,
+        size: 1.5 + Math.random() * 2.5,
+        rot: Math.random() * Math.PI,
+        vRot: (Math.random() - 0.5) * 0.4,
+        life: 1,
+        decay: 0.025 + Math.random() * 0.025,
+        color: FLAKE_COLORS[Math.floor(Math.random() * FLAKE_COLORS.length)],
+      });
+    }
+    runFlakes();
+  };
+
+  /** A short buzz while a finger scratches (Android; iPhones don't allow it from websites). */
+  const buzz = (e: React.PointerEvent) => {
+    if (e.pointerType !== "touch" || !("vibrate" in navigator)) return;
+    const now = performance.now();
+    if (now - lastBuzz.current < 60) return;
+    lastBuzz.current = now;
+    try {
+      navigator.vibrate(6);
+    } catch {
+      /* not allowed here */
+    }
+  };
+
+  /** Scrapes from the last point to this one with overlapping rough stamps, each taking off part of the gold. */
   const scratchAt = (x: number, y: number) => {
     const ctx = canvasRef.current?.getContext("2d", { willReadFrequently: true });
     if (!ctx) return;
     ctx.save();
     ctx.globalCompositeOperation = "destination-out";
-    ctx.beginPath();
-    ctx.arc(x, y, BRUSH, 0, Math.PI * 2);
-    ctx.fill();
-    if (last.current) {
-      ctx.lineWidth = BRUSH * 2;
-      ctx.lineCap = "round";
-      ctx.lineJoin = "round";
-      ctx.beginPath();
-      ctx.moveTo(last.current.x, last.current.y);
-      ctx.lineTo(x, y);
-      ctx.stroke();
+    ctx.globalAlpha = ERASE;
+    ctx.fillStyle = "#000";
+    const from = last.current ?? { x, y };
+    const dist = Math.hypot(x - from.x, y - from.y);
+    const steps = Math.max(1, Math.ceil(dist / STEP));
+    for (let k = 1; k <= steps; k++) {
+      const px = from.x + ((x - from.x) * k) / steps;
+      const py = from.y + ((y - from.y) * k) / steps;
+      stamp(ctx, px, py);
+      if (k % 2 === 0 || steps === 1) shedFlakes(px, py);
     }
     ctx.restore();
     last.current = { x, y };
@@ -525,11 +647,13 @@ export default function ScratchCard({
                     drawing.current = true;
                     const p = pos(e);
                     scratchAt(p.x, p.y);
+                    buzz(e);
                   }}
                   onPointerMove={(e) => {
                     if (!drawing.current) return;
                     const p = pos(e);
                     scratchAt(p.x, p.y);
+                    buzz(e);
                     measure();
                   }}
                   onPointerUp={() => {
@@ -538,6 +662,12 @@ export default function ScratchCard({
                     measure(true);
                   }}
                   role="img"
+                />
+                {/* Gold crumbs from scratching: drawn above the foil, never in the way of a finger. */}
+                <canvas
+                  ref={flakesRef}
+                  aria-hidden="true"
+                  className={`absolute inset-0 w-full h-full pointer-events-none z-[25] ${revealed ? "hidden" : ""}`}
                 />
                 <div
                   className={`absolute bottom-4 left-1/2 -translate-x-1/2 z-30 pointer-events-none bg-primary/80 backdrop-blur-md text-on-primary px-3 sm:px-4 py-1.5 rounded-full shadow-lg transition-opacity duration-500 whitespace-nowrap ${touched || revealed ? "opacity-0" : "opacity-100"}`}

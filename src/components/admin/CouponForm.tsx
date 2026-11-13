@@ -19,6 +19,8 @@ export default function CouponForm({ coupon }: { coupon?: CouponRow }) {
   const [value, setValue] = useState(String(coupon?.value ?? (type === "percent" ? 10 : "")));
   const [maxDiscount, setMaxDiscount] = useState(coupon?.maxDiscount != null ? String(coupon.maxDiscount) : "");
   const [minOrder, setMinOrder] = useState(coupon?.minOrder != null ? String(coupon.minOrder) : "");
+  const [appliesTo, setAppliesTo] = useState<"bag" | "pairs">(coupon?.maxPairs ? "pairs" : "bag");
+  const [maxPairs, setMaxPairs] = useState(String(coupon?.maxPairs ?? 1));
   const [perCustomer, setPerCustomer] = useState(String(coupon?.perCustomer ?? 1));
   const [fullPriceOnly, setFullPriceOnly] = useState(coupon?.fullPriceOnly ?? true);
   const [minPercent, setMinPercent] = useState(String(coupon?.minPercent ?? RANDOM_DEFAULT[0]));
@@ -31,6 +33,7 @@ export default function CouponForm({ coupon }: { coupon?: CouponRow }) {
     type,
     value: Number(value) || 0,
     maxDiscount: type === "percent" || surprise ? num(maxDiscount) : null,
+    maxPairs: (type === "percent" || surprise) && appliesTo === "pairs" ? Number(maxPairs) || 1 : null,
     minOrder: num(minOrder),
     fullPriceOnly: type !== "free_delivery" && fullPriceOnly,
     startsAt: null,
@@ -99,6 +102,39 @@ export default function CouponForm({ coupon }: { coupon?: CouponRow }) {
               <input className="input" inputMode="numeric" min={1} name="value" onChange={(ev) => setValue(ev.target.value)} step={1} type="number" value={value} />
               <Err list={e.value} />
             </label>
+          )}
+          {(type === "percent" || surprise) && (
+            <fieldset className="sm:col-span-2 flex flex-col gap-2">
+              <legend className="font-semibold mb-1">Applies to</legend>
+              <div className="flex flex-wrap items-center gap-x-5 gap-y-2">
+                <label className="flex items-center gap-2 font-normal">
+                  <input checked={appliesTo === "bag"} name="appliesTo" onChange={() => setAppliesTo("bag")} type="radio" value="bag" />
+                  Every eligible pair in the bag
+                </label>
+                <label className="flex items-center gap-2 font-normal">
+                  <input checked={appliesTo === "pairs"} name="appliesTo" onChange={() => setAppliesTo("pairs")} type="radio" value="pairs" />
+                  Only up to
+                  <input
+                    aria-label="Number of pairs"
+                    className="input w-20"
+                    disabled={appliesTo !== "pairs"}
+                    inputMode="numeric"
+                    max={20}
+                    min={1}
+                    name="maxPairs"
+                    onChange={(ev) => setMaxPairs(ev.target.value)}
+                    step={1}
+                    type="number"
+                    value={maxPairs}
+                  />
+                  {Number(maxPairs) === 1 ? "pair" : "pairs"}
+                </label>
+              </div>
+              <span className="muted text-xs">
+                With a pair limit, the percent comes off the most expensive pairs; the rest of the bag is full price. E.g. 30% on up to 2 pairs, with 6 pairs in the bag: 30% off the 2 dearest.
+              </span>
+              <Err list={e.maxPairs} />
+            </fieldset>
           )}
           {(type === "percent" || surprise) && (
             <label className="field">

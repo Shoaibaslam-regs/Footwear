@@ -5,7 +5,7 @@ import { getDashboard, RANGES, type RangeDays } from "@/lib/server/dashboard";
 import { listAllProducts } from "@/lib/server/products";
 import { listUsers } from "@/lib/server/users";
 import { listOrders } from "@/lib/server/orders";
-import { getSiteSettings } from "@/lib/server/settings";
+import { getAttention, type AttentionItem } from "@/lib/server/attention";
 import { fulfilmentSteps, orderStatusLabel, type OrderStatus } from "@/lib/orders";
 import { PaymentTag, StatusTag } from "@/components/admin/OrderTags";
 import { date, pkr } from "@/components/admin/format";
@@ -26,12 +26,12 @@ async function AdminOverviewContent({ searchParams }: PageProps<"/admin">) {
   const asked = Number(sp.range);
   const range: RangeDays = (RANGES as readonly number[]).includes(asked) ? (asked as RangeDays) : 30;
 
-  const [d, products, users, recentOrders, settings] = await Promise.all([
+  const [d, products, users, recentOrders, attention] = await Promise.all([
     getDashboard(range),
     listAllProducts(),
     listUsers(),
     listOrders(),
-    getSiteSettings(),
+    getAttention(),
   ]);
   const period = `${range} days`;
   const k = d.kpis;
@@ -41,28 +41,8 @@ async function AdminOverviewContent({ searchParams }: PageProps<"/admin">) {
   const published = products.filter((p) => p.status === "published").length;
   const onSale = products.filter((p) => p.discountPercent > 0).length;
 
-  const todo = [
-    a.toConfirm > 0 && {
-      href: "/admin/orders?status=pending",
-      title: `${count(a.toConfirm)} new ${a.toConfirm === 1 ? "order" : "orders"} to confirm`,
-      hint: "Call or message the customer, then confirm.",
-    },
-    a.awaitingPayment.count > 0 && {
-      href: "/admin/orders?payment=pending",
-      title: `${pkr(a.awaitingPayment.amount)} awaiting payment`,
-      hint: `${count(a.awaitingPayment.count)} open ${a.awaitingPayment.count === 1 ? "order" : "orders"} not yet marked paid.`,
-    },
-    a.restockRequests > 0 && {
-      href: "/admin/products",
-      title: `${count(a.restockRequests)} “notify me” ${a.restockRequests === 1 ? "request" : "requests"}`,
-      hint: "Customers are waiting for a sold-out size. Restocking emails them.",
-    },
-    !settings.deliveryConfigured && {
-      href: "/admin/settings",
-      title: "Delivery options are not set up",
-      hint: "Customers see a placeholder “Standard Delivery” at PKR 0.",
-    },
-  ].filter(Boolean) as { href: string; title: string; hint: string }[];
+  const todo = attention;
+  const urgent = todo.filter((t) => t.tone === "urgent").length;
 
   return (
     <div className="flex flex-col gap-6">
@@ -114,20 +94,17 @@ async function AdminOverviewContent({ searchParams }: PageProps<"/admin">) {
 
         {/* Needs attention */}
         <section className="panel p-4 sm:p-5 flex flex-col gap-3">
-          <h2>Needs attention</h2>
+          <div className="flex items-center justify-between gap-2">
+            <h2>Needs attention</h2>
+            {urgent > 0 && <span className="tag tag-bad">{urgent} urgent</span>}
+          </div>
           {todo.length === 0 && a.lowStock.length === 0 ? (
             <p className="muted py-6 text-center">All caught up. Nothing is waiting on you.</p>
           ) : (
             <ul className="flex flex-col divide-y divide-[var(--a-line)]">
               {todo.map((t) => (
-                <li key={t.href + t.title}>
-                  <Link className="flex items-start justify-between gap-3 py-2.5 group" href={t.href}>
-                    <span>
-                      <span className="block font-semibold group-hover:underline underline-offset-3">{t.title}</span>
-                      <span className="muted text-[13px]">{t.hint}</span>
-                    </span>
-                    <span aria-hidden="true" className="muted">→</span>
-                  </Link>
+                <li key={t.key}>
+                  <AttentionRow item={t} />
                 </li>
               ))}
               {a.lowStock.length > 0 && (
@@ -272,5 +249,40 @@ export default function AdminOverview(props: PageProps<"/admin">) {
     <Suspense fallback={<p className="muted">Loading…</p>}>
       <AdminOverviewContent {...props} />
     </Suspense>
+  );
+}
+
+const marker: Record<AttentionItem["tone"], string> = {
+  urgent: "bg-[var(--a-danger)]",
+  todo: "bg-[var(--a-gold)]",
+  setup: "bg-[var(--a-stroke)]",
+};
+
+/** One line in "Needs attention": a coloured marker (red = act today), the title and what to do. */
+function AttentionRow({ item }: { item: AttentionItem }) {
+  const body = (
+    <>
+      <span aria-hidden="true" className={`mt-1.5 w-2 h-2 shrink-0 rounded-full ${marker[item.tone]}`} />
+      <span className="flex-1 min-w-0">
+        <span className="flex flex-wrap items-center gap-x-2 font-semibold group-hover:underline underline-offset-3">
+          {item.title}
+          {item.tone === "urgent" && <span className="tag tag-bad no-underline">Urgent</span>}
+          {item.tone === "setup" && <span className="tag tag-muted no-underline">Setup</span>}
+        </span>
+        <span className="muted text-[13px]">{item.hint}</span>
+      </span>
+      {item.href && (
+        <span aria-hidden="true" className="muted">
+          →
+        </span>
+      )}
+    </>
+  );
+  return item.href ? (
+    <Link className="flex items-start gap-2.5 py-2.5 group" href={item.href}>
+      {body}
+    </Link>
+  ) : (
+    <div className="flex items-start gap-2.5 py-2.5">{body}</div>
   );
 }

@@ -23,6 +23,11 @@ export type CouponTerms = {
   value: number;
   /** PKR cap for percent coupons (null = no cap). */
   maxDiscount: number | null;
+  /**
+   * Percent coupons: how many pairs the percent is taken off, the most expensive
+   * eligible pairs first (the rest of the bag is full price). Null = the whole bag.
+   */
+  maxPairs?: number | null;
   /** Minimum items total in PKR (null = none). */
   minOrder: number | null;
   /** Only full-price items count (items already on sale are skipped). */
@@ -71,10 +76,26 @@ export function applyCoupon(terms: CouponTerms, lines: CouponLine[], fee: number
       eligibleTotal: 0,
     };
   }
-  let off = terms.type === "percent" ? Math.round((eligible * terms.value) / 100) : terms.value;
+  let off = terms.type === "percent" ? Math.round((discountBase(terms, lines) * terms.value) / 100) : terms.value;
   if (terms.type === "percent" && terms.maxDiscount) off = Math.min(off, terms.maxDiscount);
   off = Math.min(off, eligible);
   return { ok: true, itemDiscount: off, deliveryDiscount: 0, eligibleTotal: eligible };
+}
+
+/**
+ * What a percent is taken off: every eligible pair, or with `maxPairs` only the
+ * N most expensive eligible pairs (each pair counted once, so 3 × the same shoe
+ * is 3 pairs).
+ */
+export function discountBase(terms: Pick<CouponTerms, "fullPriceOnly" | "maxPairs">, lines: CouponLine[]): number {
+  const pairs = lines
+    .filter((l) => !terms.fullPriceOnly || l.discountPercent === 0)
+    .flatMap((l) => Array.from({ length: Math.max(0, l.quantity) }, () => l.unitPrice));
+  if (!terms.maxPairs || terms.maxPairs <= 0) return pairs.reduce((n, p) => n + p, 0);
+  return pairs
+    .sort((a, b) => b - a)
+    .slice(0, terms.maxPairs)
+    .reduce((n, p) => n + p, 0);
 }
 
 /** Price of one item after the coupon (for "with coupon" prices on the offer page). */
@@ -102,6 +123,7 @@ export const dayMonth = (iso: string) =>
 export function couponConditions(t: CouponTerms): string[] {
   const out: string[] = [];
   if (t.minOrder) out.push(`On orders over ${pkr(t.minOrder)}`);
+  if ((t.type === "percent" || t.type === "random") && t.maxPairs) out.push(t.maxPairs === 1 ? "On 1 pair" : `On up to ${t.maxPairs} pairs`);
   if ((t.type === "percent" || t.type === "random") && t.maxDiscount) out.push(`Up to ${pkr(t.maxDiscount)} off`);
   if (t.type !== "free_delivery" && t.fullPriceOnly) out.push("Full-price items only");
   if (t.type === "random") out.push("One card per customer");

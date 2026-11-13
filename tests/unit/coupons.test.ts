@@ -1,5 +1,5 @@
 import { describe, expect, it } from "vitest";
-import { applyCoupon, CODE_RX, couponConditions, couponHeadline, normaliseCode, priceWithCoupon, type CouponTerms } from "@/lib/coupons";
+import { applyCoupon, CODE_RX, couponConditions, couponHeadline, discountBase, normaliseCode, priceWithCoupon, type CouponTerms } from "@/lib/coupons";
 
 const terms = (t: Partial<CouponTerms>): CouponTerms => ({
   code: "TEST",
@@ -100,5 +100,44 @@ describe("coupon wording", () => {
     expect(CODE_RX.test("ROSE-AB12CD")).toBe(true);
     expect(CODE_RX.test("AB")).toBe(false);
     expect(CODE_RX.test("BAD CODE!")).toBe(false);
+  });
+});
+
+describe("percent on up to N pairs (the most expensive first)", () => {
+  // The example from the admin form: 6 pairs, 30% on up to 2 pairs.
+  const bag = [full(25_000), full(20_000), full(15_000), full(12_000), full(10_000), full(8_000)];
+
+  it("takes 30% off only the 2 dearest pairs; the rest is full price", () => {
+    expect(applyCoupon(terms({ value: 30, maxPairs: 2 }), bag, 0)).toMatchObject({ ok: true, itemDiscount: 13_500 });
+    // Whole bag, for comparison.
+    expect(applyCoupon(terms({ value: 30 }), bag, 0)).toMatchObject({ ok: true, itemDiscount: 27_000 });
+  });
+
+  it("counts each pair, so 3 of the same shoe are 3 pairs", () => {
+    expect(discountBase({ fullPriceOnly: true, maxPairs: 2 }, [full(9_000, 3), full(12_000)])).toBe(21_000);
+  });
+
+  it("with fewer pairs than the limit, every pair gets it", () => {
+    expect(applyCoupon(terms({ value: 30, maxPairs: 2 }), [full(10_000)], 0)).toMatchObject({ ok: true, itemDiscount: 3_000 });
+  });
+
+  it("sale items never count towards the pairs when the coupon is full-price only", () => {
+    // The dearest shoe is on sale: the 1 pair is the dearest full-price one.
+    expect(applyCoupon(terms({ value: 50, maxPairs: 1 }), [onSale(40_000), full(10_000), full(6_000)], 0)).toMatchObject({ ok: true, itemDiscount: 5_000 });
+  });
+
+  it("still respects the maximum discount", () => {
+    expect(applyCoupon(terms({ value: 40, maxPairs: 2, maxDiscount: 8_000 }), bag, 0)).toMatchObject({ ok: true, itemDiscount: 8_000 });
+  });
+
+  it("doesn't change fixed-amount or free-delivery coupons", () => {
+    expect(applyCoupon(terms({ type: "fixed", value: 1_000, maxPairs: 1 }), bag, 0)).toMatchObject({ ok: true, itemDiscount: 1_000 });
+    expect(applyCoupon(terms({ type: "free_delivery", value: 0, maxPairs: 1 }), bag, 450)).toMatchObject({ ok: true, deliveryDiscount: 450 });
+  });
+
+  it("customers are told how many pairs it covers", () => {
+    expect(couponConditions(terms({ maxPairs: 1 }))).toContain("On 1 pair");
+    expect(couponConditions(terms({ maxPairs: 2 }))).toContain("On up to 2 pairs");
+    expect(couponConditions(terms({}))).not.toEqual(expect.arrayContaining([expect.stringMatching(/pair/)]));
   });
 });

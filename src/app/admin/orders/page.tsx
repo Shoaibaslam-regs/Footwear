@@ -13,6 +13,8 @@ import {
   type PaymentStatus,
 } from "@/lib/orders";
 import { listOrders, queuePositions } from "@/lib/server/orders";
+import { pkToday } from "@/lib/server/attention";
+import { io } from "next/cache";
 import { campaignOfCards, couponFilterOptions, orderCodesFor } from "@/lib/server/coupons";
 import { PaymentTag, StatusTag } from "@/components/admin/OrderTags";
 import { pkr } from "@/components/admin/format";
@@ -48,8 +50,12 @@ async function AdminOrdersContent({
   const couponFilter =
     couponParam === "ANY" ? "any" : couponParam === "NONE" ? "none" : couponParam ? await orderCodesFor(couponParam) : undefined;
   const sort = (["queue", "newest", "oldest"] as const).find((v) => v === one(sp.sort)) ?? "queue";
+  // From "Needs attention": waiting orders without an expected date, or open ones past it.
+  const etaParam = one(sp.eta) === "late" ? "late" : one(sp.eta) === "none" ? "none" : undefined;
+  if (etaParam === "late") await io(); // compares with today's date
+  const eta = etaParam === "late" ? { lateBefore: pkToday() } : etaParam === "none" ? ({ missing: true } as const) : undefined;
   const [orders, couponOptions, queue] = await Promise.all([
-    listOrders({ q, status, payment, coupon: couponFilter, sort }),
+    listOrders({ q, status, payment, coupon: couponFilter, sort, eta }),
     couponFilterOptions(),
     queuePositions(),
   ]);
@@ -96,6 +102,7 @@ async function AdminOrdersContent({
 
       <form className="panel p-3 grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-[1fr_160px_180px_190px_auto] gap-2 items-end">
         {status && <input name="status" type="hidden" value={status} />}
+        {etaParam && <input name="eta" type="hidden" value={etaParam} />}
         <label className="field">
           Search
           <input
@@ -156,6 +163,17 @@ async function AdminOrdersContent({
         <p className="notice" role="status">
           <strong>{withCoupon.length}</strong> {withCoupon.length === 1 ? "order" : "orders"} {couponParam === "ANY" ? "with a coupon" : `with ${couponParam}`}{" "}
           (not counting cancelled) · <strong>{pkr(couponSales)}</strong> in sales · <strong>{pkr(couponSaving)}</strong> discount given.
+        </p>
+      )}
+
+      {etaParam && (
+        <p className="notice flex flex-wrap items-center justify-between gap-2" role="status">
+          <span>
+            Showing {etaParam === "late" ? "orders past their expected delivery date" : "waiting orders with no expected delivery date"} ({orders.length}).
+          </span>
+          <Link className="link" href="/admin/orders">
+            Show all orders
+          </Link>
         </p>
       )}
 

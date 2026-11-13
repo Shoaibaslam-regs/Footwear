@@ -78,6 +78,8 @@ export async function listOrders(opts: {
    * served), then sent and finished orders, newest first. Or plain newest / oldest.
    */
   sort?: "queue" | "newest" | "oldest";
+  /** Expected delivery: "none" = waiting orders without one; "late" = still open after its last day (`today`, YYYY-MM-DD in PKT). */
+  eta?: { missing: true } | { lateBefore: string };
 } = {}): Promise<Order[]> {
   const filter: Record<string, unknown> = {};
   const and: Record<string, unknown>[] = [];
@@ -89,6 +91,10 @@ export async function listOrders(opts: {
   if (opts.q) {
     const rx = new RegExp(opts.q.replace(/[.*+?^${}()|[\]\\]/g, "\\$&"), "i");
     and.push({ $or: [{ number: rx }, { "customer.email": rx }, { "customer.name": rx }, { "customer.phone": rx }, { "coupon.code": rx }, { "coupon.campaign": rx }] });
+  }
+  if (opts.eta && "missing" in opts.eta) and.push({ eta: { $exists: false }, status: { $in: queueStatuses } });
+  if (opts.eta && "lateBefore" in opts.eta) {
+    and.push({ "eta.to": { $lt: opts.eta.lateBefore }, status: { $in: [...queueStatuses, "shipped", "out_for_delivery"] } });
   }
   if (and.length) filter.$and = and;
   const col = await orders();

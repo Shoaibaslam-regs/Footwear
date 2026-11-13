@@ -2,7 +2,7 @@
 
 import Image from "next/image";
 import Link from "next/link";
-import { useRouter } from "next/navigation";
+import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useId, useRef, useState } from "react";
 import { createPortal } from "react-dom";
 import SalePrice from "@/components/SalePrice";
@@ -33,6 +33,9 @@ function Panel({ index, onClose }: { index: Entry[]; onClose: () => void }) {
   const router = useRouter();
   const listId = useId();
   const inputRef = useRef<HTMLInputElement>(null);
+  const rootRef = useRef<HTMLDivElement>(null);
+  const pathname = usePathname();
+  const openedOn = useRef(pathname);
   const [query, setQuery] = useState("");
   const [active, setActive] = useState(-1);
 
@@ -50,6 +53,23 @@ function Panel({ index, onClose }: { index: Entry[]; onClose: () => void }) {
       window.removeEventListener("keydown", onKey);
       previouslyFocused?.focus();
     };
+  }, [onClose]);
+
+  // The header stays on screen across pages, so close the panel whenever the page changes…
+  useEffect(() => {
+    if (pathname !== openedOn.current) onClose();
+  }, [pathname, onClose]);
+
+  // …and on any link or button clicked outside it (Shop, Bag, Account, even the
+  // page already open). The search icon is left to toggle the panel itself.
+  useEffect(() => {
+    const onPointer = (e: PointerEvent) => {
+      const t = e.target as Element | null;
+      if (!t || rootRef.current?.contains(t) || t.closest("[data-search-toggle]")) return;
+      if (t.closest("a, button, [role='button'], summary")) onClose();
+    };
+    document.addEventListener("pointerdown", onPointer, true);
+    return () => document.removeEventListener("pointerdown", onPointer, true);
   }, [onClose]);
 
   const go = (href: string) => {
@@ -72,7 +92,7 @@ function Panel({ index, onClose }: { index: Entry[]; onClose: () => void }) {
   };
 
   return (
-    <div className="fixed inset-x-0 top-28 bottom-0 z-[45]">
+    <div ref={rootRef} className="fixed inset-x-0 top-28 bottom-0 z-[45]">
       {/* Dim the page below the header, but keep it visible */}
       <div aria-hidden="true" className="absolute inset-0 bg-primary/20 motion-safe:animate-[dialogIn_160ms_ease-out]" onClick={onClose} />
 

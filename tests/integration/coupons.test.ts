@@ -76,6 +76,13 @@ describe("coupons", () => {
     expect(await unavailableReason(campaign, u)).toMatch(/surprise card/);
   });
 
+  it("a surprise card keeps its campaign's pair limit", async () => {
+    const campaign = await addCoupon({ code: "SURPRISE2", type: "random", value: 0, minPercent: 10, maxPercent: 20, maxPairs: 1 });
+    const r = await cardFor(campaign, user());
+    if (!("card" in r)) throw new Error(r.error);
+    expect(r.card.maxPairs).toBe(1);
+  });
+
   it("a card stops working when its campaign is paused", async () => {
     const campaign = await addCoupon({ code: "SURPRISE", type: "random", value: 0, minPercent: 10, maxPercent: 20 });
     const u = user();

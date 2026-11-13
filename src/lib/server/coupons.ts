@@ -21,6 +21,8 @@ export type CouponDoc = {
   type: CouponType;
   value: number;
   maxDiscount: number | null;
+  /** Percent coupons: only the N most expensive eligible pairs (null/absent = whole bag). */
+  maxPairs?: number | null;
   minOrder: number | null;
   fullPriceOnly: boolean;
   startsAt: Date | null;
@@ -69,6 +71,7 @@ export const toTerms = (c: CouponDoc): CouponTerms => ({
   type: c.type,
   value: c.value,
   maxDiscount: c.maxDiscount,
+  maxPairs: c.maxPairs ?? null,
   minOrder: c.minOrder,
   fullPriceOnly: c.fullPriceOnly,
   startsAt: c.startsAt ? c.startsAt.toISOString() : null,
@@ -200,6 +203,7 @@ export async function cardFor(campaign: CouponDoc, userId: string): Promise<{ ca
       type: "percent",
       value: randomInt(lo, hi + 1),
       maxDiscount: campaign.maxDiscount,
+      maxPairs: campaign.maxPairs ?? null,
       minOrder: campaign.minOrder,
       fullPriceOnly: campaign.fullPriceOnly,
       startsAt: campaign.startsAt,

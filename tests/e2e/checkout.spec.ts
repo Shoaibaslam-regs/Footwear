@@ -84,3 +84,33 @@ test("a coupon applied at checkout is taken off the order total", async ({ page 
   expect(order?.total).toBe(shoe.price - Math.round(shoe.price * 0.2) + order!.shippingFee);
   expect((await (await db()).collection("coupons").findOne({ code: "TEST20" }))?.uses).toBe(1);
 });
+
+test("a coupon on 1 pair takes the percent off only the dearest pair", async ({ page }) => {
+  const userId = await createUser({ name: "Rabia", email: "rabia@example.com", savedAddress: address });
+  await (await db()).collection("coupons").insertOne({
+    _id: new ObjectId(), code: "ONEPAIR", type: "percent", value: 20, maxPairs: 1, maxDiscount: null, minOrder: null, fullPriceOnly: false,
+    startsAt: null, endsAt: null, maxUses: null, perCustomer: 1, active: true, public: false, uses: 0, createdAt: new Date(), updatedAt: new Date(),
+  });
+  // Two different shoes, two pairs of the cheaper one.
+  const shoes = (await (await db()).collection("products").find({ status: "published", discountPercent: 0 }).sort({ price: -1 }).toArray()) as unknown as { slug: string; price: number; sizes: number[] }[];
+  const onSite = await pickShoe();
+  const dear = onSite;
+  const cheap = shoes.find((s) => s.slug !== dear.slug && s.price < dear.price && s.sizes?.length)!;
+  await (await db()).collection("carts").updateOne(
+    { _id: userId },
+    { $set: { bag: [{ slug: dear.slug, size: dear.sizes[0], quantity: 1, addedAt: new Date() }, { slug: cheap.slug, size: cheap.sizes[0], quantity: 2, addedAt: new Date() }], wishlist: [] } },
+    { upsert: true },
+  );
+  await logInAs(page, userId, "customer");
+  await page.goto("/checkout");
+  await page.getByRole("button", { name: "Have a coupon code?" }).first().click();
+  await page.locator("#coupon-code").fill("ONEPAIR");
+  await page.locator("#coupon-code").press("Enter");
+  await expect(page.getByText("ONEPAIR").first()).toBeVisible();
+  await page.getByLabel("Bank Transfer").check();
+  await placeOrder(page);
+  await expect(page.getByRole("heading", { name: /Thank You/ })).toBeVisible();
+  const order = await (await db()).collection("orders").findOne({ userId });
+  expect(order?.coupon).toMatchObject({ code: "ONEPAIR", discount: Math.round(dear.price * 0.2) });
+  expect(order?.total).toBe(dear.price + 2 * cheap.price - Math.round(dear.price * 0.2) + order!.shippingFee);
+});

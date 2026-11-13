@@ -26,6 +26,7 @@ const rowTerms = (c: CouponRow): CouponTerms => ({
   type: c.type,
   value: c.value,
   maxDiscount: c.maxDiscount,
+  maxPairs: c.maxPairs ?? null,
   minOrder: c.minOrder,
   fullPriceOnly: c.fullPriceOnly,
   startsAt: c.startsAt,

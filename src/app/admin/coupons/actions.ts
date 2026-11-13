@@ -30,6 +30,7 @@ const schema = z
     type: z.enum(couponTypes, "Choose a coupon type."),
     value: whole("Value"),
     maxDiscount: optionalWhole("Maximum discount"),
+    maxPairs: optionalWhole("Pairs"),
     minOrder: optionalWhole("Minimum order"),
     maxUses: optionalWhole("Total uses"),
     perCustomer: z.coerce.number().int("Uses per customer must be a whole number.").min(1, "Allow at least 1 use per customer.").max(100),
@@ -44,6 +45,7 @@ const schema = z
   .superRefine((d, ctx) => {
     if (d.type === "percent" && (d.value < 1 || d.value > 90)) ctx.addIssue({ code: "custom", path: ["value"], message: "Use a percentage from 1 to 90." });
     if (d.type === "fixed" && d.value < 1) ctx.addIssue({ code: "custom", path: ["value"], message: "Enter the amount off in PKR." });
+    if (d.maxPairs !== null && (d.maxPairs < 1 || d.maxPairs > 20)) ctx.addIssue({ code: "custom", path: ["maxPairs"], message: "Use 1 to 20 pairs, or choose the whole bag." });
     if (d.maxUses === 0) ctx.addIssue({ code: "custom", path: ["maxUses"], message: "Leave blank for unlimited, or enter 1 or more." });
     if (d.type === "random" && d.maxPercent < d.minPercent) ctx.addIssue({ code: "custom", path: ["maxPercent"], message: "The highest percent must be the same as or more than the lowest." });
     if (d.startsAt && d.endsAt && d.endsAt < d.startsAt) ctx.addIssue({ code: "custom", path: ["endsAt"], message: "The end date is before the start date." });
@@ -60,6 +62,7 @@ export async function saveCoupon(_: CouponFormState, fd: FormData): Promise<Coup
     type: fd.get("type"),
     value: fd.get("type") === "free_delivery" || fd.get("type") === "random" ? 0 : fd.get("value"),
     maxDiscount: fd.get("type") === "percent" || fd.get("type") === "random" ? fd.get("maxDiscount") : null,
+    maxPairs: (fd.get("type") === "percent" || fd.get("type") === "random") && fd.get("appliesTo") === "pairs" ? fd.get("maxPairs") : null,
     minOrder: fd.get("minOrder"),
     maxUses: fd.get("maxUses"),
     // A surprise campaign gives each customer one card, used once.
@@ -80,6 +83,7 @@ export async function saveCoupon(_: CouponFormState, fd: FormData): Promise<Coup
     type: d.type,
     value: d.value,
     maxDiscount: d.maxDiscount,
+    maxPairs: d.maxPairs,
     minOrder: d.minOrder,
     maxUses: d.maxUses,
     perCustomer: d.perCustomer,
@@ -103,7 +107,7 @@ export async function saveCoupon(_: CouponFormState, fd: FormData): Promise<Coup
       // Cards already given keep their own percent; the other rules follow the campaign.
       await col.updateMany(
         { campaignId: _id },
-        { $set: { maxDiscount: fields.maxDiscount, minOrder: fields.minOrder, fullPriceOnly: fields.fullPriceOnly, startsAt: fields.startsAt, endsAt: fields.endsAt, updatedAt: now } },
+        { $set: { maxDiscount: fields.maxDiscount, maxPairs: fields.maxPairs, minOrder: fields.minOrder, fullPriceOnly: fields.fullPriceOnly, startsAt: fields.startsAt, endsAt: fields.endsAt, updatedAt: now } },
       );
     }
   } else {

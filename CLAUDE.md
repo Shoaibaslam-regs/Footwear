@@ -44,6 +44,11 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 - `src/app/(shop)/`: the storefront. Its layout renders `Header`, `Footer` and `ActionToast`.
 - `src/app/admin/`: the admin panel. Its own layout is a plain Microsoft-style layout in the website's colours (`admin.css`, `--a-*` variables mapped to the theme tokens, inside `@layer components`; no blue; see DESIGN.md).
   - The overview reads `getDashboard(range)` from `lib/server/dashboard.ts`. It is uncached, and its days are Pakistan calendar days (Asia/Karachi), comparing the current period with the one before.
+  - Its "Needs attention" list comes from `getAttention()` (`lib/server/attention.ts`, uncached, tested in `tests/integration/attention.test.ts`). Each item has a tone (`urgent` / `todo` / `setup`) and a link, sorted urgent first.
+    - Urgent: orders past their expected delivery date (`?eta=late`); the queue when its oldest order has waited `QUEUE_URGENT_DAYS` (3) or more; parcels on the way with no status change for `IN_TRANSIT_DAYS` (7).
+    - To do: new orders to confirm; delivered COD orders not marked paid (money to collect); other payments awaited; waiting orders with no expected date (`?eta=none`); "notify me" requests.
+    - Setup: delivery options, email and `ADMIN_SECRET` missing.
+    - `/admin/orders?eta=late|none` filters through `listOrders({ eta })`.
   - `/admin/users` and `/admin/products` read per-row figures from `lib/server/insights.ts`: orders, spend, bag and wishlist counts per user, and sold, revenue, rating, wishlists and restock requests per listing. They filter, sort and page in memory with `components/admin/Pager.tsx` (`?page=`, `?per=25|50|100`).
   - `/admin/users/[id]` shows one customer: profile, saved address, orders, live bag and wishlist, reviews and restock requests. `/admin/products/[id]/insights` shows one listing's performance; `ListingTabs` switches between it and the edit form.
   - `/admin/orders/[id]/slip` is the printable order slip for receipt printers (80 or 58 mm, `?w=58`; `?print=1` opens the print dialog, used by "Print slip" on the order page). Print CSS takes the admin chrome out of the layout, since merely hiding it makes Chrome shrink the slip, and `PrintButton` sizes `@page` to the slip's measured height.
@@ -112,6 +117,7 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 - `review_uploads`: ownership of review photos, for the daily cap and so a review can only reference the uploader's own files.
 - `coupons`: codes managed at `/admin/coupons`.
   - Types: `percent` (with an optional `maxDiscount`), `fixed` (PKR) and `free_delivery`.
+  - `maxPairs` (percent and surprise campaigns, optional): the percent comes off only the N most expensive eligible pairs, with each pair counted once (`discountBase` in `lib/coupons.ts`), and the rest of the bag is full price. Absent or null means the whole bag, so older coupons are unchanged. Shown to customers as "On 1 pair" / "On up to N pairs". Surprise cards copy it from their campaign.
   - Rules: `minOrder`, `startsAt` / `endsAt` (Pakistan days), `maxUses` (total) and `perCustomer`.
   - `fullPriceOnly` is on by default, so items with a listing discount don't get the coupon as well.
   - `active` pauses a coupon.
@@ -210,6 +216,14 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
   - The admin's Copy link / WhatsApp buttons share it.
   - "Apply to Bag" saves the code on the account's cart.
   - Once revealed, the card stays revealed on that device (localStorage `rose:offer-revealed:<code>`).
+  - Scratching is meant to feel rough (`ScratchCard.tsx` constants):
+    - `BRUSH` is 24 px.
+    - Each stamp is an irregular, ragged blob with nicks around its edge, and the stamps overlap every `STEP` along the stroke.
+    - Each stamp removes only `ERASE` (20%) of the gold, so one swipe leaves a film and a second rub clears it.
+    - Gold crumbs fall on a separate pointer-free canvas (`flakesRef`, capped at `MAX_FLAKES`, skipped with reduced motion).
+    - Touch scratching vibrates for 6 ms at most every 60 ms (Android only).
+    - The card reveals at `REVEAL_AT` (50%) scratched.
+    - Covered by `tests/e2e/scratch.spec.ts`.
   - Paused, expired or used-up codes show "This offer is not available".
 - Shop-layout overlays: `CartDrawerHost` (the mini bag; it opens whenever `addToBag` runs unless `{ openBag: false }`) and the floating `WhatsAppButton`.
 

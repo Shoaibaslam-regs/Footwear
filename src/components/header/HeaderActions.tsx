@@ -36,6 +36,7 @@ export default function HeaderActions({
         aria-haspopup="dialog"
         aria-label="Search"
         className={iconBtn}
+        data-search-toggle
         onClick={() => {
           setSearchUsed(true);
           setSearchOpen((o) => !o);
