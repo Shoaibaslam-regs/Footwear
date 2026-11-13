@@ -25,15 +25,14 @@ export default async function proxy(req: NextRequest) {
   // Accounts and checkout need a signed-in client.
   if ((pathname.startsWith("/account") || pathname.startsWith("/checkout")) && !session) return toLogin();
 
-  if ((pathname === "/login" || pathname === "/register") && session) {
-    return NextResponse.redirect(
-      new URL(session.role === "admin" ? "/admin" : "/account", req.nextUrl),
-    );
-  }
+  // /login and /register are not redirected here: a cookie can be genuine but
+  // dead (account deleted, password changed, role changed), which only the
+  // database knows. Sending such a visitor from /login to /account, which sends
+  // them back to /login, would loop for ever. Those pages check the DB instead.
 
   return NextResponse.next();
 }
 
 export const config = {
-  matcher: ["/admin/:path*", "/account/:path*", "/checkout/:path*", "/login", "/register"],
+  matcher: ["/admin/:path*", "/account/:path*", "/checkout/:path*"],
 };

@@ -62,7 +62,11 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 
 ### Auth (`src/lib/auth/`)
 - `jwt.ts` (jose HS256, cookie `elora_session`, payload `{sub, role}`) is shared by the server and `src/proxy.ts`.
-- `proxy.ts` is only an optimistic cookie check for `/admin`, `/account`, `/checkout`, `/login` and `/register`.
+- `proxy.ts` is only an optimistic cookie check for `/admin`, `/account` and `/checkout` (JWT only, no DB).
+  - It must never redirect away from `/login` or `/register`. A cookie can be genuine but dead: the account was deleted, the password was changed (older logins are signed out), or the role changed. Only the database knows. Sending such a visitor from `/login` to `/account`, which sends them back to `/login`, looped for ever.
+  - The login and register pages redirect a logged-in visitor themselves, using `getCurrentUser()`.
+  - `/api/session` (behind `requireLogin()`) also uses `getCurrentUser()` and deletes a dead cookie, so the login popup appears instead of bag actions failing with a toast.
+  - Covered by `tests/e2e/stale-session.spec.ts`.
 - Real authorization is in `dal.ts`: `getCurrentUser` / `requireUser` / `requireAdmin` re-read the user from MongoDB, so role changes apply immediately. Every admin page and server action calls `requireAdmin()` itself.
 - The first registered account becomes admin. Passwords use scrypt (`lib/server/password.ts`).
 - Hidden admin login (`lib/server/admin-gate.ts`), on when `ADMIN_SECRET` (12+ characters, not an email) is set.
