@@ -573,37 +573,37 @@ export default function ScratchCard({
                 </div>
 
                 {/* Code with copy / apply */}
-                <div className="p-2.5 sm:p-4 md:p-5 rounded-lg bg-surface-container-lowest shadow-sm flex flex-col md:flex-row items-center justify-between gap-2 sm:gap-space-md">
+                <div className="px-3 py-2.5 sm:p-4 md:p-5 rounded-lg bg-surface-container-lowest shadow-sm border border-dashed border-secondary/50 sm:border-transparent flex flex-col md:flex-row items-center justify-between gap-2 sm:gap-space-md">
                   <div className="space-y-0.5 text-center md:text-left">
-                    <span className="font-label-uppercase text-[9px] sm:text-label-uppercase text-outline tracking-wider block">COUPON CODE</span>
-                    <span className="font-headline-sm text-[18px] sm:text-headline-sm tracking-[0.12em] sm:tracking-[0.18em] text-primary font-bold select-all selection:bg-secondary-container break-all">{code}</span>
+                    <span className="font-label-uppercase text-[8px] sm:text-label-uppercase text-outline tracking-[0.2em] sm:tracking-wider block">COUPON CODE</span>
+                    <span className="font-headline-sm text-[20px] leading-tight sm:text-headline-sm tracking-[0.14em] sm:tracking-[0.18em] text-primary font-bold select-all selection:bg-secondary-container break-all">{code}</span>
                   </div>
-                  <div className="grid grid-cols-2 md:flex md:flex-wrap items-center gap-1.5 sm:gap-space-xs w-full md:w-auto justify-center">
+                  <div className="flex flex-wrap items-center gap-1.5 sm:gap-space-xs w-full md:w-auto justify-center">
                     <button
-                      className={`w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-space-md py-2 sm:py-2.5 rounded-full text-[10px] sm:text-label-uppercase ${copied ? "bg-secondary" : "bg-primary"} text-on-primary hover:bg-secondary transition-all font-label-uppercase tracking-wider shadow-sm`}
+                      className={`sm:w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-1 sm:gap-2 h-7 sm:h-auto px-3 sm:px-space-md sm:py-2.5 rounded-full text-[9px] sm:text-label-uppercase ${copied ? "bg-secondary" : "bg-primary"} text-on-primary hover:bg-secondary transition-all font-label-uppercase tracking-wider shadow-sm`}
                       disabled={!revealed}
                       onClick={copy}
                       type="button"
                     >
-                      <span className="material-symbols-outlined text-[16px]">{copied ? "check" : "content_copy"}</span>
+                      <span className="material-symbols-outlined text-[13px] sm:text-[16px]">{copied ? "check" : "content_copy"}</span>
                       <span>{copied ? "COPIED" : "COPY CODE"}</span>
                     </button>
                     <button
-                      className={`w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-1.5 sm:gap-2 px-2 sm:px-space-md py-2 sm:py-2.5 rounded-full text-[10px] sm:text-label-uppercase ${applied ? "bg-secondary text-on-secondary" : "bg-secondary-container text-on-secondary-fixed"} hover:bg-secondary hover:text-on-secondary transition-all font-label-uppercase tracking-wider disabled:opacity-60`}
+                      className={`sm:w-full md:w-auto whitespace-nowrap flex items-center justify-center gap-1 sm:gap-2 h-7 sm:h-auto px-3 sm:px-space-md sm:py-2.5 rounded-full text-[9px] sm:text-label-uppercase ${applied ? "bg-secondary text-on-secondary" : "bg-secondary-container text-on-secondary-fixed"} hover:bg-secondary hover:text-on-secondary transition-all font-label-uppercase tracking-wider disabled:opacity-60`}
                       disabled={!revealed || applying || applyWait > 0}
                       onClick={applyToBag}
                       type="button"
                     >
-                      <span className="material-symbols-outlined text-[16px]">{applyWait > 0 ? "schedule" : "shopping_bag"}</span>
+                      <span className="material-symbols-outlined text-[13px] sm:text-[16px]">{applyWait > 0 ? "schedule" : "shopping_bag"}</span>
                       <span className="tabular-nums">{applied ? "ADDED TO BAG" : applyWait > 0 ? `TRY AGAIN IN ${clock(applyWait)}` : applying ? "ADDING…" : "APPLY TO BAG"}</span>
                     </button>
                   </div>
                 </div>
 
                 {/* Terms and actions */}
-                <div className="pt-space-xs flex flex-col sm:flex-row items-start sm:items-center justify-between gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
-                  <div className="flex items-center gap-space-xs text-[12px]">
-                    <span className="material-symbols-outlined text-secondary text-[16px]">schedule</span>
+                <div className="pt-1 sm:pt-space-xs flex flex-row items-center justify-between gap-2 sm:gap-space-sm text-on-surface-variant font-body-sm text-body-sm">
+                  <div className="flex items-center gap-1 sm:gap-space-xs text-[10px] sm:text-[12px] leading-tight min-w-0">
+                    <span className="material-symbols-outlined text-secondary text-[13px] sm:text-[16px]">schedule</span>
                     <span>
                       {validUntil ? (
                         <>
@@ -612,21 +612,23 @@ export default function ScratchCard({
                       ) : (
                         "No end date"
                       )}{" "}
-                      • Use it online at checkout
+                      <span className="hidden sm:inline">• Use it online at checkout</span>
                     </span>
                   </div>
-                  <div className="flex flex-wrap items-center gap-x-space-sm gap-y-1 whitespace-nowrap">
-                    <Link className="font-label-uppercase text-label-uppercase text-secondary hover:text-primary transition-colors underline underline-offset-4" href="/collections">
+                  <div className="flex items-center gap-1.5 sm:gap-x-space-sm whitespace-nowrap shrink-0">
+                    <Link className="font-label-uppercase text-[9px] sm:text-label-uppercase text-secondary hover:text-primary transition-colors underline underline-offset-4" href="/collections">
                       Shop Now
                     </Link>
-                    <span className="text-outline">•</span>
+                    <span className="hidden sm:inline text-outline">•</span>
                     <a
-                      className="font-label-uppercase text-label-uppercase text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1"
+                      aria-label="Share on WhatsApp"
+                      className="font-label-uppercase text-[9px] sm:text-label-uppercase text-on-surface-variant hover:text-primary transition-colors flex items-center gap-1 h-6 sm:h-auto px-2 sm:px-0 rounded-full ring-1 ring-outline-variant sm:ring-0"
                       href={`https://wa.me/?text=${encodeURIComponent(shareText)}`}
                       rel="noopener noreferrer"
                       target="_blank"
                     >
-                      <span className="material-symbols-outlined text-[14px]">share</span> Share on WhatsApp
+                      <span className="material-symbols-outlined text-[12px] sm:text-[14px]">share</span>
+                      <span>Share<span className="hidden sm:inline"> on WhatsApp</span></span>
                     </a>
                   </div>
                 </div>

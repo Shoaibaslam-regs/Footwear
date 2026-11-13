@@ -364,25 +364,29 @@ export async function publicCouponsFor(userId: string): Promise<OfferSummary[]> 
     col.find({ ownerId: owner }).toArray(),
   ]);
   const opened = new Set(mine.map((c) => c.campaignId!.toHexString()));
-  const out: { doc: CouponDoc; summary: OfferSummary }[] = [];
-  for (const c of [...mine, ...shared]) {
-    if (c.type === "random") {
-      // A campaign shows until the customer opens it; then their own card shows instead.
-      if (opened.has(c._id.toHexString()) || couponState(c) !== "active") continue;
-    } else if (await unavailableReason(c, userId)) continue;
-    const t = toTerms(c);
-    const revealed = c.type !== "random" && (await isRevealed(c, userId));
-    out.push({
-      doc: c,
-      summary: {
-        code: c.code,
-        headline: revealed ? couponHeadline(t) : null,
-        conditions: couponConditions(t).join(" · "),
-        validUntil: t.endsAt ? dayMonth(t.endsAt) : null,
-        surprise: c.type === "random" || !!c.campaignId,
-      },
-    });
-  }
+  // All coupons are checked at once: one at a time cost a database round trip
+  // or three per coupon, and the database is far from the server.
+  const checked = await Promise.all(
+    [...mine, ...shared].map(async (c) => {
+      if (c.type === "random") {
+        // A campaign shows until the customer opens it; then their own card shows instead.
+        if (opened.has(c._id.toHexString()) || couponState(c) !== "active") return null;
+      } else if (await unavailableReason(c, userId)) return null;
+      const t = toTerms(c);
+      const revealed = c.type !== "random" && (await isRevealed(c, userId));
+      return {
+        doc: c,
+        summary: {
+          code: c.code,
+          headline: revealed ? couponHeadline(t) : null,
+          conditions: couponConditions(t).join(" · "),
+          validUntil: t.endsAt ? dayMonth(t.endsAt) : null,
+          surprise: c.type === "random" || !!c.campaignId,
+        } satisfies OfferSummary,
+      };
+    }),
+  );
+  const out = checked.filter((o) => o !== null);
   return out.sort((a, b) => (a.doc.endsAt?.getTime() ?? Infinity) - (b.doc.endsAt?.getTime() ?? Infinity)).map((o) => o.summary);
 }
 

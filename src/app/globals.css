@@ -242,6 +242,19 @@
   font-variation-settings: "FILL" 1;
 }
 
+/* Icon sizes. Google's icon stylesheet sets every icon to 24px outside any
+   layer, which beats Tailwind's layered size classes (text-[16px] etc.).
+   revert-layer hands the size back to the layers: a size class if the icon
+   has one, otherwise the 24px default below. */
+@layer base {
+  .material-symbols-outlined {
+    font-size: 24px;
+  }
+}
+.material-symbols-outlined.material-symbols-outlined {
+  font-size: revert-layer;
+}
+
 /* ---- Catalog 360° Quick-View Studio (from design) ---- */
 
 /* Elastic pop animation for wishlist button */

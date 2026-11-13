@@ -111,7 +111,10 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
         )}
       </div>
 
-      <MyCoupons userId={user.id} />
+      {/* Streams in on its own, so the rest of the page doesn't wait for the coupon checks. */}
+      <Suspense>
+        <MyCoupons userId={user.id} />
+      </Suspense>
 
       <div className="mt-space-lg sm:mt-space-xl">
         <span className={eyebrow}>Order History</span>
