@@ -77,13 +77,23 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
 - Pills (buttons, badges, chips, toasts) use `rounded-full`. Cards use `rounded-lg` or `rounded-xl`, and dialogs use `rounded-2xl`.
 - Shadows: `shadow-sm` at rest, `hover:shadow-xl` on cards, `shadow-md` on CTAs, `shadow-2xl` only on floating UI (toast, dialog, search panel).
 - **Motion** ("Premium motion" in `globals.css`, driven by `components/Motion.tsx`):
-  - One ease, `--ease-lux` (fast start, long settle), at 0.5–1.4 s. Fade, translate and clip only, never layout, and each animation plays once.
-  - **Scroll reveals:** put `data-reveal` on a section's heading block and `data-reveal-stagger` on a grid (its items appear about 90 ms apart). For a photo wipe, use `data-reveal="curtain"` on a `relative overflow-hidden` box.
-  - **Photos:** add `img-fade` to fade them in on load. Never on the hero/LCP image.
-  - **Hero entrance:** `.hero-rise` with `--d` delays; the headline uses `.hero-word` masks.
+  - One ease, `--ease-lux` (fast start, long settle), at 0.9–1.6 s. **No fades:** translate, clip and scale only, never layout, and each animation plays once. Owner's choice, one effect per kind of content:
+    - **Headings: slide up.** `data-reveal` on a section's heading block: each child rises out of a mask at its own baseline, about 90 ms apart.
+    - **Cards: stagger.** `data-reveal-stagger` on a grid: each card wipes up from its bottom edge and rises 40 px, about 110 ms apart.
+    - **Images: reveal (clip path).** `data-reveal="clip"` on a plain wrapper whose first child is the photo frame; the frame opens upwards. Clip a child, never the observed element: Chrome treats a fully clipped element as off screen, so it would never start.
+    - **Sections: parallax.** `data-parallax="<speed>"` on a layer drawn taller than its `overflow-hidden` frame (`absolute inset-x-0 -inset-y-[12%]`); `Motion` moves it with `translate`, clamped to that room. Used on the hero slideshow (0.25) and the campaign photo (0.18).
+    - **Product images: scale up.** `img-scale` on a product card photo: it settles from 125% once it is on screen and loaded, in step with its card. Hover zoom uses Tailwind's `scale`, a separate property, so they don't fight. Never on the hero/LCP image.
+  - **Hero entrance:** `.hero-rise` (slides up from a mask, `--d` delays); the headline uses `.hero-word` masks.
   - **Text links:** `.link-draw` (gold underline drawn on hover; `--draw-color` to change it).
   - **Header:** `.site-bar` frosts once `html[data-scrolled]` is set.
   - **How it stays safe:** content is only hidden under `html[data-motion]`, which an inline script in the root layout sets only when the visitor hasn't asked for reduced motion. It is removed again if `Motion` hasn't started within 4 s.
+- **Home page premium style** (owner's choice):
+  - **Type:** use `lib/home-type.ts` for every home section: `eyebrow` (10–11px, tracking 0.32em), `sectionTitle` (30/42/52px serif, tracking -0.02em, balanced) with one italic gold word via `accent` (`New <em className={accent}>Arrivals</em>`), and `quietPrice` (light, never bold). Playfair has no weight below 400, so lightness comes from size, spacing and the italic.
+  - **Cards:** no box, shadow, badge or red sale chip; the photo, a tiny spec line, the serif name and a quiet price (`<SalePrice quiet>`: sale price in gold, old price struck through). The listing's second photo wipes in from the right on hover (`hoverImage` from `toArrivalCard` / `toBestSellerCard`).
+  - **Buttons:** outlined, filling from left to right on hover (`.btn-fill`; `--fill` / `--fill-text` change the colours, as on the hero).
+  - **Hero:** eyebrow, headline (last words italic gold), one line, one button; full height on desktop; 8 s slides with a thin progress line and a 01 / 03 counter.
+  - **WhatsApp button:** a small espresso circle with a gold icon that opens to "Chat" on hover. `rounded-full` is only 0.75rem here, so true circles use `rounded-[999px]`.
+  - **Footer:** the newsletter is one underlined line with an arrow; a large, faint ŔOSE wordmark closes the page.
   - Other effects: `animate-marquee`, `animate-heart-pop`, `btn-shimmer`, `animate-kenburns` (hero, plus a gentle scroll parallax), and `dialogIn`. Every new animation needs a reduced-motion fallback.
 
 ### Icons

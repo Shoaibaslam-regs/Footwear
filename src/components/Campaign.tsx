@@ -1,4 +1,5 @@
 import Image from "next/image";
+import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
 
 export default function Campaign() {
   return (
@@ -7,15 +8,20 @@ export default function Campaign() {
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
           {/* Visual Story Column */}
           <div className="lg:col-span-7 relative">
-            <div data-reveal="curtain" className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-2xl bg-surface-container">
+            <div data-reveal="clip">
+            {/* The scroll observer watches this plain wrapper; the frame inside is the part that is clipped. */}
+            <div className="relative w-full aspect-[4/5] rounded-xl overflow-hidden shadow-2xl bg-surface-container">
+              {/* Drawn taller than the frame so it can drift with the scroll (parallax). */}
+              <div className="absolute inset-x-0 -inset-y-[12%]" data-parallax="0.18">
               <Image
                 alt="Woman in a black suit sitting in a cream armchair, wearing black pointed slingback kitten heels"
-                className="img-fade object-cover"
+                className="object-cover"
                 fill
                 sizes="(min-width: 1024px) 58vw, 100vw"
                 src="/home/campaign.jpeg"
                 style={{ objectPosition: "center 88%" }}
               />
+              </div>
               <div className="absolute inset-0 bg-linear-to-t/srgb from-primary/30 via-transparent to-transparent" />
               {/* Bottom-right, over the empty floor: the face (top) and the shoes (bottom-left) stay visible. */}
               <div className="absolute bottom-3 right-3 sm:bottom-6 sm:right-6 max-w-[52%] sm:max-w-[48%] p-space-sm sm:p-space-md bg-surface/90 backdrop-blur-md rounded-lg flex flex-col items-start gap-1.5 text-on-surface shadow-lg">
@@ -32,6 +38,7 @@ export default function Campaign() {
                 </span>
               </div>
             </div>
+            </div>
             {/* Decorative offset floating card */}
             <div className="hidden sm:block absolute -top-8 -right-8 w-48 p-space-md bg-secondary-fixed text-on-secondary-fixed rounded-lg shadow-xl">
               <span className="font-label-uppercase text-[10px] tracking-widest uppercase block mb-1">
@@ -46,11 +53,9 @@ export default function Campaign() {
 
           {/* Editorial Narrative Column */}
           <div data-reveal className="lg:col-span-5 flex flex-col gap-space-md lg:pl-space-md">
-            <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.25em]">
-              Comfort & Style
-            </span>
-            <h2 className="font-headline-lg text-headline-lg lg:text-display-hero text-primary font-normal leading-[1.08] tracking-tight">
-              Made To Move With You.
+            <span className={eyebrow}>Comfort &amp; Style</span>
+            <h2 className={`${sectionTitle} lg:text-display-hero`}>
+              Made to Move <em className={accent}>With You.</em>
             </h2>
             <div className="flex flex-col gap-space-sm font-body-md text-body-md text-on-surface-variant font-light leading-relaxed">
               <p>

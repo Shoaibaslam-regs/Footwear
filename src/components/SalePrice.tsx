@@ -10,6 +10,7 @@ export default function SalePrice({
   discountPercent,
   className = "",
   chipOnPhones = false,
+  quiet = false,
 }: {
   price: number;
   compareAt?: number;
@@ -17,8 +18,22 @@ export default function SalePrice({
   className?: string;
   /** Cards already show the percent on the photo, so phones skip the chip unless asked. */
   chipOnPhones?: boolean;
+  /** Home cards: the sale price in gold, the old price struck through, no red chip. */
+  quiet?: boolean;
 }) {
   if (!compareAt || compareAt <= price) return <Price amount={price} />;
+  if (quiet)
+    return (
+      <span className={`inline-flex flex-wrap items-baseline gap-x-1.5 ${className}`}>
+        <span className="text-secondary">
+          <Price amount={price} />
+        </span>
+        <s className="text-outline text-[0.85em]">
+          <span className="sr-only">was </span>
+          <Price amount={compareAt} />
+        </s>
+      </span>
+    );
   return (
     <span className={`inline-flex flex-wrap items-baseline gap-x-1.5 ${className}`}>
       <span className="text-error">

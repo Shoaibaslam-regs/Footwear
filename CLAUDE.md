@@ -235,4 +235,10 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
 - Real payment gateway (PayFast, or EasyPaisa/JazzCash merchant APIs).
 - Email sends through Brevo with a Gmail sender; a domain of the store's own (with Brevo DKIM) would keep it out of spam.
 - WhatsApp Business API, for automatic order messages (today they are one-click from the admin panel).
+- **Newsletter (not connected yet).** The footer form (`components/Footer.tsx`, `#newsletter-email`) has no action: emails typed there go nowhere and the visitor gets no confirmation. Owner's plan (2026-11-14), when ready:
+  1. Buy a domain of the store's own and verify it in Brevo (DKIM/DMARC). It must come first: bulk mail "from" a `@gmail.com` address sent through Brevo fails Gmail/Yahoo sender checks and lands in spam or is rejected.
+  2. Connect the form to a Brevo contact list: a server action adds the email via the Brevo API (needs a `BREVO_API_KEY` and the list id, e.g. `BREVO_NEWSLETTER_LIST_ID`), rate-limited per IP like the other forms. Show "Thank you, you're on the list."
+  3. The admin writes and sends newsletters in Brevo (Campaigns): Brevo handles the editor, scheduling, unsubscribe links and open/click stats. The free plan sends 300 emails a day.
+  - Building a sender inside the admin panel was considered and set aside: more work, no statistics, and long bulk sends don't suit Vercel's time limits.
+  - Until then the form promises "news and offers" without sending any; if the plan is dropped, remove the form instead.
 

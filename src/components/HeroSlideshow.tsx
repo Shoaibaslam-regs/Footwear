@@ -5,7 +5,8 @@ import { useEffect, useRef, useState } from "react";
 
 export type HeroSlide = { image: string; alt: string; position?: string };
 
-const SLIDE_MS = 6500;
+/** Slower slides feel calmer; the thin line shows the time left. */
+const SLIDE_MS = 8000;
 
 /**
  * Background slideshow for the hero: cross-fades slides while the active one
@@ -78,7 +79,8 @@ export default function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
         ref={layer}
         aria-roledescription="carousel"
         aria-label="Featured collections"
-        className="absolute inset-0 will-change-transform"
+        className="absolute inset-x-0 -inset-y-[12%]"
+        data-parallax="0.25"
         onMouseEnter={() => setHovered(true)}
         onMouseLeave={() => setHovered(false)}
         role="region"
@@ -122,12 +124,12 @@ export default function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
       </div>
 
       {slides.length > 1 && (
-        <div className="absolute z-20 bottom-space-sm left-1/2 -translate-x-1/2 flex items-center gap-space-sm">
-          <div
-            className="flex items-center gap-1.5"
-            role="group"
-            aria-label="Choose slide"
-          >
+        // Phones: centred at the bottom. Larger screens: bottom right, with a 01 / 03 counter.
+        <div className="absolute z-20 bottom-space-sm left-1/2 -translate-x-1/2 sm:left-auto sm:translate-x-0 sm:right-margin-mobile lg:right-margin sm:bottom-24 flex items-center gap-space-md">
+          <span aria-hidden="true" className="hidden sm:block font-label-uppercase text-[10px] tracking-[0.3em] text-surface-container-lowest/80 tabular-nums">
+            {String(index + 1).padStart(2, "0")} <span className="text-surface-container-lowest/40">/ {String(slides.length).padStart(2, "0")}</span>
+          </span>
+          <div className="flex items-center gap-2" role="group" aria-label="Choose slide">
             {slides.map((s, i) => (
               <button
                 key={s.image}
@@ -138,21 +140,15 @@ export default function HeroSlideshow({ slides }: { slides: HeroSlide[] }) {
                 type="button"
               >
                 <span
-                  className={`block h-[3px] rounded-full overflow-hidden bg-surface-container-lowest/30 transition-all duration-300 ${
-                    i === index
-                      ? "w-10"
-                      : "w-4 group-hover:w-6 group-hover:bg-surface-container-lowest/60"
+                  className={`block h-px overflow-hidden bg-surface-container-lowest/30 transition-all duration-500 ${
+                    i === index ? "w-12 sm:w-16" : "w-5 sm:w-8 group-hover:bg-surface-container-lowest/60"
                   }`}
                 >
                   {i === index && (
                     <span
                       key={`${index}-${running}`}
                       className={`block h-full bg-secondary-fixed ${running ? "animate-[heroProgress_linear_forwards]" : "w-full"}`}
-                      style={
-                        running
-                          ? { animationDuration: `${SLIDE_MS}ms` }
-                          : undefined
-                      }
+                      style={running ? { animationDuration: `${SLIDE_MS}ms` } : undefined}
                     />
                   )}
                 </span>

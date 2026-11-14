@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { categories } from "@/lib/data";
+import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
 
 export default function Categories() {
   return (
@@ -9,11 +10,9 @@ export default function Categories() {
     >
       <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-lg">
         <div data-reveal>
-          <p className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em] mb-1">
-            Shop by Style
-          </p>
-          <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight">
-            Find the Perfect Pair
+          <p className={eyebrow}>Shop by Style</p>
+          <h2 className={`${sectionTitle} mt-2`}>
+            Find the <em className={accent}>Perfect</em> Pair
           </h2>
         </div>
         <p className="hidden sm:block font-body-sm text-body-sm text-on-surface-variant max-w-md">
@@ -31,7 +30,7 @@ export default function Categories() {
           >
             <Image
               alt={c.alt}
-              className="img-fade object-cover transition-transform duration-700 ease-out group-hover:scale-105"
+              className="object-cover transition-transform duration-700 ease-out group-hover:scale-105"
               fill
               sizes={i === 0 ? "(min-width: 1024px) 58vw, (min-width: 768px) 50vw, 100vw" : "(min-width: 1024px) 42vw, 50vw"}
               src={c.image}

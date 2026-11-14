@@ -149,7 +149,7 @@ export function toCatalogCard(
   };
 }
 
-export function toArrivalCard(p: Listing): ArrivalCard & PriceFields {
+export function toArrivalCard(p: Listing): ArrivalCard & PriceFields & { hoverImage?: string } {
   return {
     name: p.name,
     href: productHref(p),
@@ -163,10 +163,12 @@ export function toArrivalCard(p: Listing): ArrivalCard & PriceFields {
     alt: p.alt,
     swatches: [],
     moreColors: categoryLabel(p.category),
+    // The second photo, shown on hover.
+    hoverImage: p.gallery[1]?.url,
   };
 }
 
-export function toBestSellerCard(p: Listing): BestSeller & PriceFields & { href: string } {
+export function toBestSellerCard(p: Listing): BestSeller & PriceFields & { href: string; hoverImage?: string } {
   const inStock = p.sizes.filter((s) => !p.soldOutSizes.includes(s));
   return {
     name: p.name,
@@ -179,6 +181,7 @@ export function toBestSellerCard(p: Listing): BestSeller & PriceFields & { href:
     defaultSize: inStock.includes(38) ? 38 : (inStock[0] ?? 38),
     soldOut: p.soldOutSizes,
     href: productHref(p),
+    hoverImage: p.gallery[1]?.url,
   };
 }
 

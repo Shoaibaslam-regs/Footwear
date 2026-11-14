@@ -11,36 +11,41 @@ export default function Footer() {
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg">
         <div className="pb-space-xl mb-space-xl border-b border-outline-variant/20 flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
           <div className="max-w-xl">
-            <p className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em] mb-space-xs">
+            <p className="font-label-uppercase text-[10px] sm:text-[11px] font-medium text-secondary uppercase tracking-[0.32em] mb-space-xs">
               Newsletter
             </p>
-            <h2 className="font-headline-md text-headline-md text-primary font-normal tracking-tight">
-              Get News & Offers by Email
+            <h2 className="font-headline-md text-[26px] sm:text-[32px] leading-tight text-primary font-normal tracking-[-0.02em]">
+              Get News &amp; Offers <em className="italic text-secondary">by Email</em>
             </h2>
             <p className="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">
               Be the first to see new collections, special invitations and early
               offers.
             </p>
           </div>
-          <form className="w-full lg:max-w-md flex flex-col sm:flex-row gap-space-xs items-stretch">
-            <div className="relative flex-1">
+          {/* One underlined line with an arrow, instead of a boxed form. */}
+          <form className="w-full lg:max-w-md">
+            <label htmlFor="newsletter-email" className="sr-only">
+              Email Address
+            </label>
+            <div className="group flex items-center border-b border-primary/40 focus-within:border-primary transition-colors">
               <input
                 id="newsletter-email"
-                className="w-full h-[52px] bg-surface-container-lowest px-space-md text-on-surface placeholder:text-outline font-body-sm text-body-sm rounded-none border border-outline-variant/60 focus:border-primary focus:outline-none transition-colors"
-                placeholder="Enter your email address"
+                className="flex-1 min-w-0 h-12 bg-transparent px-0 text-on-surface placeholder:text-outline font-body-md text-body-md font-light focus:outline-none"
+                placeholder="Email address"
                 required
                 type="email"
               />
-              <label htmlFor="newsletter-email" className="sr-only">
-                Email Address
-              </label>
+              <button
+                aria-label="Subscribe"
+                className="h-12 pl-space-sm flex items-center gap-2 font-label-uppercase text-[10px] uppercase tracking-[0.26em] text-primary hover:text-secondary transition-colors"
+                type="submit"
+              >
+                <span className="hidden sm:inline">Subscribe</span>
+                <span aria-hidden="true" className="material-symbols-outlined text-[18px] transition-transform duration-300 group-focus-within:translate-x-1">
+                  arrow_forward
+                </span>
+              </button>
             </div>
-            <button
-              className="h-[52px] px-space-lg bg-primary hover:bg-secondary-fixed text-on-primary hover:text-on-secondary-fixed font-label-uppercase text-label-uppercase uppercase tracking-widest transition-all duration-300 flex items-center justify-center"
-              type="submit"
-            >
-              Subscribe
-            </button>
           </form>
         </div>
 
@@ -98,6 +103,13 @@ export default function Footer() {
             </div>
           </div>
         </div>
+      </div>
+
+      {/* The brand, large and light, closing the page. */}
+      <div aria-hidden="true" className="overflow-hidden select-none">
+        <p className="font-headline-lg font-normal text-primary/[0.07] text-center leading-[0.8] tracking-[0.1em] text-[clamp(72px,21vw,300px)] translate-y-[6%]">
+          ŔOSE
+        </p>
       </div>
     </footer>
   );

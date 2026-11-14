@@ -1,5 +1,6 @@
 import Image from "next/image";
 import { socialTiles } from "@/lib/data";
+import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
 
 export default function SocialGallery() {
   return (
@@ -7,11 +8,9 @@ export default function SocialGallery() {
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm mb-space-lg">
           <div data-reveal>
-            <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              As Seen on Instagram
-            </span>
-            <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight">
-              #RoseAtelier
+            <span className={eyebrow}>As Seen on Instagram</span>
+            <h2 className={`${sectionTitle} mt-2`}>
+              #Rose<em className={accent}>Atelier</em>
             </h2>
           </div>
           <a
@@ -37,7 +36,7 @@ export default function SocialGallery() {
               href="#social"
             >
               <Image
-                className="img-fade w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
+                className="w-full h-full object-cover transition-transform duration-500 group-hover:scale-110"
                 alt={tile.alt}
                 src={tile.image}
                 fill

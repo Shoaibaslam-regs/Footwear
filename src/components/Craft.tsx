@@ -1,15 +1,14 @@
 import { craftPillars } from "@/lib/data";
+import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
 
 export default function Craft() {
   return (
     <section className="w-full py-space-xl bg-surface scroll-mt-28" id="craft">
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div data-reveal className="max-w-2xl mx-auto text-center mb-space-lg sm:mb-space-xl">
-          <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.25em]">
-            Made in Karachi
-          </span>
-          <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight mt-1 mb-space-xs">
-            What Goes Into an Ŕose Atelier Shoe
+          <span className={eyebrow}>Made in Karachi</span>
+          <h2 className={`${sectionTitle} mt-2 mb-space-xs`}>
+            What Goes Into an <em className={accent}>Ŕose Atelier</em> Shoe
           </h2>
           <p className="hidden sm:block font-body-md text-body-md text-on-surface-variant font-light">
             Made in our family workshops in Karachi, run by the third
