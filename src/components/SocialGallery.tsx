@@ -4,7 +4,7 @@ import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
 
 export default function SocialGallery() {
   return (
-    <section className="w-full py-space-xl bg-surface">
+    <section className="w-full py-space-xl">
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div className="flex flex-col sm:flex-row sm:items-end justify-between gap-space-sm mb-space-lg">
           <div data-reveal>

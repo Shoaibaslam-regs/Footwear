@@ -3,7 +3,7 @@ import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
 
 export default function Campaign() {
   return (
-    <section className="w-full py-space-xl overflow-hidden bg-surface">
+    <section className="w-full py-space-xl overflow-hidden">
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
           {/* Visual Story Column */}
@@ -69,10 +69,13 @@ export default function Campaign() {
                 comfortably, from late-night parties to long flights.
               </p>
             </div>
-            <div className="grid grid-cols-2 gap-space-md pt-space-xs">
-              <div className="flex items-start gap-3">
-                <span className="material-symbols-outlined text-secondary text-2xl">
-                  architecture
+            <div className="grid grid-cols-2 gap-space-sm sm:gap-space-md pt-space-xs">
+              <div className="flex flex-col sm:flex-row items-start gap-2.5 sm:gap-3 p-space-sm sm:p-space-md bg-surface-container-lowest rounded-none shadow-[0_6px_24px_rgba(33,27,25,0.06)] ring-1 ring-outline-variant/30">
+                <span className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-[999px] bg-secondary-container/60 flex items-center justify-center">
+                  {/* The icon font forces inline-block, so the circle centres a wrapper, not the glyph itself. */}
+                  <span aria-hidden="true" className="material-symbols-outlined text-secondary text-[20px] leading-none">
+                    architecture
+                  </span>
                 </span>
                 <div>
                   <h4 className="font-label-md text-label-md font-semibold text-primary">
@@ -83,9 +86,12 @@ export default function Campaign() {
                   </p>
                 </div>
               </div>
-              <div className="flex items-start gap-3">
-                <span className="material-symbols-outlined text-secondary text-2xl">
-                  spa
+              <div className="flex flex-col sm:flex-row items-start gap-2.5 sm:gap-3 p-space-sm sm:p-space-md bg-surface-container-lowest rounded-none shadow-[0_6px_24px_rgba(33,27,25,0.06)] ring-1 ring-outline-variant/30">
+                <span className="w-9 h-9 sm:w-10 sm:h-10 shrink-0 rounded-[999px] bg-secondary-container/60 flex items-center justify-center">
+                  {/* The icon font forces inline-block, so the circle centres a wrapper, not the glyph itself. */}
+                  <span aria-hidden="true" className="material-symbols-outlined text-secondary text-[20px] leading-none">
+                    spa
+                  </span>
                 </span>
                 <div>
                   <h4 className="font-label-md text-label-md font-semibold text-primary">

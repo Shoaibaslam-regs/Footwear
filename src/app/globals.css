@@ -506,6 +506,13 @@ html[data-scrolled] .site-bar {
   }
 }
 
+/* Home page: while the silk backdrop (components/SilkBackdrop.tsx, a fixed canvas at z-index -10) is
+   showing, it adds .has-backdrop to <main>, so the sections show it through. Set from the component, not
+   with :has(), because Next.js keeps the hidden home page in the DOM on other pages. */
+.shop-main.has-backdrop {
+  background-color: transparent;
+}
+
 /* Outlined buttons that fill from left to right on hover (home cards, hero). */
 .btn-fill {
   background-image: linear-gradient(var(--fill, var(--color-primary)), var(--fill, var(--color-primary)));

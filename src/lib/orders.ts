@@ -107,6 +107,8 @@ export type OrderItem = {
   /** List price per pair before discount (PKR). */
   listPrice: number;
   discountPercent: number;
+  /** The sale event this price came from ("11.11 Sale"), when a sale's discount applied. */
+  sale?: { id: string; name: string };
   image: string;
   alt: string;
 };

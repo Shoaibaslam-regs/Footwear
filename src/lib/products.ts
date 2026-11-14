@@ -97,12 +97,16 @@ export type PriceFields = {
   /** Original price when discounted. */
   compareAt?: number;
   discountPercent?: number;
+  /** Which listing, so the storefront can apply a live sale event (lib/sale-events.ts). */
+  slug?: string;
+  category?: ProductCategory;
 };
 
 function priceFields(p: Listing): PriceFields {
+  const who = { slug: p.slug, category: p.category };
   return p.discountPercent > 0
-    ? { price: salePrice(p), compareAt: p.price, discountPercent: p.discountPercent }
-    : { price: p.price };
+    ? { price: salePrice(p), compareAt: p.price, discountPercent: p.discountPercent, ...who }
+    : { price: p.price, ...who };
 }
 
 /* ---------- Storefront view mappers ---------- */

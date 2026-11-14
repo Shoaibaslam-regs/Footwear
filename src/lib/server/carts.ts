@@ -1,7 +1,9 @@
 import "server-only";
 import { ObjectId } from "mongodb";
 import type { CartItem } from "../cart-data";
-import { categoryLabel, productHref, salePrice, type Listing } from "../products";
+import { categoryLabel, productHref, type Listing } from "../products";
+import type { SaleEvent } from "../sale-events";
+import { listingPrice, salePricingNow } from "./sale-events";
 import type { WishItem } from "../store-types";
 import { getDb } from "./db";
 import { getPublishedProducts } from "./products";
@@ -27,8 +29,12 @@ export const lineIdOf = (slug: string, size: number) => `${slug}--eu-${size}`;
 
 export const carts = async () => (await getDb()).collection<CartDoc>("carts");
 
-function toCartItem(p: Listing, size: number, quantity: number): CartItem {
+type Pricing = { events: SaleEvent[]; now: number };
+
+function toCartItem(p: Listing, size: number, quantity: number, pricing: Pricing): CartItem {
   const soldOut = p.soldOutSizes.includes(size);
+  // Priced with live sales and the real clock (lib/sale-events.ts), as checkout will.
+  const live = listingPrice(p, pricing);
   return {
     id: lineIdOf(p.slug, size),
     href: productHref(p),
@@ -36,8 +42,10 @@ function toCartItem(p: Listing, size: number, quantity: number): CartItem {
     collection: categoryLabel(p.category),
     name: p.name,
     drawerName: p.name,
-    price: salePrice(p),
-    discountPercent: p.discountPercent,
+    price: live.price,
+    discountPercent: live.discountPercent,
+    couponPercent: live.couponPercent,
+    ...(live.sale ? { sale: { name: live.sale.name, tag: live.sale.tag } } : {}),
     material: p.material,
     size: `EU ${size}`,
     color: p.material,
@@ -56,10 +64,10 @@ function toCartItem(p: Listing, size: number, quantity: number): CartItem {
   };
 }
 
-const toWishItem = (p: Listing): WishItem => ({
+const toWishItem = (p: Listing, pricing: Pricing): WishItem => ({
   id: p.slug,
   name: p.name,
-  price: salePrice(p),
+  price: listingPrice(p, pricing).price,
   image: p.image,
   alt: p.alt,
   href: productHref(p),
@@ -69,16 +77,17 @@ const toWishItem = (p: Listing): WishItem => ({
 /** The account's bag and wishlist with current names, prices and photos. */
 export async function hydrateCart(doc: Pick<CartDoc, "bag" | "wishlist"> | null): Promise<AccountCart> {
   if (!doc) return EMPTY_CART;
-  const catalogue = new Map((await getPublishedProducts()).map((p) => [p.slug, p]));
+  const [listings, pricing] = await Promise.all([getPublishedProducts(), salePricingNow()]);
+  const catalogue = new Map(listings.map((p) => [p.slug, p]));
   return {
     // Unpublished or deleted listings simply drop out.
     bag: doc.bag.flatMap((l) => {
       const p = catalogue.get(l.slug);
-      return p && p.sizes.includes(l.size) ? [toCartItem(p, l.size, l.quantity)] : [];
+      return p && p.sizes.includes(l.size) ? [toCartItem(p, l.size, l.quantity, pricing)] : [];
     }),
     wishlist: doc.wishlist.flatMap((w) => {
       const p = catalogue.get(w.slug);
-      return p ? [toWishItem(p)] : [];
+      return p ? [toWishItem(p, pricing)] : [];
     }),
   };
 }

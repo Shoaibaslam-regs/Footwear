@@ -192,7 +192,7 @@ function Panel({ index, onClose }: { index: Entry[]; onClose: () => void }) {
                         <span className="block font-body-sm text-body-sm text-on-surface-variant truncate">{r.detail}</span>
                       </span>
                       <span className="font-label-md text-label-md text-primary font-semibold whitespace-nowrap">
-                        <SalePrice compareAt={r.compareAt} discountPercent={r.discountPercent} price={r.price} />
+                        <SalePrice category={r.category} compareAt={r.compareAt} discountPercent={r.discountPercent} price={r.price} slug={r.id} />
                       </span>
                     </Link>
                   </li>

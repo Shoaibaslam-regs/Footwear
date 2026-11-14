@@ -11,6 +11,8 @@ import StockAlert from "./StockAlert";
 import Accordion from "./Accordion";
 import SizeGuideModal from "./SizeGuideModal";
 import SalePrice from "@/components/SalePrice";
+import { useCardPrice } from "@/components/sale/SaleProvider";
+import { saleTime } from "@/lib/sale-events";
 import { addToBag, openBag, toggleWishlist as toggleSaved, useInBag, useIsWishlisted } from "@/lib/store";
 
 const MAX_QTY = 5;
@@ -40,6 +42,8 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
   }, [tooltip]);
 
   const cover = product.gallery[0];
+  // The price right now, with any live sale event (the bag is re-priced on the server too).
+  const live = useCardPrice(product);
   const euSize = size.startsWith("EU") ? size : `EU ${size}`;
   const inBag = useInBag(product.slug, euSize);
 
@@ -48,7 +52,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
     const added = toggleSaved({
       id: product.slug,
       name: product.name,
-      price: product.price,
+      price: live.price,
       image: cover.image,
       alt: cover.alt,
       href: `/products/${product.slug}`,
@@ -63,7 +67,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       {
         id: product.slug,
         name: product.name,
-        price: product.price,
+        price: live.price,
         image: cover.image,
         alt: cover.alt,
         size: euSize,
@@ -116,12 +120,18 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         </h1>
         <div className="flex items-baseline gap-space-sm pt-space-xs">
           <span className="font-headline-sm text-[22px] sm:text-[24px] text-primary font-normal">
-            <SalePrice chipOnPhones price={product.price} compareAt={product.compareAt} discountPercent={product.discountPercent} />
+            <SalePrice category={product.category} chipOnPhones compareAt={product.compareAt} discountPercent={product.discountPercent} price={product.price} slug={product.slug} />
           </span>
           <span className="hidden sm:inline font-body-sm text-body-sm text-on-surface-variant">
             Tax included
           </span>
         </div>
+        {live.sale && (
+          <p className="flex items-center gap-1.5 font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-secondary">
+            <span aria-hidden="true" className="material-symbols-outlined text-[15px]">schedule</span>
+            {live.sale.name} ends {saleTime(live.sale.endsAt)}
+          </p>
+        )}
         {product.sold ? (
           <p className="flex items-center gap-1.5 py-space-xs font-body-sm text-body-sm text-on-surface-variant">
             <span className="material-symbols-outlined text-[18px] text-secondary">local_mall</span>

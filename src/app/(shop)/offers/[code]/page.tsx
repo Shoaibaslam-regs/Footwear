@@ -5,7 +5,9 @@ import { io } from "next/cache";
 import { Suspense } from "react";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { couponConditions, couponHeadline, dayMonth, normaliseCode, priceWithCoupon, type CouponTerms } from "@/lib/coupons";
-import { categoryLabel, productHref, salePrice, type Listing } from "@/lib/products";
+import { categoryLabel, productHref, type Listing } from "@/lib/products";
+import type { SaleEvent } from "@/lib/sale-events";
+import { listingPrice, salePricingNow } from "@/lib/server/sale-events";
 import { cardFor, getCouponByCode, isRevealed, toTerms, unavailableReason } from "@/lib/server/coupons";
 import { getPublishedProducts } from "@/lib/server/products";
 import { getOnlineSales } from "@/lib/server/sales";
@@ -19,8 +21,12 @@ export const metadata: Metadata = { title: "Coupon — Ŕose Atelier", robots: {
 const label = "font-label-uppercase text-label-uppercase";
 
 /** Up to 3 shoes the coupon works on: best sellers first, then newest. */
-function pickShoes(all: Listing[], t: CouponTerms, sold: Record<string, number>) {
-  const ok = all.filter((p) => (!t.fullPriceOnly || p.discountPercent === 0) && (!t.minOrder || salePrice(p) >= t.minOrder));
+function pickShoes(all: Listing[], t: CouponTerms, sold: Record<string, number>, pricing: { events: SaleEvent[]; now: number }) {
+  // Prices as they are right now, live sales included (lib/sale-events.ts).
+  const ok = all.filter((p) => {
+    const live = listingPrice(p, pricing);
+    return (!t.fullPriceOnly || live.couponPercent === 0) && (!t.minOrder || live.price >= t.minOrder);
+  });
   const pool = ok.length >= 3 ? ok : all;
   return [...pool]
     .sort((a, b) => Number(b.bestSeller) - Number(a.bestSeller) || (sold[b.slug] ?? 0) - (sold[a.slug] ?? 0) || b.createdAt.localeCompare(a.createdAt))
@@ -108,8 +114,8 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
   const headline = couponHeadline(t);
   const conditions = couponConditions(t);
   const validUntil = t.endsAt ? dayMonth(t.endsAt) : null;
-  const [all, sold] = await Promise.all([getPublishedProducts(), getOnlineSales()]);
-  const shoes = pickShoes(all, t, sold);
+  const [all, sold, pricing] = await Promise.all([getPublishedProducts(), getOnlineSales(), salePricingNow()]);
+  const shoes = pickShoes(all, t, sold, pricing);
   // Shares the campaign link (each friend gets their own card), never the code or the discount.
   const shareText = surprise
     ? `A surprise discount is waiting for you at Ŕose Atelier. Scratch your card: /offers/${code}`
@@ -218,8 +224,9 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
           </div>
           <div className="grid grid-cols-2 md:grid-cols-3 gap-space-sm sm:gap-gutter">
             {shoes.map((p, i) => {
-              const now = salePrice(p);
-              const withCoupon = priceWithCoupon(t, now, p.discountPercent);
+              const live = listingPrice(p, pricing);
+              const now = live.price;
+              const withCoupon = priceWithCoupon(t, now, live.couponPercent);
               return (
                 <div key={p.slug} className="group bg-surface-container-lowest rounded-xl overflow-hidden shadow-sm hover:shadow-md transition-all duration-300 flex flex-col justify-between">
                   <div className="relative aspect-[3/4] w-full overflow-hidden bg-surface-container-low">

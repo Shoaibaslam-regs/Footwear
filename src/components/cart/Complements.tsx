@@ -9,6 +9,7 @@ export type Suggestion = {
   price: number;
   compareAt?: number;
   discountPercent?: number;
+  category?: string;
   image: string;
   alt: string;
   href: string;
@@ -56,7 +57,7 @@ export default function Complements({ suggestions }: { suggestions: Suggestion[]
               </h4>
               <p className="font-body-sm text-body-sm text-on-surface-variant truncate">{c.detail}</p>
               <span className="mt-auto pt-2 font-body-md text-body-md text-primary font-semibold">
-                <SalePrice compareAt={c.compareAt} discountPercent={c.discountPercent} price={c.price} />
+                <SalePrice category={c.category} compareAt={c.compareAt} discountPercent={c.discountPercent} price={c.price} slug={c.slug} />
               </span>
             </div>
           </Link>

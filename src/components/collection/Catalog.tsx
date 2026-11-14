@@ -13,6 +13,7 @@ import {
   type FilterableProduct,
 } from "@/lib/catalog-filters";
 import FilterSidebar from "./FilterSidebar";
+import { liveCardPrice, useSaleClock } from "@/components/sale/SaleProvider";
 import SortMenu from "./SortMenu";
 import CatalogProductCard from "./CatalogProductCard";
 import Pagination from "./Pagination";
@@ -25,7 +26,16 @@ const QuickViewModal = dynamic(() => import("./QuickViewModal"), { ssr: false })
 const densityActive = "bg-surface-container-lowest text-primary shadow-sm";
 const densityIdle = "text-on-surface-variant hover:text-primary";
 
-export default function Catalog({ products }: { products: FilterableProduct[] }) {
+export default function Catalog({ products: listed }: { products: FilterableProduct[] }) {
+  // Re-priced with any live sale event, so the cards, the "On sale" filter and
+  // price sorting all follow it (prices switch when a sale starts or ends).
+  const { events, now } = useSaleClock();
+  const products = listed.map((p) => {
+    const live = liveCardPrice(p, events, now);
+    return live.sale
+      ? { ...p, price: live.price, compareAt: live.compareAt, discountPercent: live.discountPercent, saleTag: live.sale.tag }
+      : p;
+  });
   const filters = useFilters();
   const [filtersOpen, setFiltersOpen] = useState(true);
   const [sheetOpen, setSheetOpen] = useState(false);

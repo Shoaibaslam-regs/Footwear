@@ -80,6 +80,8 @@ export default function Recommendations({ items }: { items: Listing[] }) {
                 </h4>
                 <p className="font-body-sm text-body-sm text-on-surface font-medium">
                   <SalePrice
+                    category={r.category}
+                    slug={r.slug}
                     price={salePrice(r)}
                     compareAt={r.discountPercent ? r.price : undefined}
                     discountPercent={r.discountPercent || undefined}

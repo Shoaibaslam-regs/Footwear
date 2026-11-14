@@ -101,7 +101,7 @@ function CheckoutForm({
   const shipping = option.fee;
   // Live coupon maths for display; the server recomputes it when the order is placed.
   const couponResult = coupon
-    ? applyCoupon(coupon, items.map((i) => ({ unitPrice: i.price, quantity: i.quantity, discountPercent: i.discountPercent })), shipping)
+    ? applyCoupon(coupon, items.map((i) => ({ unitPrice: i.price, quantity: i.quantity, discountPercent: i.couponPercent ?? i.discountPercent })), shipping)
     : null;
   const itemDiscount = couponResult?.ok ? couponResult.itemDiscount : 0;
   const deliveryDiscount = couponResult?.ok ? couponResult.deliveryDiscount : 0;

@@ -6,11 +6,13 @@ import Link from "next/link";
 import { useState } from "react";
 import { sizes, type BestSeller } from "@/lib/data";
 import SalePrice from "@/components/SalePrice";
+import SelectMenu from "@/components/SelectMenu";
+import { useCardPrice } from "@/components/sale/SaleProvider";
 import { quietPrice } from "@/lib/home-type";
 import { productId } from "@/lib/product-id";
 import { addToBag, openBag, useInBag } from "@/lib/store";
 
-const chipBase = "w-9 h-9 ring-1 ring-inset ring-outline-variant/60 font-body-sm text-[12px] font-normal";
+const chipBase = "w-full h-9 ring-1 ring-inset ring-outline-variant/60 font-body-sm text-[12px] font-normal";
 
 /**
  * Best-seller card. On phones it is compact: square photo, size dropdown
@@ -21,7 +23,7 @@ export default function BestSellerCard({
   item,
   wide = false,
 }: {
-  item: BestSeller & { href?: string; hoverImage?: string };
+  item: BestSeller & { href?: string; hoverImage?: string; slug?: string; category?: string };
   wide?: boolean;
 }) {
   const [selected, setSelected] = useState(item.defaultSize);
@@ -30,6 +32,8 @@ export default function BestSellerCard({
   const size = available.includes(selected) ? selected : available[0];
 
   const id = productId(item.name, item.href);
+  // A live sale event (if any) prices this pair; the bag is re-priced on the server too.
+  const live = useCardPrice(item);
   const inBag = useInBag(id, `EU ${size}`);
 
   const reserve = async () => {
@@ -38,7 +42,7 @@ export default function BestSellerCard({
     addToBag({
       id,
       name: item.name,
-      price: item.price,
+      price: live.price,
       image: item.image,
       alt: item.alt,
       size: `EU ${size}`,
@@ -89,32 +93,32 @@ export default function BestSellerCard({
             {item.detail}
           </p>
           <span className={`${quietPrice} block mt-1`}>
-            <SalePrice quiet price={item.price} compareAt={item.compareAt} discountPercent={item.discountPercent} />
+            <SalePrice category={item.category} compareAt={item.compareAt} discountPercent={item.discountPercent} price={item.price} quiet slug={item.slug} />
           </span>
         </div>
 
         <div>
-          {/* Phones: compact dropdown */}
-          <label className="md:hidden block mt-2">
-            <span className="sr-only">EU size for {item.name}</span>
-            <select
-              className="w-full h-9 px-2 rounded-none bg-transparent ring-1 ring-inset ring-outline-variant text-on-surface font-body-sm text-xs focus:outline-none focus:ring-primary"
-              onChange={(e) => setSelected(Number(e.target.value))}
-              value={size ?? ""}
-            >
-              {sizes.map((size) => (
-                <option key={size} disabled={item.soldOut.includes(size)} value={size}>
-                  EU {size}
-                  {item.soldOut.includes(size) ? " · sold out" : ""}
-                </option>
-              ))}
-            </select>
-          </label>
+          {/* Phones: the themed dropdown (sold-out sizes shown, not selectable) */}
+          <div className="md:hidden mt-2">
+            <SelectMenu
+              align="stretch"
+              buttonClassName={(open) =>
+                `w-full h-9 px-2.5 flex items-center justify-between gap-1 font-label-uppercase text-[10px] uppercase tracking-[0.18em] ring-1 ring-inset transition-colors ${
+                  open ? "ring-primary text-primary" : "ring-outline-variant text-on-surface"
+                }`
+              }
+              label={`EU size for ${item.name}`}
+              onChange={setSelected}
+              options={sizes.map((s) => ({ value: s, label: `EU ${s}`, disabled: item.soldOut.includes(s), note: item.soldOut.includes(s) ? "Sold out" : undefined }))}
+              value={size ?? sizes[0]}
+            />
+          </div>
 
           {/* Tablet & desktop: small outlined size squares */}
           <div className="hidden md:block pt-space-sm">
             <span className="font-label-uppercase text-[9px] text-outline uppercase tracking-[0.24em] block mb-2">EU Size</span>
-            <div className="flex flex-wrap gap-1">
+            {/* All seven sizes on one row, however narrow the card (New Arrivals has four per row). */}
+            <div className="grid grid-cols-7 gap-1">
               {sizes.map((size) => {
                 const soldOut = item.soldOut.includes(size);
                 if (soldOut) {

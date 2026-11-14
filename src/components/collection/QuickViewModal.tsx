@@ -482,7 +482,7 @@ function QuickViewStudio({
 
               <div className="flex flex-wrap items-baseline gap-2 pt-1 border-b border-outline-variant/20 pb-3">
                 <span className="font-body-lg text-xl sm:text-2xl font-medium text-primary">
-                  <SalePrice price={p.price} compareAt={p.compareAt} discountPercent={p.discountPercent} />
+                  <SalePrice compareAt={p.compareAt} discountPercent={p.discountPercent} price={p.price} saleTag={p.saleTag} />
                 </span>
                 <span className="font-label-uppercase text-[10px] sm:text-xs text-outline uppercase tracking-wider">
                   Taxes &amp; Fast Delivery Included

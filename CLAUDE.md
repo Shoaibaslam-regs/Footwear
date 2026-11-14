@@ -141,6 +141,15 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - The browser keeps pages it has already shown, so a checkout opened before the coupon was applied would come back without it.
     - `applyCouponCode` / `removeCouponCode` call `revalidatePath` on `/checkout` and `/cart`.
     - `Checkout` re-reads the bag's coupon on open (`currentCoupon()`).
+- `sale_events`: store sales like 11.11 / 12.12, managed at `/admin/sales` (internally "sale events": the `sales` cache tag already means units sold).
+  - Fields: `name`, `tag` (shown on cards, e.g. "11.11"), `headline`, `startsAt` / `endsAt` (entered in Pakistan time), `scope` (`all` / `categories` / `items`), `percent`, `categories`, `items` (slug → percent), `countdown`, `teaser`, `allowCoupons`, `stoppedAt`.
+  - Listings are never edited: the sale is a layer on top while live, and prices go back by themselves. Stop sets `stoppedAt` (prices return at once); a stopped sale stays in the list as Ended.
+  - **One price rule, `livePrice` in `lib/sale-events.ts`:** the bigger of the listing's own `discountPercent` and the best live sale for it, never both added. Overlapping sales: the biggest percent wins.
+  - Money paths use it with the real clock: `hydrateCart` (bag), `priceOrder` (checkout) and the offer page call `salePricingNow()` (`io()` + `Date.now()`, cached schedule tagged `sale-events`). An order at 11:59:58 pm gets the sale; one at 12:00:01 am doesn't. Order lines store `sale: {id, name}`.
+  - Coupons: `LivePrice.couponPercent` is what coupon rules see. Sale pairs count as discounted (skipped by full-price-only coupons) unless the sale has `allowCoupons`. Bag lines carry it as `CartItem.couponPercent`, so checkout's live coupon preview matches `placeOrder`.
+  - Pre-built pages can't read the clock, so the shop layout passes the cached schedule to `components/sale/SaleProvider.tsx`; prices switch in the browser at the exact start/end (a timer to the next change, not a per-second tick). `SalePrice` applies it when given `slug` (+ `category`); the catalogue re-prices its list (`liveCardPrice`) so the "On sale" filter and price sorting follow; already re-priced cards pass `saleTag`.
+  - `saleUpTo()` works out "Up to X%" from the published listings each sale covers, so the banner can't overstate it. `components/sale/SaleBanner.tsx` shows the band over the top of the hero (live, or a "Coming soon" teaser up to 3 days before) and leads the announcement bar.
+  - Every admin change calls `updateTag("sale-events")`. Tested in `tests/unit/sale-events.test.ts`, `tests/integration/sale-events.test.ts` and `tests/e2e/sale.spec.ts` (create → banner → checkout at the sale price → stop).
 - `meta`: seed and migration markers.
 - `rate_limits`: counters (`{_id: "<rule>:<key>", n, expiresAt}`, TTL index on `expiresAt`) used by `lib/server/rate-limit.ts`. Each window starts at the first attempt, so a lockout always lasts until that window ends. Actions answer a reached limit with `retryAfter` (seconds), never a message: the button locks and counts down via `useCooldown` (`lib/use-cooldown.ts`), e.g. "Try again in 14:32". The limits are listed in `RULES`:
   - Login: 5 failed tries per email and 20 per IP in 15 min. Only failures count, and the check runs before the password.
@@ -188,7 +197,7 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 ### Collection filters
 - `lib/catalog-filters.ts` is a client store synced to the URL with `history.pushState`, which keeps `/collections` static.
 - Facets are derived from listing data: the heel height is parsed from "95mm" in `spec`, and material groups are matched by keyword.
-- Sorting uses `components/collection/SortMenu.tsx`, a themed listbox (arrow keys, Enter, Esc), not a native `<select>`.
+- Sorting uses `components/collection/SortMenu.tsx`, a wrapper around the shared themed listbox `components/SelectMenu.tsx` (arrow keys skip disabled options, Enter, Esc), not a native `<select>`. The home Best Sellers size picker on phones uses the same component (sold-out sizes shown, not selectable). Use it for any new dropdown.
 - Quick View opens on the photos (`components/collection/PhotoZoom.tsx`, the listing's `gallery` via `toCatalogCard`). Hover zoom works only where `(hover: hover) and (pointer: fine)` matches. On touch, a tap zooms in, a drag pans, a second tap zooms out, and a swipe changes the photo. The 360° turntable is the second tab. On phones Quick View is a bottom sheet with Add to Bag pinned. Covered in `tests/e2e/checkout-again.spec.ts`.
 - `?q=` is a text filter. The header search dropdown (`components/header/SearchPanel.tsx`) links to `/collections?q=…`.
 - `FiltersUrlSync` re-reads the URL on client navigations.

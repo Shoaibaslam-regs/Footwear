@@ -166,6 +166,7 @@
 .admin .notice { padding: 8px 12px; border-radius: var(--a-radius); border: 1px solid var(--a-line); background: var(--a-panel); }
 .admin .notice-ok { border-color: #abefc6; background: #ecfdf3; color: #067647; }
 .admin .notice-bad { border-color: #fecdca; background: #fef3f2; color: #b42318; }
+.admin .notice-warn { border-color: #fedf89; background: #fffaeb; color: #93370d; }
 
 /* Empty state */
 .admin .empty {

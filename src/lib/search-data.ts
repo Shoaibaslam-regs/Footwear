@@ -5,6 +5,8 @@ export type SearchEntry = {
   price: number;
   compareAt?: number;
   discountPercent?: number;
+  /** Listing category, so a live sale event can price it (see SalePrice). */
+  category?: string;
   image: string;
   alt: string;
   href: string;

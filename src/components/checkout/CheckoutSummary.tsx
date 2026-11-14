@@ -6,6 +6,7 @@ import Link from "next/link";
 import type { CartItem } from "@/lib/cart-data";
 import { whatsappUrl } from "@/lib/data";
 import Price from "@/components/Price";
+import { SaleTag } from "@/components/SalePrice";
 import { formatPrice } from "@/lib/currency";
 import { lineProductId, removeFromBag, toggleWishlist, useCurrency } from "@/lib/store";
 import { showToast } from "@/lib/toast";
@@ -127,10 +128,11 @@ export default function CheckoutSummary({
               <div className="relative w-[72px] h-[90px] sm:w-24 sm:h-32 flex-shrink-0 rounded-lg sm:rounded-none bg-surface-container-high overflow-hidden">
                 <Image className="w-full h-full object-cover" alt={item.alt} src={item.image} fill sizes="96px" />
                 {item.discountPercent > 0 && (
-                  <span className="absolute top-1 left-1 rounded-full bg-error text-on-error font-label-uppercase text-[9px] px-1.5 py-0.5 tracking-wider">
+                  <span className="absolute top-1 left-1 rounded-full bg-secondary-fixed text-on-secondary-fixed font-label-uppercase text-[9px] px-1.5 py-0.5 tracking-wider">
                     −{item.discountPercent}%
                   </span>
                 )}
+                {item.sale && <SaleTag className="absolute bottom-1 left-1" tag={item.sale.tag} />}
               </div>
               <div className="flex-1 min-w-0 flex flex-col gap-1.5">
                 <div className="flex items-start justify-between gap-2">

@@ -6,7 +6,7 @@ import { getCurrentUser } from "@/lib/auth/dal";
 import { countries } from "@/lib/checkout-data";
 import { getSiteSettings } from "@/lib/server/settings";
 import { checkoutMethodValues, isWalletMethod, type Order, type PaymentMethod, type OrderItem } from "@/lib/orders";
-import { salePrice } from "@/lib/products";
+import { listingPrice, salePricingNow } from "@/lib/server/sale-events";
 import { insertOrder } from "@/lib/server/orders";
 import { getPublishedProducts } from "@/lib/server/products";
 import { SALES_TAG } from "@/lib/server/sales";
@@ -16,7 +16,7 @@ import { PRODUCTS_TAG } from "@/lib/server/products";
 import { getDb } from "@/lib/server/db";
 import { orderPlacedLines, sendMail, siteUrl } from "@/lib/server/mail";
 import { updateTag } from "next/cache";
-import { applyCoupon } from "@/lib/coupons";
+import { applyCoupon, type CouponLine } from "@/lib/coupons";
 import { claimCoupon, coupons, getCouponByCode, releaseCoupon, toTerms, unavailableReason } from "@/lib/server/coupons";
 import { MAX_PENDING_ORDERS, RULES, blocked, hit } from "@/lib/server/rate-limit";
 import { mailConfigured } from "@/lib/server/mail";
@@ -121,27 +121,34 @@ function readForm(fd: FormData): { ok: true; data: CheckoutData } | { ok: false;
 async function priceOrder(user: User, data: CheckoutData) {
   const cartCol = await carts();
   const cart = await cartCol.findOne({ _id: new ObjectId(user.id) });
-  const catalogue = new Map((await getPublishedProducts()).map((p) => [p.slug, p]));
+  const [listings, pricing] = await Promise.all([getPublishedProducts(), salePricingNow()]);
+  const catalogue = new Map(listings.map((p) => [p.slug, p]));
   // Same rule as the bag display: unpublished/removed pieces are not shown, so they are not ordered.
   const available = (cart?.bag ?? []).filter((it) => catalogue.get(it.slug)?.sizes.includes(it.size));
   if (!cart || available.length === 0) return { ok: false as const, state: { message: "Your bag is empty." } as Failure };
   const lines: OrderItem[] = [];
+  // What coupon rules see per line (a sale that allows coupons counts as full price).
+  const couponLines: CouponLine[] = [];
   for (const it of available) {
     const p = catalogue.get(it.slug)!;
     if (p.soldOutSizes.includes(it.size)) {
       return { ok: false as const, state: { message: `${p.name} in EU ${it.size} is sold out. Please choose another size.` } as Failure };
     }
+    // The price right now: the listing's own discount or a live sale's, whichever is bigger.
+    const live = listingPrice(p, pricing);
     lines.push({
       slug: p.slug,
       name: p.name,
       size: it.size,
       quantity: it.quantity,
-      unitPrice: salePrice(p),
+      unitPrice: live.price,
       listPrice: p.price,
-      discountPercent: p.discountPercent,
+      discountPercent: live.discountPercent,
+      ...(live.sale ? { sale: { id: live.sale.id, name: live.sale.name } } : {}),
       image: p.image,
       alt: p.alt,
     });
+    couponLines.push({ unitPrice: live.price, quantity: it.quantity, discountPercent: live.couponPercent });
   }
 
   const option = (await getSiteSettings()).deliveryOptions.find((d) => d.id === data.delivery);
@@ -157,7 +164,7 @@ async function priceOrder(user: User, data: CheckoutData) {
   if (cart.coupon) {
     const why = await unavailableReason(couponDoc, user.id);
     if (why || !couponDoc) return { ok: false as const, state: { message: `Coupon ${cart.coupon}: ${why ?? "This code is not valid."} Remove it to continue.` } as Failure };
-    const r = applyCoupon(toTerms(couponDoc), lines, option.fee);
+    const r = applyCoupon(toTerms(couponDoc), couponLines, option.fee);
     if (!r.ok) return { ok: false as const, state: { message: `Coupon ${couponDoc.code}: ${r.reason} Or remove the coupon to continue.` } as Failure };
     itemDiscount = r.itemDiscount;
     deliveryDiscount = r.deliveryDiscount;

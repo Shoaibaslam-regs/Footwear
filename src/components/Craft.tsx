@@ -3,7 +3,7 @@ import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
 
 export default function Craft() {
   return (
-    <section className="w-full py-space-xl bg-surface scroll-mt-28" id="craft">
+    <section className="w-full py-space-xl scroll-mt-28" id="craft">
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div data-reveal className="max-w-2xl mx-auto text-center mb-space-lg sm:mb-space-xl">
           <span className={eyebrow}>Made in Karachi</span>

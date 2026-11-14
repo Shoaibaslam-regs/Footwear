@@ -46,6 +46,7 @@ export function toProductDetail(p: Listing): ProductDetail {
   const base = richDetails["aurelia-stiletto"];
   return {
     slug: p.slug,
+    category: p.category,
     name: p.name,
     breadcrumbCategory: categoryLabel(p.category),
     breadcrumbName: p.name.replace(/^The\s+/i, ""),

@@ -2,6 +2,7 @@ import Image from "next/image";
 import Link from "next/link";
 import type { CartItem } from "@/lib/cart-data";
 import Price from "@/components/Price";
+import { SaleTag } from "@/components/SalePrice";
 
 const chip = "font-label-sm text-label-sm bg-surface-container px-2.5 py-1 rounded";
 const stepBtn =
@@ -47,6 +48,7 @@ export default function CartItemCard({
                 <span className="font-label-uppercase text-[10px] sm:text-label-uppercase text-secondary uppercase tracking-widest">
                   {item.collection}
                 </span>
+                {item.sale && <SaleTag className="ml-2 align-middle" tag={item.sale.tag} />}
                 <h2 className="font-headline-sm text-[17px] leading-snug sm:text-headline-sm text-primary line-clamp-2">
                   {item.href ? (
                     <Link className="hover:text-secondary transition-colors" href={item.href}>

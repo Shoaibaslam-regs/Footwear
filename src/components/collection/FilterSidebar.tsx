@@ -19,7 +19,10 @@ import { useDialog } from "@/components/header/useDialog";
 
 const sectionTitle =
   "font-label-uppercase text-label-uppercase text-primary uppercase tracking-wider font-semibold";
-const PRICE_STEP = 1000;
+/** The price slider: PKR 500 to 10,000 in steps of 500. The top end means "10,000 and above". */
+const PRICE_STEP = 500;
+const PRICE_MIN = 500;
+const PRICE_MAX = 10_000;
 
 /**
  * Catalog filters. Desktop (lg+): sticky sidebar, toggled by `desktopOpen`.
@@ -47,9 +50,8 @@ export default function FilterSidebar({
   const count = (skip: Parameters<typeof matches>[2], extra: (p: FilterableProduct) => boolean) =>
     products.filter((p) => matches(p, f, skip) && extra(p)).length;
 
-  const prices = products.map((p) => p.price);
-  const floor = prices.length ? Math.floor(Math.min(...prices) / PRICE_STEP) * PRICE_STEP : 0;
-  const ceil = prices.length ? Math.ceil(Math.max(...prices) / PRICE_STEP) * PRICE_STEP : 0;
+  const floor = PRICE_MIN;
+  const ceil = PRICE_MAX;
   const lo = Math.max(floor, Math.min(f.minPrice ?? floor, ceil));
   const hi = Math.min(ceil, Math.max(f.maxPrice ?? ceil, floor));
   const onSaleCount = count({ onSale: true }, (p) => !!p.discountPercent);
@@ -324,8 +326,9 @@ function PriceRange({ floor, ceil, lo, hi }: { floor: number; ceil: number; lo: 
     <fieldset className="space-y-space-xs">
       <div className="flex items-center justify-between">
         <legend className={sectionTitle}>Price Range</legend>
-        <span aria-live="polite" className="font-body-sm text-xs font-semibold text-primary">
+        <span aria-live="polite" className="font-body-sm text-xs font-semibold text-primary whitespace-nowrap">
           <Price amount={range.lo} /> – <Price amount={range.hi} />
+          {range.hi >= ceil && "+"}
         </span>
       </div>
       <div className="relative h-6 mt-2">
@@ -362,7 +365,7 @@ function PriceRange({ floor, ceil, lo, hi }: { floor: number; ceil: number; lo: 
           <Price amount={floor} />
         </span>
         <span>
-          <Price amount={ceil} />
+          <Price amount={ceil} />+
         </span>
       </div>
     </fieldset>

@@ -25,6 +25,13 @@ const paths: Record<string, React.ReactNode> = {
       <path d="M12 5.5v9" strokeDasharray="1.5 1.5" />
     </>
   ),
+  sales: (
+    <>
+      <circle cx="7" cy="7" r="1.8" />
+      <circle cx="13" cy="13" r="1.8" />
+      <path d="M14.5 5.5 5.5 14.5" />
+    </>
+  ),
   reviews: (
     <path d="m10 3.5 1.9 3.9 4.3.6-3.1 3 .7 4.3L10 13.3l-3.8 2 .7-4.3-3.1-3 4.3-.6L10 3.5Z" />
   ),
@@ -56,6 +63,7 @@ const links = [
   { href: "/admin/orders", label: "Orders", icon: "orders" },
   { href: "/admin/products", label: "Listings", icon: "listings" },
   { href: "/admin/coupons", label: "Coupons", icon: "coupons" },
+  { href: "/admin/sales", label: "Sales", icon: "sales" },
   { href: "/admin/reviews", label: "Reviews", icon: "reviews" },
   { href: "/admin/users", label: "Users", icon: "users" },
   { href: "/admin/settings", label: "Settings", icon: "settings" },

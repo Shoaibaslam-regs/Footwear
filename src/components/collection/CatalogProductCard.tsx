@@ -118,7 +118,7 @@ export default function CatalogProductCard({
         </div>
         <div className="flex items-center justify-between pt-space-xs border-t border-outline-variant/20">
           <span className="font-body-md text-body-md sm:font-body-lg sm:text-body-lg text-primary font-medium">
-            <SalePrice price={p.price} compareAt={p.compareAt} discountPercent={p.discountPercent} />
+            <SalePrice compareAt={p.compareAt} discountPercent={p.discountPercent} price={p.price} saleTag={p.saleTag} />
           </span>
           {p.sold ? (
             <span className="font-label-uppercase text-[10px] text-secondary tracking-wider uppercase whitespace-nowrap">

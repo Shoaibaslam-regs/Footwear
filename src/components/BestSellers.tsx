@@ -10,7 +10,7 @@ export default async function BestSellers() {
     .map(toBestSellerCard);
   if (bestSellers.length === 0) return null;
   return (
-    <section className="w-full bg-surface-container-low py-space-xl lg:py-28">
+    <section className="w-full py-space-xl lg:py-28">
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm mb-space-lg lg:mb-space-xl">
           <div data-reveal>

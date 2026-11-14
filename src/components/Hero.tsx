@@ -2,13 +2,17 @@ import Link from "next/link";
 import { Fragment } from "react";
 import { getSiteSettings } from "@/lib/server/settings";
 import HeroSlideshow from "./HeroSlideshow";
+import SaleBanner from "./sale/SaleBanner";
+import { saleUpTo } from "@/lib/server/sale-events";
 
 export default async function Hero() {
-  const { heroSlides } = await getSiteSettings();
+  const [{ heroSlides }, upTo] = await Promise.all([getSiteSettings(), saleUpTo()]);
   // Phones: about half the screen (the fixed header overlaps its top). Tablet/desktop: tall editorial hero.
   return (
     <section className="relative w-full -mt-28 h-[56svh] min-h-[400px] max-h-[560px] sm:h-auto sm:max-h-none sm:min-h-[720px] lg:min-h-[100svh] flex items-end justify-start overflow-hidden bg-primary-container">
       <HeroSlideshow slides={heroSlides.map((s) => ({ image: s.url, alt: s.alt }))} />
+      {/* While a sale is live: a highlighted band over the top of the hero, under the header. */}
+      <SaleBanner upTo={upTo} />
       {/* Atmospheric Gradients & Scrim */}
       <div className="absolute inset-0 bg-linear-to-t/srgb from-primary via-primary/40 to-transparent pointer-events-none" />
       <div className="absolute inset-0 bg-linear-to-r/srgb from-primary/80 via-primary/30 to-transparent pointer-events-none" />

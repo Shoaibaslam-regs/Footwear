@@ -12,6 +12,8 @@ export type CatalogProduct = {
   price: number;
   compareAt?: number;
   discountPercent?: number;
+  /** Set by the catalogue while a sale event prices this shoe (e.g. "11.11"). */
+  saleTag?: string;
   /** Full Tailwind class strings for the color dots. */
   swatches: string[];
   quickSizes: number[];

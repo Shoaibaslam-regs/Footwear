@@ -8,8 +8,12 @@ export type CartItem = {
   drawerName: string;
   /** Unit price in PKR. */
   price: number;
-  /** The listing's own sale discount (0 = full price). Coupons can be full-price only. */
+  /** The discount that applies: the listing's own, or a live sale's (0 = full price). */
   discountPercent: number;
+  /** The discount coupon rules see (0 = full price): a sale that allows coupons counts as full price. */
+  couponPercent?: number;
+  /** The live sale this price comes from, if any. */
+  sale?: { name: string; tag: string };
   material: string;
   size: string;
   color: string;

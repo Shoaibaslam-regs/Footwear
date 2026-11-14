@@ -56,7 +56,7 @@ export default function RecentlyViewed({ current, catalogue }: { current: string
               </span>
               <span className="block font-headline-sm text-body-lg sm:text-headline-sm text-primary truncate group-hover:text-secondary transition-colors">{r.name}</span>
               <span className="block font-label-md text-label-sm sm:text-label-md font-semibold text-primary">
-                <SalePrice compareAt={r.compareAt} discountPercent={r.discountPercent} price={r.price} />
+                <SalePrice category={r.category} compareAt={r.compareAt} discountPercent={r.discountPercent} price={r.price} slug={r.id} />
               </span>
             </Link>
           </li>

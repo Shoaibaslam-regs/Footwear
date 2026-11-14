@@ -27,6 +27,8 @@ export type ProductDetail = {
   price: number;
   compareAt?: number;
   discountPercent?: number;
+  /** Listing category (for category-wide sale events). */
+  category?: string;
   /** "N sold" (online orders + other channels). */
   sold?: number;
   badges: { label: string; className: string }[];
