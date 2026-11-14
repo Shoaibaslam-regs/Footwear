@@ -12,6 +12,7 @@ import {
 } from "react";
 import SalePrice from "@/components/SalePrice";
 import SizeGuideLink from "@/components/SizeGuideLink";
+import PhotoZoom from "./PhotoZoom";
 import type { CatalogProduct } from "@/lib/collection-data";
 import { showToast } from "@/lib/toast";
 import { productId } from "@/lib/product-id";
@@ -116,9 +117,10 @@ function QuickViewStudio({
   visible: boolean;
   onClose: () => void;
 }) {
-  const [studio, setStudio] = useState(true);
+  // Opens on the photos (with zoom); the 360° turntable is one tap away.
+  const [studio, setStudio] = useState(false);
   const [angle, setAngle] = useState(0);
-  const [autoRotate, setAutoRotate] = useState(true);
+  const [autoRotate, setAutoRotate] = useState(false);
   const [dragging, setDragging] = useState(false);
   const [hintHidden, setHintHidden] = useState(false);
   const [size, setSize] = useState(
@@ -248,6 +250,7 @@ function QuickViewStudio({
   };
 
   const t = turntable(angle);
+  const photos = p.gallery?.length ? p.gallery : [{ url: p.image, alt: p.alt }];
   const modeBtn = (active: boolean) =>
     `px-3 py-1 rounded-full font-semibold transition-all flex items-center gap-1.5 whitespace-nowrap ${
       active
@@ -257,7 +260,7 @@ function QuickViewStudio({
 
   return (
     <div
-      className={`fixed inset-0 z-50 transition-opacity duration-300 flex items-center justify-center p-3 sm:p-5 lg:p-8 ${
+      className={`fixed inset-0 z-50 transition-opacity duration-300 flex items-end sm:items-center justify-center p-0 sm:p-5 lg:p-8 ${
         visible ? "opacity-100" : "opacity-0 pointer-events-none"
       }`}
     >
@@ -273,14 +276,14 @@ function QuickViewStudio({
         aria-labelledby="quick-view-title"
         aria-modal="true"
         role="dialog"
-        className={`relative w-full max-w-5xl bg-surface-container-lowest rounded-2xl shadow-2xl overflow-hidden border border-outline-variant/30 transform transition-all duration-300 max-h-[92vh] flex flex-col z-10 ${
-          visible ? "scale-100" : "scale-95"
+        className={`relative w-full max-w-5xl bg-surface-container-lowest rounded-t-2xl sm:rounded-2xl shadow-2xl overflow-hidden border border-outline-variant/30 transform transition-all duration-300 max-h-[94dvh] sm:max-h-[92vh] flex flex-col z-10 ${
+          visible ? "translate-y-0 sm:scale-100" : "translate-y-8 sm:translate-y-0 sm:scale-95"
         }`}
       >
         <button
           ref={closeRef}
           aria-label="Close Quick View"
-          className="absolute top-4 right-4 w-9 h-9 rounded-full bg-surface-container/80 hover:bg-primary hover:text-on-primary flex items-center justify-center text-on-surface transition-all duration-200 z-30 cursor-pointer shadow-sm"
+          className="absolute top-3 right-3 sm:top-4 sm:right-4 w-9 h-9 rounded-full bg-surface-container/80 hover:bg-primary hover:text-on-primary flex items-center justify-center text-on-surface transition-all duration-200 z-30 cursor-pointer shadow-sm"
           onClick={onClose}
           type="button"
         >
@@ -289,7 +292,9 @@ function QuickViewStudio({
 
         <div className="flex-1 overflow-y-auto grid grid-cols-1 lg:grid-cols-12 min-h-0">
           {/* LEFT STAGE: 360° Turntable & Still View */}
-          <div className="lg:col-span-7 bg-surface-container-low p-4 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-outline-variant/20 relative select-none">
+          <div className="lg:col-span-7 bg-surface-container-low p-3 pt-4 sm:p-6 flex flex-col justify-between border-b lg:border-b-0 lg:border-r border-outline-variant/20 relative select-none">
+            {/* Phones: the sheet's grab handle */}
+            <span aria-hidden="true" className="sm:hidden absolute top-1.5 left-1/2 -translate-x-1/2 w-10 h-1 rounded-full bg-outline-variant/70" />
             {/* Top bar: mode switch & angle readout */}
             <div className="flex flex-wrap items-center justify-between gap-2 mb-3 z-20 pr-10 lg:pr-0">
               <div
@@ -297,17 +302,6 @@ function QuickViewStudio({
                 className="inline-flex p-1 bg-surface-container rounded-full shadow-inner border border-outline-variant/30 text-xs font-label-uppercase"
                 role="group"
               >
-                <button
-                  aria-pressed={studio}
-                  className={modeBtn(studio)}
-                  onClick={() => setMode(true)}
-                  type="button"
-                >
-                  <span className="material-symbols-outlined text-[15px]">
-                    360
-                  </span>
-                  <span>360° View</span>
-                </button>
                 <button
                   aria-pressed={!studio}
                   className={modeBtn(!studio)}
@@ -319,10 +313,21 @@ function QuickViewStudio({
                   </span>
                   <span>Photo</span>
                 </button>
+                <button
+                  aria-pressed={studio}
+                  className={modeBtn(studio)}
+                  onClick={() => setMode(true)}
+                  type="button"
+                >
+                  <span className="material-symbols-outlined text-[15px]">
+                    360
+                  </span>
+                  <span>360° View</span>
+                </button>
               </div>
 
-              <div className="flex items-center gap-2">
-                <div className="px-2.5 py-1 bg-surface-container-lowest/90 backdrop-blur-md rounded-full border border-outline-variant/30 flex items-center gap-1 text-[11px] font-label-uppercase uppercase text-primary font-medium whitespace-nowrap">
+              <div className={`${studio ? "flex" : "hidden"} items-center gap-2`}>
+                <div className="hidden sm:flex px-2.5 py-1 bg-surface-container-lowest/90 backdrop-blur-md rounded-full border border-outline-variant/30 items-center gap-1 text-[11px] font-label-uppercase uppercase text-primary font-medium whitespace-nowrap">
                   <span className="text-secondary font-semibold">
                     {studio ? perspectiveLabel(angle) : "Photo"}
                   </span>
@@ -349,9 +354,12 @@ function QuickViewStudio({
               </div>
             </div>
 
+            {!studio && <PhotoZoom name={p.name} photos={photos} />}
+
             {/* Turntable viewport */}
+            {studio && (
             <div
-              className={`relative w-full aspect-[4/3] sm:aspect-[1/1] max-h-[460px] rounded-xl bg-linear-to-b/srgb from-surface-container-lowest to-surface-container-low border border-outline-variant/30 flex items-center justify-center overflow-hidden shadow-inner group touch-pan-y ${
+              className={`relative w-full aspect-square max-h-[46dvh] sm:max-h-[460px] rounded-xl bg-linear-to-b/srgb from-surface-container-lowest to-surface-container-low border border-outline-variant/30 flex items-center justify-center overflow-hidden shadow-inner group touch-pan-y ${
                 studio ? (dragging ? "cursor-grabbing" : "cursor-grab") : ""
               }`}
               onPointerDown={onPointerDown}
@@ -392,8 +400,9 @@ function QuickViewStudio({
                 <span>Drag left or right to turn the shoe</span>
               </div>
             </div>
+            )}
 
-            {studio ? (
+            {studio && (
               /* 360 scrub control bar */
               <div className="mt-4 pt-3 border-t border-outline-variant/20 flex flex-col gap-2">
                 <div className="flex flex-wrap items-center justify-between gap-y-1 text-[11px] font-label-uppercase uppercase text-outline">
@@ -403,7 +412,7 @@ function QuickViewStudio({
                     </span>{" "}
                     Turn the shoe
                   </span>
-                  <div className="flex items-center gap-3">
+                  <div className="hidden sm:flex items-center gap-3">
                     {PRESETS.map((pr) => (
                       <button
                         key={pr.angle}
@@ -430,33 +439,12 @@ function QuickViewStudio({
                   />
                 </div>
               </div>
-            ) : (
-              /* Still view thumbnails */
-              <div className="mt-3 pt-3 border-t border-outline-variant/20 flex items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <span className="relative w-12 h-12 rounded border-2 border-primary overflow-hidden">
-                    <Image
-                      alt=""
-                      className="object-cover"
-                      src={p.image}
-                      fill
-                      sizes="48px"
-                    />
-                  </span>
-                  <span className="text-[11px] font-label-uppercase uppercase text-outline">
-                    High-Quality Photo
-                  </span>
-                </div>
-                <span className="text-xs text-secondary font-label-uppercase">
-                  Made in Karachi
-                </span>
-              </div>
             )}
           </div>
 
           {/* RIGHT STAGE: details & purchasing */}
-          <div className="lg:col-span-5 p-6 md:p-8 flex flex-col justify-between space-y-5 bg-surface-container-lowest">
-            <div className="space-y-4">
+          <div className="lg:col-span-5 p-4 pb-0 sm:p-6 md:p-8 flex flex-col justify-between space-y-4 sm:space-y-5 bg-surface-container-lowest">
+            <div className="space-y-3 sm:space-y-4">
               <div>
                 <div className="flex items-center justify-between text-outline text-[11px] font-label-uppercase uppercase tracking-wider mb-1 lg:pr-10">
                   <span>{p.spec}</span>
@@ -466,7 +454,7 @@ function QuickViewStudio({
                 </div>
                 <h2
                   id="quick-view-title"
-                  className="font-headline-md text-headline-md text-primary tracking-tight font-normal"
+                  className="font-headline-md text-[22px] leading-tight sm:text-headline-md text-primary tracking-tight font-normal"
                 >
                   {p.href ? (
                     <Link
@@ -493,26 +481,27 @@ function QuickViewStudio({
               </div>
 
               <div className="flex flex-wrap items-baseline gap-2 pt-1 border-b border-outline-variant/20 pb-3">
-                <span className="font-body-lg text-2xl font-medium text-primary">
+                <span className="font-body-lg text-xl sm:text-2xl font-medium text-primary">
                   <SalePrice price={p.price} compareAt={p.compareAt} discountPercent={p.discountPercent} />
                 </span>
-                <span className="font-label-uppercase text-xs text-outline uppercase tracking-wider">
+                <span className="font-label-uppercase text-[10px] sm:text-xs text-outline uppercase tracking-wider">
                   Taxes &amp; Fast Delivery Included
                 </span>
               </div>
 
-              {/* 360 feature highlight */}
-              <div className="p-3 bg-secondary-container/30 rounded-xl border border-secondary-fixed/50 flex items-start gap-2.5">
+              {/* 360 feature highlight (only while the turntable is showing) */}
+              <div className="hidden lg:flex p-3 bg-secondary-container/30 rounded-xl border border-secondary-fixed/50 items-start gap-2.5">
                 <span className="material-symbols-outlined text-secondary text-[20px] mt-0.5">
                   view_in_ar
                 </span>
                 <div className="text-xs">
                   <div className="font-label-uppercase uppercase font-semibold text-primary tracking-wider">
-                    360° View Is On
+                    {studio ? "360° View Is On" : "Try the 360° View"}
                   </div>
                   <div className="text-on-surface-variant text-[11px] leading-relaxed">
-                    Turn the shoe above to see the hand stitching, heel and arch
-                    from every side.
+                    {studio
+                      ? "Turn the shoe to see the hand stitching, heel and arch from every side."
+                      : "Hover a photo to zoom in, or switch to 360° to turn the shoe."}
                   </div>
                 </div>
               </div>
@@ -523,8 +512,8 @@ function QuickViewStudio({
                   <span className="font-label-uppercase text-xs font-semibold uppercase text-primary tracking-wider">
                     Choose EU Size
                   </span>
-                  <SizeGuideLink className="text-xs text-secondary hover:underline font-label-uppercase">
-                    Size Guide (Fits True to Size)
+                  <SizeGuideLink className="text-[11px] sm:text-xs text-secondary hover:underline font-label-uppercase">
+                    Size Guide<span className="hidden sm:inline"> (Fits True to Size)</span>
                   </SizeGuideLink>
                 </div>
                 <div
@@ -536,7 +525,7 @@ function QuickViewStudio({
                     <button
                       key={s}
                       aria-checked={s === size}
-                      className={`h-9 rounded text-xs font-medium transition-all cursor-pointer ${
+                      className={`h-10 sm:h-9 rounded-lg sm:rounded text-xs font-medium transition-all cursor-pointer ${
                         s === size
                           ? "bg-primary text-on-primary"
                           : "bg-surface-container hover:bg-surface-container-high text-on-surface"
@@ -552,7 +541,7 @@ function QuickViewStudio({
               </div>
 
               {/* Actions */}
-              <div className="pt-2 flex items-center gap-3">
+              <div className="pt-2 max-sm:sticky max-sm:bottom-0 max-sm:z-10 max-sm:-mx-4 max-sm:px-4 max-sm:py-3 max-sm:bg-surface-container-lowest/95 max-sm:backdrop-blur-md max-sm:border-t max-sm:border-outline-variant/30 max-sm:pb-[calc(env(safe-area-inset-bottom)+0.75rem)] flex items-center gap-3">
                 <button
                   className="btn-shimmer flex-1 py-3.5 px-space-lg bg-primary hover:bg-secondary-fixed text-on-primary hover:text-on-secondary-fixed font-label-uppercase text-xs uppercase tracking-widest transition-all duration-300 rounded-full shadow-md flex items-center justify-center gap-2 cursor-pointer"
                   onClick={addToBag}
@@ -584,12 +573,12 @@ function QuickViewStudio({
             </div>
 
             {/* Reassurance footer */}
-            <div className="border-t border-outline-variant/20 pt-4 space-y-2">
+            <div className="hidden sm:block border-t border-outline-variant/20 pt-4 space-y-2">
               <div className="flex items-center gap-2 text-on-surface-variant font-body-sm text-xs">
                 <span className="material-symbols-outlined text-secondary text-[16px]">
                   payments
                 </span>
-                <span>Cash on Delivery, EasyPaisa &amp; JazzCash accepted</span>
+                <span>Cash on Delivery across Pakistan</span>
               </div>
               <div className="flex items-center gap-2 text-on-surface-variant font-body-sm text-xs">
                 <span className="material-symbols-outlined text-secondary text-[16px]">

@@ -68,3 +68,33 @@ test("scratching is rough: one swipe leaves a gold film, a few rubs reveal the c
   await expect(page.getByText("SCRATCH20").first()).toBeVisible();
   expect(await scratched(page)).toBe(100);
 });
+
+test("the reveal happens once, even when the finger stays down and keeps scratching", async ({ page }) => {
+  await page.setViewportSize({ width: 1280, height: 1500 });
+  await logInAs(page, await createUser({ name: "Iqra", email: "iqra.scratch@example.com" }), "customer");
+  // Each reveal tells the server (a server action POST); count them.
+  let reveals = 0;
+  page.on("request", (r) => {
+    if (r.method() === "POST" && r.headers()["next-action"] && r.url().includes("/offers/")) reveals++;
+  });
+  await page.goto("/offers/SCRATCH20");
+  await expect(page.locator('canvas[role="img"]')).toBeVisible();
+  await page.waitForTimeout(800);
+
+  // One long stroke without lifting the mouse: back and forth across the card,
+  // well past the reveal point.
+  const box = (await page.locator('canvas[role="img"]').boundingBox())!;
+  await page.mouse.move(box.x + 12, box.y + 12);
+  await page.mouse.down();
+  for (let pass = 0; pass < 8 && (await page.getByText("Revealed").count()) === 0; pass++) {
+    for (let r = 0.08; r < 0.95; r += 0.06) {
+      for (let x = 12; x < box.width - 12; x += 24) await page.mouse.move(box.x + x, box.y + box.height * r, { steps: 2 });
+    }
+  }
+  await expect(page.getByText("Revealed")).toBeVisible();
+  // Keep scratching after the reveal, still without lifting.
+  for (let x = 12; x < box.width - 12; x += 8) await page.mouse.move(box.x + x, box.y + box.height * 0.5);
+  await page.mouse.up();
+  await page.waitForTimeout(800);
+  expect(reveals).toBe(1);
+});

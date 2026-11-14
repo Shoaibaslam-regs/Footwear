@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { address, createUser, logInAs, pickShoe, putInBag, setupStore } from "./helpers";
+import { address, createUser, logInAs, makeReturning, pickShoe, putInBag, setupStore } from "./helpers";
 
 test.beforeAll(setupStore);
 
@@ -7,11 +7,11 @@ test("a second order starts a fresh checkout, not the last order's thank-you scr
   const userId = await createUser({ name: "Hina Shah", email: `hina.${info.project.name}@example.com`, savedAddress: address });
   const shoe = await pickShoe();
   await putInBag(userId, shoe.slug, shoe.sizes[0]);
+  await makeReturning(userId); // Cash on Delivery without the email code
   await logInAs(page, userId, "customer");
 
-  // First order (bank transfer: no code needed).
+  // First order.
   await page.goto("/checkout");
-  await page.getByLabel("Bank Transfer").check();
   await page.locator('button[type="submit"]:visible', { hasText: "Place Order" }).first().click();
   await expect(page.getByRole("heading", { name: /Thank You/ })).toBeVisible();
 
@@ -34,4 +34,63 @@ test("a second order starts a fresh checkout, not the last order's thank-you scr
   await expect(page.getByText("Order Summary").filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByText(/1 pair/i).filter({ visible: true }).first()).toBeVisible();
   await expect(page.getByRole("link", { name: /Shopping Bag \(1 items?\)/ })).toBeVisible();
+});
+
+test("quick view photos zoom on a tap and back on a second tap @phone", async ({ page }, info) => {
+  test.skip(info.project.name !== "phone", "touch only");
+  const shoe = await pickShoe();
+  await page.goto("/collections");
+  await page.locator('main h3 button[aria-haspopup="dialog"]:visible', { hasText: shoe.name }).first().click();
+  const dialog = page.getByRole("dialog");
+  const photo = dialog.getByRole("group", { name: /photo 1 of/ });
+  await expect(photo).toBeVisible();
+  await photo.tap();
+  await expect(dialog.getByRole("button", { name: "Zoom out" })).toBeVisible();
+  await photo.tap();
+  await expect(dialog.getByRole("button", { name: "Zoom in" })).toBeVisible();
+});
+
+test("the sort menu is a themed list that sorts the shoes", async ({ page }) => {
+  await page.goto("/collections");
+  await page.getByRole("button", { name: /Sort products: Featured/ }).click();
+  const list = page.getByRole("listbox", { name: "Sort products" });
+  await expect(list.getByRole("option", { name: "Featured" })).toHaveAttribute("aria-selected", "true");
+  await list.getByRole("option", { name: "Price: Low to High" }).click();
+  await expect(list).toHaveCount(0);
+  await expect(page).toHaveURL(/sort=price-asc/);
+  await expect(page.getByRole("button", { name: /Sort products: Price: Low to High/ })).toBeVisible();
+  // Keyboard: arrow down opens, Enter picks.
+  await page.getByRole("button", { name: /Sort products/ }).focus();
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("ArrowDown");
+  await page.keyboard.press("Enter");
+  await expect(page).toHaveURL(/sort=best/);
+});
+
+test("checkout progress follows the boxes filled in, live @phone", async ({ page }, info) => {
+  const userId = await createUser({ name: "Zara", email: `zara.steps.${info.project.name}@example.com`, savedAddress: address });
+  const shoe = await pickShoe();
+  await putInBag(userId, shoe.slug, shoe.sizes[0]);
+  await logInAs(page, userId, "customer");
+  await page.goto("/checkout");
+  const steps = page.getByRole("navigation", { name: "Checkout steps" });
+  const step = (name: string) => steps.getByRole("button", { name });
+
+  // Saved details fill every box: all four steps are ticked.
+  await expect(step("Step 4: Payment, done")).toBeVisible();
+
+  // Empty the city: the bar falls back to Address and the later steps lose their ticks.
+  await page.getByLabel("City *").fill("");
+  await expect(step("Step 2: Address, to do")).toBeVisible();
+  await expect(step("Step 1: Contact, done")).toBeVisible();
+  await expect(step("Step 3: Delivery")).toBeVisible();
+  await expect(step("Step 4: Payment")).toBeVisible();
+
+  // Type it back: complete again, as it's typed.
+  await page.getByLabel("City *").fill("Lahore");
+  await expect(step("Step 4: Payment, done")).toBeVisible();
+
+  // A bad email undoes even the first step.
+  await page.getByLabel("Email *").fill("zara@");
+  await expect(step("Step 1: Contact, to do")).toBeVisible();
 });

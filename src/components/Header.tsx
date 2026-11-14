@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { getSiteSettings } from "@/lib/server/settings";
 import { toSearchEntry } from "@/lib/products";
@@ -43,7 +44,16 @@ export default async function Header() {
           </Suspense>
           <MobileMenu />
           <div className="flex items-center justify-center">
-            <Link className="flex items-center group" href="/">
+            <Link aria-label="Ŕose Atelier, home" className="flex items-center gap-1.5 sm:gap-2.5 group" href="/">
+              {/* The site icon (src/app/icon.png), before the name. */}
+              <Image
+                alt=""
+                className="w-7 h-7 sm:w-9 sm:h-9 object-contain transition-transform duration-300 group-hover:-rotate-6 motion-reduce:transition-none"
+                height={36}
+                priority
+                src="/icon.png"
+                width={36}
+              />
               <span className="font-headline-md text-[15px] leading-none tracking-[0.12em] min-[380px]:text-[17px] min-[380px]:tracking-[0.14em] sm:text-headline-md sm:tracking-[0.22em] uppercase text-primary font-normal whitespace-nowrap">
                 R&apos;ose
               </span>

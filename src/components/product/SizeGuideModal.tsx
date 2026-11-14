@@ -25,7 +25,7 @@ function SizeGuidePanel({ onClose }: { onClose: () => void }) {
   const panelRef = useDialog<HTMLDivElement>(true, onClose);
 
   return (
-    <div className="fixed inset-0 z-[70] overflow-y-auto overscroll-contain bg-primary/60 backdrop-blur-sm">
+    <div className="sheet-fade fixed inset-0 z-[70] overflow-y-auto overscroll-contain bg-primary/60 backdrop-blur-sm">
       <div
         className="min-h-full flex items-end sm:items-center justify-center p-0 sm:p-4"
         onClick={(e) => e.target === e.currentTarget && onClose()}
@@ -35,8 +35,10 @@ function SizeGuidePanel({ onClose }: { onClose: () => void }) {
           aria-labelledby="size-guide-title"
           aria-modal="true"
           role="dialog"
-          className="bg-surface max-w-2xl w-full p-space-lg shadow-xl relative rounded-t-2xl sm:rounded-none"
+          className="sheet-up bg-surface max-w-2xl w-full p-space-lg pt-space-md sm:pt-space-lg shadow-xl relative rounded-t-2xl sm:rounded-none"
         >
+          {/* Phones: the sheet's grab handle */}
+          <div aria-hidden="true" className="sm:hidden mx-auto mb-space-sm h-1.5 w-12 rounded-full bg-outline-variant" />
           <div className="flex items-center justify-between pb-space-md border-b border-outline-variant/30">
             <div>
               <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">

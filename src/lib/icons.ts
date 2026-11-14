@@ -31,6 +31,7 @@ export const ICON_NAMES = [
   "credit_card",
   "dashboard",
   "delete",
+  "edit",
   "error",
   "expand_more",
   "favorite",
@@ -78,6 +79,7 @@ export const ICON_NAMES = [
   "warning",
   "workspace_premium",
   "zoom_in",
+  "zoom_out",
 ] as const;
 
 /** Google Fonts CSS for the subset: fill axis only (for .icon-filled), regular weight. */

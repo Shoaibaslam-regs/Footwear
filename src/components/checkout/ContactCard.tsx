@@ -9,7 +9,7 @@ export default function ContactCard({
   errors?: FieldErrors;
 }) {
   return (
-    <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm">
+    <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm scroll-mt-28" id="step-section-contact">
       <div className="flex items-baseline justify-between mb-space-md">
         <div className="flex items-center gap-space-sm">
           <span className="w-7 h-7 bg-primary text-on-primary font-label-uppercase text-label-uppercase flex items-center justify-center font-semibold">

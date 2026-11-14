@@ -84,6 +84,21 @@ export async function putInBag(userId: ObjectId, slug: string, size: number, qua
   );
 }
 
+/**
+ * Gives the account a delivered order, so Cash on Delivery places at once
+ * (only first-time customers confirm it with an email code).
+ */
+export async function makeReturning(userId: ObjectId) {
+  const now = new Date(Date.now() - 30 * 86_400_000);
+  await (await db()).collection("orders").insertOne({
+    _id: new ObjectId(), number: `PAST-${userId.toHexString().slice(-6)}`, userId, status: "delivered",
+    customer: { name: "Past order", email: "past@example.com", phone: address.phone },
+    address: { ...address, country: "PK" }, items: [], listTotal: 0, discountTotal: 0, shippingFee: 0, total: 0,
+    delivery: { id: "standard", name: "Standard Delivery" }, payment: { method: "cod", status: "paid", reference: "" },
+    trackingNumber: "", history: [], statusDates: {}, createdAt: now, updatedAt: now,
+  });
+}
+
 /** Emails the fake mail server received for this address (newest last). */
 export async function mailTo(email: string): Promise<{ subject: string; code: string | null; links: string[] }[]> {
   const res = await fetch(`http://127.0.0.1:2526/messages?to=${encodeURIComponent(email.toLowerCase())}`);

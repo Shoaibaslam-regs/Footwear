@@ -57,17 +57,17 @@ export default async function ProductPage({
         <div className="flex items-center justify-between font-label-uppercase text-label-uppercase text-on-surface-variant">
           <nav
             aria-label="Breadcrumb"
-            className="flex items-center gap-space-xs tracking-widest text-[10px] uppercase"
+            className="flex items-center gap-space-xs tracking-widest text-[10px] uppercase min-w-0 whitespace-nowrap"
           >
-            <Link className="hover:text-on-surface transition-colors" href="/collections">
+            <Link className="hover:text-on-surface transition-colors shrink-0" href="/collections">
               Collections
             </Link>
             <span>/</span>
-            <Link className="hover:text-on-surface transition-colors" href="/collections">
+            <Link className="hover:text-on-surface transition-colors shrink-0" href="/collections">
               {product.breadcrumbCategory}
             </Link>
             <span>/</span>
-            <span className="text-primary font-medium">
+            <span className="text-primary font-medium truncate min-w-0">
               {product.breadcrumbName}
             </span>
           </nav>

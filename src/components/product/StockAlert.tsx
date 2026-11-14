@@ -22,7 +22,7 @@ export default function StockAlert({ slug, soldOut }: { slug: string; soldOut: s
         Size to be notified about
       </label>
       <select
-        className="h-8 px-2 bg-surface-container text-on-surface rounded"
+        className="h-8 px-2 bg-surface-container text-on-surface rounded-none"
         id="alert-size"
         onChange={(e) => setSize(e.target.value)}
         value={size}
@@ -34,7 +34,7 @@ export default function StockAlert({ slug, soldOut }: { slug: string; soldOut: s
         ))}
       </select>
       <button
-        className="h-8 px-space-sm rounded-full bg-surface-container hover:bg-primary hover:text-on-primary text-primary font-label-uppercase text-[11px] uppercase tracking-wider transition-colors disabled:opacity-50"
+        className="h-8 px-space-sm rounded-none bg-surface-container hover:bg-primary hover:text-on-primary text-primary font-label-uppercase text-[11px] uppercase tracking-wider transition-colors disabled:opacity-50"
         disabled={busy || wait > 0}
         onClick={async () => {
           if (!(await requireLogin("get back-in-stock alerts"))) return;

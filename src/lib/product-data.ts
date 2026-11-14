@@ -116,7 +116,7 @@ export const products: Record<string, ProductDetail> = {
       "Fits true to size. If you have wide feet, we suggest taking half a size bigger.",
     // Shown on every product page: keep to facts the business actually offers.
     guarantees: [
-      { icon: "payments", title: "Pay your way:", text: "Cash on Delivery, EasyPaisa, JazzCash or bank transfer." },
+      { icon: "payments", title: "Cash on Delivery:", text: "Pay the courier in cash when your order arrives." },
       { icon: "local_shipping", title: "Delivery across Pakistan:", text: "Options and charges are shown at checkout." },
       { icon: "chat", title: "Need help choosing?", text: "Message us on WhatsApp before you order." },
     ],

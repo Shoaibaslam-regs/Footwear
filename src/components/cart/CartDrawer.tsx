@@ -138,7 +138,7 @@ export default function CartDrawer({
               <div className="p-space-sm bg-surface-container-low rounded-lg mt-space-sm flex items-center gap-2">
                 <span className="material-symbols-outlined text-secondary text-[18px]">payments</span>
                 <span className="font-label-sm text-label-sm text-primary font-medium">
-                  Cash on Delivery, EasyPaisa &amp; JazzCash accepted
+                  Cash on Delivery across Pakistan
                 </span>
               </div>
             </div>

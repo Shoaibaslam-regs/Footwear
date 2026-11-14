@@ -30,7 +30,7 @@ export type CartItem = {
 
 
 export const reassurances = [
-  { icon: "payments", text: "Cash on Delivery, EasyPaisa & JazzCash accepted" },
+  { icon: "payments", text: "Cash on Delivery across Pakistan" },
   { icon: "straighten", text: "Pakistani size guide on every product" },
   { icon: "chat", text: "Help on WhatsApp before and after you order" },
 ];

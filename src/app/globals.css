@@ -242,6 +242,44 @@
   font-variation-settings: "FILL" 1;
 }
 
+/* Bottom sheets on phones (filters, size guide): slide up with a soft
+   settle, the backdrop fades, and the content rises in a beat later. */
+@keyframes sheetUp {
+  from {
+    transform: translateY(100%);
+  }
+}
+@keyframes sheetFade {
+  from {
+    opacity: 0;
+  }
+}
+@keyframes sheetContent {
+  from {
+    opacity: 0;
+    transform: translateY(14px);
+  }
+}
+@media (max-width: 639px) and (prefers-reduced-motion: no-preference) {
+  .sheet-up {
+    animation: sheetUp 480ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+  .sheet-fade {
+    animation: sheetFade 300ms ease-out both;
+  }
+  .sheet-content {
+    animation: sheetContent 420ms 140ms cubic-bezier(0.32, 0.72, 0, 1) both;
+  }
+}
+
+/* Sort dropdown opening (components/collection/SortMenu.tsx) */
+@keyframes sortIn {
+  from {
+    opacity: 0;
+    transform: translateY(-4px) scale(0.98);
+  }
+}
+
 /* Icon sizes. Google's icon stylesheet sets every icon to 24px outside any
    layer, which beats Tailwind's layered size classes (text-[16px] etc.).
    revert-layer hands the size back to the layers: a size class if the icon

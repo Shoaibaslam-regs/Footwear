@@ -10,7 +10,7 @@ export default function CraftSection() {
             <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
               How It&apos;s Made
             </span>
-            <h2 className="font-headline-lg text-headline-lg text-primary tracking-tight font-normal">
+            <h2 className="font-headline-sm text-[26px] leading-tight lg:font-headline-lg-mobile lg:text-headline-lg-mobile text-primary font-normal tracking-tight">
               Comfortable for 8 Hours, Light on the Feet.
             </h2>
             <p className="hidden sm:block font-body-lg text-body-lg text-on-surface-variant font-light">

@@ -18,6 +18,8 @@ export type CatalogProduct = {
   quickSelected?: number;
   image: string;
   alt: string;
+  /** All photos, cover first (Quick View shows them). Falls back to `image`. */
+  gallery?: { url: string; alt: string }[];
 };
 
 export const catalogProducts: CatalogProduct[] = [
@@ -138,3 +140,10 @@ export const assurances = [
     text: "Made in certified family workshops in Karachi, checked for eco-friendly practices.",
   },
 ];
+
+/** Shop page heading and its one line (phones get the shorter line). */
+export const collectionIntro = {
+  title: "Atelier Collections",
+  line: "Cut, stitched and finished by hand in our own workshop, with Pakistani sizes on every pair.",
+  lineShort: "Cut, stitched and finished by hand.",
+};

@@ -5,7 +5,7 @@ import { z } from "zod";
 import { getCurrentUser } from "@/lib/auth/dal";
 import { countries } from "@/lib/checkout-data";
 import { getSiteSettings } from "@/lib/server/settings";
-import { isWalletMethod, paymentMethods, type Order, type OrderItem } from "@/lib/orders";
+import { checkoutMethodValues, isWalletMethod, type Order, type PaymentMethod, type OrderItem } from "@/lib/orders";
 import { salePrice } from "@/lib/products";
 import { insertOrder } from "@/lib/server/orders";
 import { getPublishedProducts } from "@/lib/server/products";
@@ -55,7 +55,7 @@ const schema = z.object({
   postalCode: text(20, "Enter your postal code."),
   country: z.enum(countries.map((c) => c.code) as [string, ...string[]], "Choose a country."),
   delivery: z.string().min(1, "Choose a delivery option.").max(60),
-  paymentMethod: z.enum(paymentMethods.map((m) => m.value), "Choose a payment method."),
+  paymentMethod: z.enum(checkoutMethodValues as [PaymentMethod, ...PaymentMethod[]], "Choose a payment method."),
   walletNumber: z.string().trim(),
 });
 

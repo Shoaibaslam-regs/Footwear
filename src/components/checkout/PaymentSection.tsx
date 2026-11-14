@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useBottomBar } from "@/lib/use-bottom-bar";
-import { paymentMethods, type PaymentMethod } from "@/lib/orders";
+import { checkoutMethods, type PaymentMethod } from "@/lib/orders";
 import { formatPrice as formatIn } from "@/lib/currency";
 import { FieldError, fieldInput, fieldLabel, type FieldErrors } from "./fields";
 import { clock, tryAgainIn } from "@/lib/use-cooldown";
@@ -35,7 +35,9 @@ export default function PaymentSection({
   const [method, setMethod] = useState<PaymentMethod>("cod");
   // Orders are charged in PKR, whatever display currency is selected.
   const formatPKR = (n: number) => formatIn(n, "PKR");
-  const active = paymentMethods.find((m) => m.value === method)!;
+  const active = checkoutMethods.find((m) => m.value === method) ?? checkoutMethods[0];
+  // With one method there is nothing to choose: it shows as a selected card.
+  const single = checkoutMethods.length === 1;
 
   return (
     <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm scroll-mt-28" id="step-section-payment">
@@ -48,13 +50,13 @@ export default function PaymentSection({
         </div>
         <div className="flex items-center gap-1 text-on-surface-variant font-label-uppercase text-[11px] uppercase tracking-widest">
           <span className="material-symbols-outlined text-[16px] text-secondary">lock</span>
-          <span>No card or PIN details stored</span>
+          <span>Pay when it arrives</span>
         </div>
       </div>
 
       <fieldset className="space-y-space-sm">
         <legend className="sr-only">Payment method</legend>
-        {paymentMethods.map((m) => {
+        {checkoutMethods.map((m) => {
           const isActive = method === m.value;
           return (
             <div
@@ -67,7 +69,7 @@ export default function PaymentSection({
                 <span className="flex items-center gap-space-sm">
                   <input
                     checked={isActive}
-                    className="accent-primary w-4 h-4 cursor-pointer"
+                    className={single ? "sr-only" : "accent-primary w-4 h-4 cursor-pointer"}
                     name="paymentMethod"
                     onChange={() => setMethod(m.value)}
                     type="radio"
@@ -125,14 +127,16 @@ export default function PaymentSection({
             {wait > 0 ? tryAgainIn(wait) : pending ? "Placing order…" : `Place Order (${formatPKR(total)})`}
           </span>
         </button>
-        <p className="mt-space-sm text-center font-body-sm text-body-sm text-on-surface-variant">
-          Paying with {active.label}. {active.wallet ? "Keep your phone nearby to approve the payment." : ""}
-        </p>
-        <div className="mt-space-sm flex flex-wrap items-center justify-center gap-space-md text-on-surface-variant font-label-uppercase text-[11px] uppercase tracking-wider">
+        {!single && (
+          <p className="mt-space-sm text-center font-body-sm text-body-sm text-on-surface-variant">
+            Paying with {active.label}. {active.wallet ? "Keep your phone nearby to approve the payment." : ""}
+          </p>
+        )}
+        <div className="mt-space-sm flex flex-wrap items-center justify-center gap-x-space-md gap-y-1 text-on-surface-variant font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-wider">
           <span className="flex items-center gap-1">
             <span className="material-symbols-outlined text-[14px] text-secondary">verified</span> Guaranteed Authenticity
           </span>
-          <span>•</span>
+          <span className="hidden sm:inline">•</span>
           <span className="flex items-center gap-1">
             <span className="material-symbols-outlined text-[14px] text-secondary">autorenew</span> 30-Day Returns
           </span>

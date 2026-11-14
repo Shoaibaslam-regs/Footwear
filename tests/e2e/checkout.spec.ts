@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { ObjectId } from "mongodb";
-import { address, createUser, db, logInAs, pickShoe, putInBag, setupStore, typeCode, waitForCode } from "./helpers";
+import { address, createUser, db, logInAs, makeReturning, pickShoe, putInBag, setupStore, typeCode, waitForCode } from "./helpers";
 
 let adminId: ObjectId;
 test.beforeAll(async () => {
@@ -68,6 +68,7 @@ test("a coupon applied at checkout is taken off the order total", async ({ page 
   });
   const shoe = await pickShoe();
   await putInBag(userId, shoe.slug, shoe.sizes[0]);
+  await makeReturning(userId); // Cash on Delivery without the email code
   await logInAs(page, userId, "customer");
 
   await page.goto("/checkout");
@@ -76,10 +77,9 @@ test("a coupon applied at checkout is taken off the order total", async ({ page 
   await page.locator("#coupon-code").press("Enter");
   await expect(page.getByText("TEST20").first()).toBeVisible();
 
-  await page.getByLabel("Bank Transfer").check(); // no code needed for bank transfer
   await placeOrder(page);
   await expect(page.getByRole("heading", { name: /Thank You/ })).toBeVisible();
-  const order = await (await db()).collection("orders").findOne({ userId });
+  const order = await (await db()).collection("orders").findOne({ userId, status: { $ne: "delivered" } });
   expect(order?.coupon).toMatchObject({ code: "TEST20", discount: Math.round(shoe.price * 0.2) });
   expect(order?.total).toBe(shoe.price - Math.round(shoe.price * 0.2) + order!.shippingFee);
   expect((await (await db()).collection("coupons").findOne({ code: "TEST20" }))?.uses).toBe(1);
@@ -101,16 +101,33 @@ test("a coupon on 1 pair takes the percent off only the dearest pair", async ({ 
     { $set: { bag: [{ slug: dear.slug, size: dear.sizes[0], quantity: 1, addedAt: new Date() }, { slug: cheap.slug, size: cheap.sizes[0], quantity: 2, addedAt: new Date() }], wishlist: [] } },
     { upsert: true },
   );
+  await makeReturning(userId); // Cash on Delivery without the email code
   await logInAs(page, userId, "customer");
   await page.goto("/checkout");
   await page.getByRole("button", { name: "Have a coupon code?" }).first().click();
   await page.locator("#coupon-code").fill("ONEPAIR");
   await page.locator("#coupon-code").press("Enter");
   await expect(page.getByText("ONEPAIR").first()).toBeVisible();
-  await page.getByLabel("Bank Transfer").check();
   await placeOrder(page);
   await expect(page.getByRole("heading", { name: /Thank You/ })).toBeVisible();
-  const order = await (await db()).collection("orders").findOne({ userId });
+  const order = await (await db()).collection("orders").findOne({ userId, status: { $ne: "delivered" } });
   expect(order?.coupon).toMatchObject({ code: "ONEPAIR", discount: Math.round(dear.price * 0.2) });
   expect(order?.total).toBe(dear.price + 2 * cheap.price - Math.round(dear.price * 0.2) + order!.shippingFee);
+});
+
+test("checkout offers Cash on Delivery only, and the server refuses any other method", async ({ page }) => {
+  const userId = await createUser({ name: "Sana", email: "sana.cod@example.com", savedAddress: address });
+  const shoe = await pickShoe();
+  await putInBag(userId, shoe.slug, shoe.sizes[0]);
+  await makeReturning(userId);
+  await logInAs(page, userId, "customer");
+  await page.goto("/checkout");
+  await expect(page.getByText("Cash on Delivery").filter({ visible: true }).first()).toBeVisible();
+  for (const other of ["EasyPaisa", "JazzCash", "Bank Transfer", "Debit / Credit Card"]) await expect(page.getByLabel(other)).toHaveCount(0);
+
+  // A tampered form (someone edits the page) is refused, and no order is made.
+  await page.locator('input[name="paymentMethod"]').evaluate((el: HTMLInputElement) => (el.value = "bank"));
+  await placeOrder(page);
+  await expect(page.getByText("Choose a payment method.").first()).toBeVisible();
+  expect(await (await db()).collection("orders").countDocuments({ userId, status: { $ne: "delivered" } })).toBe(0);
 });

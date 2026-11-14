@@ -76,6 +76,12 @@ export const paymentMethods = [
     wallet: false,
   },
 ] as const;
+/**
+ * What checkout offers today: Cash on Delivery only. The other methods stay
+ * above so older orders keep their labels; add a value here to offer one again.
+ */
+export const checkoutMethodValues: readonly PaymentMethod[] = ["cod"];
+export const checkoutMethods = paymentMethods.filter((m) => checkoutMethodValues.includes(m.value));
 /** Methods that need the client's mobile-wallet number. */
 export const isWalletMethod = (m: string) => paymentMethods.some((p) => p.value === m && p.wallet);
 export type PaymentMethod = (typeof paymentMethods)[number]["value"];

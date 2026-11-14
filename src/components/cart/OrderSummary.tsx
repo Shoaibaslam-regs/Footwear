@@ -2,7 +2,7 @@ import { reassurances } from "@/lib/cart-data";
 import Link from "next/link";
 import { whatsappUrl } from "@/lib/data";
 import Price from "@/components/Price";
-import { paymentMethods } from "@/lib/orders";
+import { checkoutMethods } from "@/lib/orders";
 
 export default function OrderSummary({
   pieces,
@@ -49,9 +49,9 @@ export default function OrderSummary({
 
           {/* Accepted payments */}
           <div className="p-space-sm bg-surface-container-low rounded-lg mt-1 flex flex-col gap-2">
-            <p className="font-body-sm text-body-sm text-on-surface-variant">Pay your way at checkout:</p>
+            <p className="font-body-sm text-body-sm text-on-surface-variant">Pay at your door:</p>
             <ul className="flex flex-wrap gap-1.5" aria-label="Accepted payment methods">
-              {paymentMethods.map((m) => (
+              {checkoutMethods.map((m) => (
                 <li
                   key={m.value}
                   className="font-label-uppercase text-[10px] tracking-wider uppercase text-primary font-semibold px-2 py-1 bg-surface-container-highest rounded"

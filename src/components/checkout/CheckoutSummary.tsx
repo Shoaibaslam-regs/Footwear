@@ -94,31 +94,48 @@ export default function CheckoutSummary({
           <span className="font-headline-sm text-headline-sm text-primary whitespace-nowrap">{formatPrice(total, "PKR")}</span>
         </button>
 
+        {/* Phones, folded: the pairs at a glance. Tapping opens the full list. */}
+        {!open && (
+          <button
+            aria-label={`Show ${pieces} ${pieces === 1 ? "pair" : "pairs"}`}
+            className="lg:hidden mt-space-sm w-full flex items-center gap-2 overflow-x-auto [scrollbar-width:none]"
+            onClick={() => setOpen(true)}
+            type="button"
+          >
+            {items.slice(0, 5).map((item) => (
+              <span key={item.id} className="relative w-12 h-14 shrink-0 rounded-md bg-surface-container-high overflow-hidden ring-1 ring-outline-variant/40">
+                <Image alt="" className="object-cover" fill sizes="48px" src={item.image} />
+                {item.quantity > 1 && (
+                  <span className="absolute bottom-0.5 right-0.5 min-w-4 h-4 px-1 rounded-full bg-primary text-on-primary text-[9px] leading-4 font-semibold text-center">
+                    {item.quantity}
+                  </span>
+                )}
+              </span>
+            ))}
+            {items.length > 5 && (
+              <span className="w-12 h-14 shrink-0 rounded-md bg-surface-container flex items-center justify-center font-label-uppercase text-[10px] text-on-surface-variant">
+                +{items.length - 5}
+              </span>
+            )}
+          </button>
+        )}
+
         {/* Bag Items */}
         <ul className={`flex flex-col max-lg:mt-space-sm max-lg:pt-space-xs max-lg:border-t max-lg:border-surface-container-high ${fold}`} id="checkout-summary-items">
           {items.map((item, i) => (
-            <li
-              key={item.id}
-              className={`flex gap-space-md py-space-sm${i > 0 ? ` ${divider}` : ""}`}
-            >
-              <div className="relative w-16 h-20 sm:w-24 sm:h-32 flex-shrink-0 bg-surface-container-high overflow-hidden">
-                <Image
-                  className="w-full h-full object-cover"
-                  alt={item.alt}
-                  src={item.image}
-                  fill
-                  sizes="96px"
-                />
-                {item.quantity > 1 && (
-                  <span className="absolute top-1 left-1 bg-primary text-on-primary font-label-uppercase text-[9px] px-1.5 py-0.5 tracking-wider uppercase">
-                    ×{item.quantity}
+            <li key={item.id} className={`flex gap-space-sm sm:gap-space-md py-space-sm${i > 0 ? ` ${divider}` : ""}`}>
+              <div className="relative w-[72px] h-[90px] sm:w-24 sm:h-32 flex-shrink-0 rounded-lg sm:rounded-none bg-surface-container-high overflow-hidden">
+                <Image className="w-full h-full object-cover" alt={item.alt} src={item.image} fill sizes="96px" />
+                {item.discountPercent > 0 && (
+                  <span className="absolute top-1 left-1 rounded-full bg-error text-on-error font-label-uppercase text-[9px] px-1.5 py-0.5 tracking-wider">
+                    −{item.discountPercent}%
                   </span>
                 )}
               </div>
-              <div className="flex-1 min-w-0 flex flex-col justify-between">
-                <div>
-                  <div className="flex flex-col sm:flex-row sm:items-start sm:justify-between gap-0.5 sm:gap-2">
-                    <h3 className="font-headline-sm text-[16px] sm:text-headline-sm text-primary leading-tight font-normal min-w-0 line-clamp-2">
+              <div className="flex-1 min-w-0 flex flex-col gap-1.5">
+                <div className="flex items-start justify-between gap-2">
+                  <div className="min-w-0">
+                    <h3 className="font-headline-sm text-[15px] sm:text-headline-sm text-primary leading-snug font-normal line-clamp-2">
                       {item.href ? (
                         <Link className="hover:text-secondary transition-colors" href={item.href}>
                           {item.name}
@@ -127,34 +144,35 @@ export default function CheckoutSummary({
                         item.name
                       )}
                     </h3>
-                    <span className="font-body-md text-body-md sm:font-body-lg sm:text-body-lg text-primary font-semibold whitespace-nowrap">
+                    <p className="font-body-sm text-[11px] sm:text-body-sm text-on-surface-variant mt-0.5 line-clamp-1">{item.material}</p>
+                  </div>
+                  <div className="text-right shrink-0">
+                    <span className="block font-body-md text-[14px] sm:font-body-lg sm:text-body-lg text-primary font-semibold whitespace-nowrap">
                       <Price amount={item.price * item.quantity} />
                     </span>
-                  </div>
-                  <p className="font-body-sm text-body-sm text-on-surface-variant mt-0.5 line-clamp-1">
-                    {item.material}
-                  </p>
-                  <div className="flex flex-wrap items-center gap-x-space-md gap-y-1 mt-2 text-on-surface-variant font-label-uppercase text-[11px] uppercase tracking-wider">
-                    <span>
-                      Size: <strong className="text-primary">{item.size}</strong>
-                    </span>
-                    <span>
-                      Qty: <strong className="text-primary">{item.quantity}</strong>
-                    </span>
-                    <span className="hidden sm:inline">
-                      Color: <strong className="text-secondary">{item.drawerColor}</strong>
-                    </span>
+                    {item.quantity > 1 && (
+                      <span className="block font-body-sm text-[10px] sm:text-[11px] text-outline whitespace-nowrap">
+                        <Price amount={item.price} /> each
+                      </span>
+                    )}
                   </div>
                 </div>
-                <div className="flex items-center gap-space-md text-on-surface-variant font-label-uppercase text-[11px] uppercase">
-                  <button
-                    className="hover:text-primary transition-colors underline underline-offset-2"
-                    onClick={() => saveForLater(item)}
-                    type="button"
-                  >
+                {/* Size and quantity as chips (the colour is in the material line) */}
+                <div className="flex flex-wrap items-center gap-1 sm:gap-1.5">
+                  <span className="inline-flex items-center h-6 px-2 rounded-none bg-surface-container font-label-uppercase text-[10px] uppercase tracking-wider text-on-surface-variant">
+                    Size&nbsp;<strong className="text-primary">{item.size}</strong>
+                  </span>
+                  <span className="inline-flex items-center h-6 px-2 rounded-none bg-surface-container font-label-uppercase text-[10px] uppercase tracking-wider text-on-surface-variant">
+                    Qty&nbsp;<strong className="text-primary">{item.quantity}</strong>
+                  </span>
+                </div>
+                <div className="mt-auto flex items-center gap-space-md text-on-surface-variant font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-wider">
+                  <button className="flex items-center gap-1 uppercase tracking-wider hover:text-primary transition-colors" onClick={() => saveForLater(item)} type="button">
+                    <span aria-hidden="true" className="material-symbols-outlined text-[14px]">favorite</span>
                     Save for Later
                   </button>
-                  <Link className="hover:text-primary transition-colors underline underline-offset-2" href="/cart">
+                  <Link className="flex items-center gap-1 hover:text-primary transition-colors" href="/cart">
+                    <span aria-hidden="true" className="material-symbols-outlined text-[14px]">edit</span>
                     Edit Bag
                   </Link>
                 </div>

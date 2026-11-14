@@ -188,6 +188,8 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 ### Collection filters
 - `lib/catalog-filters.ts` is a client store synced to the URL with `history.pushState`, which keeps `/collections` static.
 - Facets are derived from listing data: the heel height is parsed from "95mm" in `spec`, and material groups are matched by keyword.
+- Sorting uses `components/collection/SortMenu.tsx`, a themed listbox (arrow keys, Enter, Esc), not a native `<select>`.
+- Quick View opens on the photos (`components/collection/PhotoZoom.tsx`, the listing's `gallery` via `toCatalogCard`). Hover zoom works only where `(hover: hover) and (pointer: fine)` matches. On touch, a tap zooms in, a drag pans, a second tap zooms out, and a swipe changes the photo. The 360° turntable is the second tab. On phones Quick View is a bottom sheet with Add to Bag pinned. Covered in `tests/e2e/checkout-again.spec.ts`.
 - `?q=` is a text filter. The header search dropdown (`components/header/SearchPanel.tsx`) links to `/collections?q=…`.
 - `FiltersUrlSync` re-reads the URL on client navigations.
 
@@ -204,7 +206,7 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
 - Accounts are required to add to the bag or wishlist and to check out; guest checkout is gone. This is enforced in `proxy.ts`, `placeOrder` and the cart actions.
 - A review gets a "Verified purchase" badge only for a delivered order containing that product (`hasPurchased`). Marking an order delivered upgrades the customer's existing reviews.
 - "N sold" = units in orders that aren't cancelled + the listing's `otherSales`. `otherSales` is labelled for real off-site sales only. Never seed or suggest invented numbers.
-- Payment methods (`lib/orders.ts`): COD, EasyPaisa, JazzCash (wallet number stored, normalised to `03XXXXXXXXX`), bank transfer, card payment link. There is no gateway; admins record payment status and a reference (TID). Never collect card numbers or wallet PINs/OTPs.
+- Payment methods (`lib/orders.ts`): COD, EasyPaisa, JazzCash (wallet number stored, normalised to `03XXXXXXXXX`), bank transfer, card payment link. **Checkout offers Cash on Delivery only** (owner's decision, 2026-11-14): `checkoutMethodValues` lists what checkout shows and what `placeOrder` accepts; the other methods stay defined so older orders keep their labels (covered by `tests/e2e/checkout.spec.ts`). Browser tests make customers returning (`makeReturning`) to skip the COD email code. There is no gateway; admins record payment status and a reference (TID). Never collect card numbers or wallet PINs/OTPs.
 - Fulfilment follows `nextStatuses`. Shipping requires a tracking number. Status changes are guarded against concurrent admins.
 
 ## Customer-facing pages to know
@@ -223,6 +225,7 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
     - Gold crumbs fall on a separate pointer-free canvas (`flakesRef`, capped at `MAX_FLAKES`, skipped with reduced motion).
     - Touch scratching vibrates for 6 ms at most every 60 ms (Android only).
     - The card reveals at `REVEAL_AT` (50%) scratched.
+    - `reveal()` runs once (`done` ref): moves after it, with the finger still down, don't restart the burst or the notice. "Scratch again" clears it. How to scratch is said once, by the floating hint (nothing is printed on the foil).
     - Covered by `tests/e2e/scratch.spec.ts`.
   - Paused, expired or used-up codes show "This offer is not available".
 - Shop-layout overlays: `CartDrawerHost` (the mini bag; it opens whenever `addToBag` runs unless `{ openBag: false }`) and the floating `WhatsAppButton`.

@@ -7,14 +7,13 @@ import {
   matches,
   PAGE_SIZE,
   resetFilters,
-  sortOptions,
   sortProducts,
   updateFilters,
   useFilters,
   type FilterableProduct,
-  type SortOption,
 } from "@/lib/catalog-filters";
 import FilterSidebar from "./FilterSidebar";
+import SortMenu from "./SortMenu";
 import CatalogProductCard from "./CatalogProductCard";
 import Pagination from "./Pagination";
 import dynamic from "next/dynamic";
@@ -119,23 +118,7 @@ export default function Catalog({ products }: { products: FilterableProduct[] })
               <span className="font-label-uppercase text-label-uppercase text-outline uppercase tracking-wider hidden sm:inline">
                 Sort:
               </span>
-              <div className="relative">
-                <select
-                  aria-label="Sort products"
-                  onChange={(e) => updateFilters({ sort: e.target.value as SortOption })}
-                  value={filters.sort}
-                  className="appearance-none bg-surface-container py-2 pl-space-md pr-space-lg font-label-uppercase text-label-uppercase uppercase tracking-wider text-on-surface rounded-full cursor-pointer focus:outline-none focus:bg-surface-container-high transition-colors"
-                >
-                  {sortOptions.map((o) => (
-                    <option key={o.value} value={o.value}>
-                      {o.label}
-                    </option>
-                  ))}
-                </select>
-                <span className="material-symbols-outlined absolute right-space-sm top-1/2 -translate-y-1/2 pointer-events-none text-on-surface-variant text-[18px]">
-                  expand_more
-                </span>
-              </div>
+              <SortMenu onChange={(sort) => updateFilters({ sort })} value={filters.sort} />
             </div>
           </div>
         </div>

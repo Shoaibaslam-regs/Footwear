@@ -145,6 +145,7 @@ export function toCatalogCard(
     quickSelected: inStock.includes(38) ? 38 : inStock[0],
     image: p.image,
     alt: p.alt,
+    gallery: p.gallery.map((g) => ({ url: g.url, alt: g.alt || p.alt })),
   };
 }
 

@@ -3,7 +3,7 @@ import { footerColumns } from "@/lib/data";
 import SizeGuideLink from "./SizeGuideLink";
 import FooterCurrency from "./FooterCurrency";
 
-const payments = ["CASH ON DELIVERY", "EASYPAISA", "JAZZCASH", "BANK TRANSFER", "VISA", "MASTERCARD"];
+const payments = ["CASH ON DELIVERY"];
 
 export default function Footer() {
   return (

@@ -166,20 +166,7 @@ export default function ScratchCard({
     ctx.fillStyle = "#3a250b";
     ctx.fillText("SCRATCH CARD", cx, cy + 22);
 
-    const narrow = width < 400;
-    ctx.font = `600 ${narrow ? 10 : 11}px ${sans}`;
-    spaced.letterSpacing = narrow ? "1.5px" : "3px";
-    ctx.fillStyle = "#2c1906";
-    // Phones: just above the floating "Scratch with your finger" hint.
-    ctx.fillText("✦ SCRATCH TO REVEAL ✦", cx, height - (narrow ? 60 : 78), width - 48);
-
-    // On phones the floating hint below says the same, so the second line is desktop-only.
-    if (!narrow) {
-      ctx.font = `400 10px ${sans}`;
-      spaced.letterSpacing = "1px";
-      ctx.fillStyle = "#5c3a10";
-      ctx.fillText("Rub the gold with your finger or mouse", cx, height - 62, width - 48);
-    }
+    // How to scratch is said once, by the floating hint below the foil.
     ctx.restore();
   }, []);
 
@@ -231,8 +218,15 @@ export default function ScratchCard({
     requestAnimationFrame(frame);
   }, []);
 
+  // Set at the first reveal: moves after it (the finger still down) must not
+  // fire the burst again. Cleared by "Scratch again".
+  const done = useRef(false);
   const reveal = useCallback(
     (celebrate = true) => {
+      if (done.current) return;
+      done.current = true;
+      drawing.current = false;
+      last.current = null;
       setRevealed(true);
       setPercent(100);
       try {
@@ -261,7 +255,6 @@ export default function ScratchCard({
     }
     if (seen) {
       // Restoring a remembered state from browser storage after mount.
-      // eslint-disable-next-line react-hooks/set-state-in-effect
       reveal(false);
       return;
     }
@@ -438,6 +431,7 @@ export default function ScratchCard({
     } catch {
       /* ignore */
     }
+    done.current = false;
     setRevealed(false);
     setTouched(false);
     setPercent(0);
@@ -652,16 +646,17 @@ export default function ScratchCard({
                     buzz(e);
                   }}
                   onPointerMove={(e) => {
-                    if (!drawing.current) return;
+                    if (!drawing.current || done.current) return;
                     const p = pos(e);
                     scratchAt(p.x, p.y);
                     buzz(e);
                     measure();
                   }}
                   onPointerUp={() => {
+                    const was = drawing.current;
                     drawing.current = false;
                     last.current = null;
-                    measure(true);
+                    if (was && !done.current) measure(true);
                   }}
                   role="img"
                 />

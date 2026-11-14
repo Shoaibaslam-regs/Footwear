@@ -16,7 +16,8 @@ import { addToBag, openBag, toggleWishlist as toggleSaved, useInBag, useIsWishli
 const MAX_QTY = 5;
 
 export default function PurchasePanel({ product }: { product: ProductDetail }) {
-  const [color, setColor] = useState(product.defaultColor);
+  // One colour per listing: shown as text, no palette to pick from.
+  const color = product.defaultColor;
   const [size, setSize] = useState(product.defaultSize);
   const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
@@ -84,16 +85,16 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
   };
 
   return (
-    <div className="lg:col-span-5 flex flex-col gap-space-lg lg:sticky lg:top-28">
+    <div className="lg:col-span-5 flex flex-col gap-space-md sm:gap-space-lg lg:sticky lg:top-28">
       {/* Header Info */}
       <div className="space-y-space-xs">
-        <div className="flex items-center justify-between">
-          <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em] text-[11px]">
+        <div className="flex items-center justify-between gap-space-sm">
+          <span className="min-w-0 truncate font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.14em] sm:tracking-[0.2em] text-[10px] sm:text-[11px]">
             {product.eyebrow}
           </span>
           {product.reviewCount > 0 ? (
             <a
-              className="flex items-center gap-1 font-label-uppercase text-label-uppercase text-on-surface text-xs hover:text-primary"
+              className="shrink-0 flex items-center gap-1 font-label-uppercase text-label-uppercase text-on-surface text-xs hover:text-primary"
               href="#reviews-anchor"
             >
               <Stars className="text-sm" size="text-[16px]" value={product.rating} />
@@ -102,18 +103,19 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             </a>
           ) : (
             <a
-              className="font-label-uppercase text-[11px] uppercase tracking-wider text-on-surface-variant hover:text-primary underline underline-offset-2"
+              className="shrink-0 whitespace-nowrap font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-wider text-on-surface-variant hover:text-primary underline underline-offset-2"
               href="#reviews-anchor"
             >
-              Be the first to review
+              <span className="sm:hidden">Write a review</span>
+              <span className="hidden sm:inline">Be the first to review</span>
             </a>
           )}
         </div>
-        <h1 className="font-headline-lg text-headline-lg text-primary tracking-tight font-normal">
+        <h1 className="font-headline-lg text-[28px] leading-tight sm:text-[36px] sm:leading-[44px] text-primary tracking-tight font-normal">
           {product.name}
         </h1>
         <div className="flex items-baseline gap-space-sm pt-space-xs">
-          <span className="font-headline-md text-headline-md text-primary font-normal">
+          <span className="font-headline-sm text-[22px] sm:text-[24px] text-primary font-normal">
             <SalePrice chipOnPhones price={product.price} compareAt={product.compareAt} discountPercent={product.discountPercent} />
           </span>
           <span className="hidden sm:inline font-body-sm text-body-sm text-on-surface-variant">
@@ -124,55 +126,17 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
           <p className="flex items-center gap-1.5 py-space-xs font-body-sm text-body-sm text-on-surface-variant">
             <span className="material-symbols-outlined text-[18px] text-secondary">local_mall</span>
             <span>
-              <strong className="text-primary font-semibold">{product.sold.toLocaleString("en-US")}</strong>{" "}
+              <span className="text-primary font-medium">{product.sold.toLocaleString("en-US")}</span>{" "}
               {product.sold === 1 ? "pair" : "pairs"} sold
             </span>
           </p>
         ) : null}
       </div>
 
-      {/* Color Selection */}
-      <div className="space-y-space-sm pt-space-xs">
-        <div className="flex justify-between items-center">
-          <span className="font-label-uppercase text-label-uppercase text-primary uppercase tracking-widest text-[11px]">
-            Color:{" "}
-            <span className="font-normal text-on-surface-variant">{color}</span>
-          </span>
-          <span className="hidden sm:inline font-label-uppercase text-label-uppercase text-secondary uppercase text-[10px] tracking-wider">
-            Only at Ŕose Atelier
-          </span>
-        </div>
-        <div
-          aria-label="Available Colors"
-          className="flex items-center gap-space-sm"
-          role="radiogroup"
-        >
-          {product.colors.map((c) => {
-            const isActive = c.name === color;
-            return (
-              <button
-                key={c.name}
-                aria-checked={isActive}
-                aria-label={c.name}
-                className={`relative w-10 h-10 rounded-full p-0.5 ring-offset-2 ring-offset-surface focus:outline-none transition-all ${
-                  isActive
-                    ? "ring-2 ring-primary"
-                    : "ring-1 ring-transparent hover:ring-outline-variant"
-                }`}
-                onClick={() => setColor(c.name)}
-                role="radio"
-                title={c.name}
-                type="button"
-              >
-                <span
-                  className="block w-full h-full rounded-full shadow-inner"
-                  style={{ backgroundColor: c.hex }}
-                />
-              </button>
-            );
-          })}
-        </div>
-      </div>
+      {/* Colour (text only) */}
+      <p className="font-label-uppercase text-label-uppercase text-primary uppercase tracking-widest text-[11px]">
+        Color: <span className="font-normal text-on-surface-variant">{color}</span>
+      </p>
 
       {/* Size Matrix */}
       <div className="space-y-space-sm pt-space-xs">
@@ -193,7 +157,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         </div>
         <div
           aria-label="Shoe Sizes"
-          className={`grid ${product.sizes.length === 7 ? "grid-cols-7 sm:grid-cols-5" : "grid-cols-5"} gap-1 sm:gap-space-xs`}
+          className={`grid ${product.sizes.length >= 6 ? "grid-cols-7" : "grid-cols-5"} gap-1 sm:gap-1.5`}
           role="radiogroup"
         >
           {product.sizes.map((s) => {
@@ -204,7 +168,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
                 aria-checked={isActive}
                 aria-disabled={s.soldOut || undefined}
                 aria-label={`EU ${s.size}${s.soldOut ? ", sold out" : s.left ? `, only ${s.left} left` : ""}`}
-                className={`relative h-10 sm:h-12 flex flex-col items-center justify-center font-body-sm text-body-sm transition-colors ${
+                className={`relative h-11 sm:h-12 flex flex-col items-center justify-center font-body-sm text-body-sm ring-1 ring-inset ring-outline-variant/40 transition-colors ${
                   s.soldOut
                     ? "bg-surface-container text-outline line-through cursor-not-allowed opacity-50"
                     : isActive
@@ -238,7 +202,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             verified_user
           </span>
           <span>
-            <strong>Fit Tip:</strong> {product.fitInsight}
+            <span className="text-primary font-medium">Fit tip:</span> {product.fitInsight}
           </span>
         </div>
       </div>
@@ -309,7 +273,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         <Link
           href="/checkout"
           onClick={buyNow}
-          className="w-full h-[52px] bg-secondary-fixed text-on-secondary-fixed hover:bg-secondary hover:text-on-secondary font-label-uppercase text-label-uppercase uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-space-sm"
+          className="w-full h-[52px] bg-transparent text-primary ring-1 ring-inset ring-primary hover:bg-primary hover:text-on-primary font-label-uppercase text-label-uppercase uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-space-sm"
         >
           <span className="material-symbols-outlined text-[18px]">bolt</span>
           <span>Buy Now</span>
@@ -317,18 +281,16 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       </div>
 
       {/* Guarantees */}
-      <div className="p-space-md bg-surface-container-lowest space-y-space-sm">
+      <ul className="bg-surface-container-lowest divide-y divide-outline-variant/30 px-space-md">
         {product.guarantees.map((g) => (
-          <div key={g.title} className="flex items-center gap-space-sm">
-            <span className="material-symbols-outlined text-[20px] text-secondary shrink-0">
-              {g.icon}
-            </span>
-            <div className="font-body-sm text-body-sm text-on-surface">
-              <strong>{g.title}</strong> {g.text}
-            </div>
-          </div>
+          <li key={g.title} className="flex items-start gap-space-sm py-space-sm">
+            <span className="material-symbols-outlined text-[18px] text-secondary shrink-0 mt-0.5">{g.icon}</span>
+            <p className="font-body-sm text-[13px] leading-relaxed text-on-surface-variant">
+              <span className="text-primary font-medium">{g.title}</span> {g.text}
+            </p>
+          </li>
         ))}
-      </div>
+      </ul>
 
       {/* Accordions */}
       <div className="space-y-space-xs pt-space-xs">

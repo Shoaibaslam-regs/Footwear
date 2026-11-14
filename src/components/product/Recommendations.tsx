@@ -14,7 +14,7 @@ export default function Recommendations({ items }: { items: Listing[] }) {
             <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
               You May Also Like
             </span>
-            <h2 className="font-headline-lg text-headline-lg text-primary font-normal">
+            <h2 className="font-headline-sm text-[26px] leading-tight lg:font-headline-lg-mobile lg:text-headline-lg-mobile text-primary font-normal">
               Complete the Look
             </h2>
           </div>

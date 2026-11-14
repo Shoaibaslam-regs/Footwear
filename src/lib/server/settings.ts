@@ -41,7 +41,7 @@ const DEFAULT_SETTINGS: SiteSettings = {
   deliveryConfigured: false,
   heroSlides: defaultHeroSlides().map((s) => ({ url: s.image, key: "", alt: s.alt, caption: "" })),
   announcements: [
-    "Cash on Delivery, EasyPaisa & JazzCash accepted",
+    "Cash on Delivery across Pakistan",
     "Pakistani size guide on every product",
     "Questions? WhatsApp 0314 8428115",
   ],

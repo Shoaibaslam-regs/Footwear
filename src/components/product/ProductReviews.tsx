@@ -34,7 +34,7 @@ export default function ProductReviews({
             <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
               Customer Reviews
             </span>
-            <h2 className="font-headline-lg-mobile text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary font-normal">
+            <h2 className="font-headline-sm text-[26px] leading-tight lg:font-headline-lg-mobile lg:text-headline-lg-mobile text-primary font-normal">
               What Customers Say
             </h2>
             {summary.count > 0 ? (

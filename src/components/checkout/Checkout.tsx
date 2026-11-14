@@ -14,7 +14,7 @@ import Price from "@/components/Price";
 import { applyCoupon, type CouponTerms } from "@/lib/coupons";
 import { currentCoupon } from "@/lib/coupon-actions";
 import type { OfferSummary } from "@/lib/coupons";
-import CheckoutSteps, { type StepTarget } from "./CheckoutSteps";
+import CheckoutSteps, { FORM_ID, type StepTarget } from "./CheckoutSteps";
 import ContactCard from "./ContactCard";
 import ShippingForm from "./ShippingForm";
 import DeliveryOptions from "./DeliveryOptions";
@@ -76,7 +76,6 @@ function CheckoutForm({
   const [state, formAction, pending] = useActionState(placeOrder, undefined);
   // Hourly order limit: Place Order locks and counts down.
   const orderWait = useCooldown(state && !state.ok ? state.retryAfter : undefined, state);
-  const [step, setStep] = useState(2);
   const [delivery, setDelivery] = useState(deliveryOptions[0].id);
   const [coupon, setCoupon] = useState<CouponTerms | null>(initialCoupon);
   const [droppedNote, setDroppedNote] = useState(couponNote);
@@ -129,13 +128,8 @@ function CheckoutForm({
     window.scrollTo({ top: 0, behavior: "smooth" });
   }, [placed, onPlaced]);
 
-  const goToStep = (n: number, target?: StepTarget) => {
-    setStep(n);
-    if (target) {
-      document
-        .getElementById(`step-section-${target}`)
-        ?.scrollIntoView({ behavior: "smooth" });
-    }
+  const goToStep = (_n: number, target?: StepTarget) => {
+    document.getElementById(`step-section-${target ?? "contact"}`)?.scrollIntoView({ behavior: "smooth" });
   };
 
   if (placed) return <OrderConfirmation order={placed} signedIn={!!user} />;
@@ -164,10 +158,10 @@ function CheckoutForm({
 
   return (
     <div className="w-full max-w-[1536px] mx-auto px-margin-mobile lg:px-margin py-space-md lg:py-space-xl">
-      <CheckoutSteps current={step} onSelect={goToStep} />
+      <CheckoutSteps onSelect={goToStep} />
 
       <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-space-xl items-start">
-        <form action={formAction} className="lg:col-span-7 flex flex-col gap-space-lg" noValidate>
+        <form action={formAction} className="lg:col-span-7 flex flex-col gap-space-lg" id={FORM_ID} noValidate>
           <ContactCard errors={errors} user={user} />
           <ShippingForm defaults={saved} errors={errors} />
           <DeliveryOptions onSelect={setDelivery} options={deliveryOptions} selected={delivery} />

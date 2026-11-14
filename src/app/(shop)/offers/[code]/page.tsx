@@ -180,7 +180,7 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
             {
               n: "03",
               title: "Place the Order",
-              text: "Pay by Cash on Delivery, EasyPaisa, JazzCash, bank transfer or a card payment link. We deliver across Pakistan.",
+              text: "Pay by Cash on Delivery when it arrives. We deliver across Pakistan.",
               foot: "STEP 3 • RELAX",
               tone: "bg-surface-container-highest text-primary",
             },

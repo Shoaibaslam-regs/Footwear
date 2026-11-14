@@ -1,6 +1,7 @@
 import Link from "next/link";
 import type { ProductCategory } from "@/lib/products";
 import CategoryPills from "./CategoryPills";
+import { collectionIntro } from "@/lib/collection-data";
 
 export default function CollectionIntro({
   counts,
@@ -29,30 +30,23 @@ export default function CollectionIntro({
         <span className="text-primary font-semibold">All Shoes</span>
       </nav>
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-lg items-end pb-space-lg">
-        <div className="lg:col-span-8 space-y-space-sm">
-          <span className="inline-flex items-center gap-space-xs px-space-sm py-1 bg-secondary-container/40 text-on-secondary-container font-label-uppercase text-label-uppercase tracking-[0.2em] uppercase rounded-full">
-            Made in Karachi • Spring / Summer
-          </span>
-          <h1 className="font-headline-lg text-headline-lg text-primary tracking-tight">
-            The Spring Collection
+      {/* Heading with the promise badge on its right (one line, phones too), then the sentence. */}
+      <div className="pb-space-md sm:pb-space-lg space-y-space-xs sm:space-y-space-sm">
+        <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1.5 sm:gap-x-space-lg">
+          <h1 className="min-w-0 font-headline-sm text-[24px] leading-tight min-[390px]:text-[26px] sm:font-headline-lg-mobile sm:text-headline-lg-mobile lg:font-headline-lg lg:text-headline-lg text-primary tracking-tight font-normal whitespace-nowrap">
+            {collectionIntro.title}
           </h1>
-          <p className="hidden sm:block font-body-lg text-body-lg text-on-surface-variant max-w-2xl leading-relaxed">
-            Shop {total} handmade styles from Karachi. From evening parties to
-            summer holidays, every pair combines a well-balanced heel with soft
-            Italian leather.
-          </p>
-        </div>
-        <div className="hidden lg:col-span-4 sm:flex flex-col sm:flex-row lg:flex-col items-start lg:items-end justify-end gap-space-sm">
-          <div className="flex items-center gap-space-sm bg-surface-container-low px-space-md py-space-sm rounded-full shadow-sm">
-            <span className="material-symbols-outlined text-secondary text-[20px]">
-              verified
+          <span className="shrink-0 inline-flex items-center gap-1 sm:gap-space-sm bg-surface-container-low px-2 py-1 sm:px-space-md sm:py-space-sm rounded-full shadow-sm whitespace-nowrap">
+            <span aria-hidden="true" className="material-symbols-outlined text-secondary text-[12px] sm:text-[20px]">verified</span>
+            <span className="font-label-uppercase text-[8px] leading-none tracking-wide uppercase text-on-surface sm:font-body-sm sm:text-body-sm sm:leading-normal sm:normal-case sm:tracking-normal sm:font-medium">
+              Perfect Fit Promise
             </span>
-            <span className="font-body-sm text-body-sm text-on-surface font-medium">
-              Perfect Fit Promise • 100% Leather &amp; Silk
-            </span>
-          </div>
+          </span>
         </div>
+        <p className="font-body-sm text-[13px] sm:font-body-lg sm:text-body-lg text-on-surface-variant font-light">
+          <span className="sm:hidden">{collectionIntro.lineShort}</span>
+          <span className="hidden sm:inline">{collectionIntro.line}</span>
+        </p>
       </div>
 
       <CategoryPills counts={counts} total={total} />

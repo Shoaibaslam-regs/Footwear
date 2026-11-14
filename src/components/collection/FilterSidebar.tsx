@@ -75,7 +75,7 @@ export default function FilterSidebar({
           // Mobile: bottom sheet
           "fixed inset-x-0 bottom-0 z-[61] max-h-[85vh] flex flex-col bg-surface-container-low rounded-t-2xl shadow-2xl",
           // visibility flips after the slide-out so the sheet animates closed
-          "transition-[transform,visibility] duration-300 ease-out motion-reduce:transition-none",
+          "transition-[transform,visibility] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
           mobileOpen ? "translate-y-0" : "translate-y-full invisible",
           // Desktop: sticky sidebar
           "lg:visible lg:translate-y-0 lg:static lg:z-auto lg:max-h-none lg:rounded-xl lg:shadow-sm lg:col-span-3 lg:sticky lg:top-36",
@@ -98,7 +98,7 @@ export default function FilterSidebar({
           </div>
         </div>
 
-        <div className="flex-1 overflow-y-auto overscroll-contain px-space-lg pb-space-lg lg:pt-space-lg space-y-space-lg">
+        <div className={`${mobileOpen ? "sheet-content " : ""}flex-1 overflow-y-auto overscroll-contain px-space-lg pb-space-lg lg:pt-space-lg space-y-space-lg`}>
           <div className="flex items-center justify-between">
             <div className="flex items-center gap-space-xs">
               <span className="font-label-uppercase text-label-uppercase tracking-widest uppercase font-semibold text-primary">
