@@ -67,7 +67,7 @@ export default function CheckoutSummary({
 
   return (
     <div className="order-first lg:order-none lg:col-span-5 lg:sticky lg:top-28 space-y-space-md">
-      <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm">
+      <div className="bg-surface-container-lowest ring-1 ring-outline-variant/40 p-space-md sm:p-space-lg">
         {/* Larger screens: a heading. Phones: a toggle with the total. */}
         <div className="hidden lg:flex items-baseline justify-between pb-space-sm border-b border-surface-container-high mb-space-md">
           <h2 className="font-headline-sm text-headline-sm text-primary font-normal">Order Summary</h2>
@@ -246,7 +246,7 @@ export default function CheckoutSummary({
       </div>
 
       {/* Concierge Card */}
-      <div className="hidden lg:flex bg-surface-container-high p-space-md items-center justify-between">
+      <div className="hidden lg:flex ring-1 ring-outline-variant/40 p-space-md items-center justify-between">
         <div className="flex items-center gap-space-sm">
           <span className="material-symbols-outlined text-secondary text-[28px]">
             support_agent

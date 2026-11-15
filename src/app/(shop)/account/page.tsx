@@ -116,7 +116,7 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
         <MyCoupons userId={user.id} />
       </Suspense>
 
-      <div className="mt-space-lg sm:mt-space-xl">
+      <div className="mt-space-lg sm:mt-space-xl scroll-mt-28" id="orders">
         <span className={eyebrow}>Order History</span>
         <h2 className="font-headline-sm text-[24px] sm:font-headline-md sm:text-headline-md text-primary mt-1 mb-space-sm sm:mb-space-md">Orders</h2>
         {orders.length === 0 ? (

@@ -3,8 +3,9 @@
 import { updateFilters, useFilters } from "@/lib/catalog-filters";
 import { productCategories, type ProductCategory } from "@/lib/products";
 
+/** Calm square chips; the count sits quietly after the name. */
 const base =
-  "px-space-lg py-space-sm font-label-uppercase text-label-uppercase uppercase tracking-wider rounded-full transition-all whitespace-nowrap";
+  "shrink-0 h-9 px-3.5 sm:px-4 inline-flex items-center gap-1.5 font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.14em] transition-colors whitespace-nowrap";
 
 /** Quick single-category switch; shares state with the sidebar filters. */
 export default function CategoryPills({ counts, total }: { counts: Record<ProductCategory, number>; total: number }) {
@@ -15,7 +16,7 @@ export default function CategoryPills({ counts, total }: { counts: Record<Produc
   ];
 
   return (
-    <div className="flex items-center gap-space-xs overflow-x-auto pb-space-xs no-scrollbar pt-space-xs">
+    <div className="flex items-center gap-1.5 sm:gap-2 overflow-x-auto [scrollbar-width:none] -mx-margin-mobile px-margin-mobile lg:mx-0 lg:px-0">
       {pills.map((p) => {
         const active = p.value === null ? categories.length === 0 : categories.length === 1 && categories[0] === p.value;
         return (
@@ -23,14 +24,13 @@ export default function CategoryPills({ counts, total }: { counts: Record<Produc
             key={p.label}
             aria-pressed={active}
             className={`${base} ${
-              active
-                ? "bg-primary text-on-primary shadow-sm"
-                : "bg-surface-container hover:bg-surface-container-high text-on-surface-variant hover:text-on-surface"
+              active ? "bg-primary text-on-primary" : "ring-1 ring-inset ring-outline-variant/70 text-on-surface-variant hover:ring-primary hover:text-primary"
             }`}
             onClick={() => updateFilters({ categories: p.value ? [p.value] : [] })}
             type="button"
           >
-            {p.label} ({p.n})
+            {p.label}
+            <span className={active ? "text-on-primary/60" : "text-outline"}>{p.n}</span>
           </button>
         );
       })}

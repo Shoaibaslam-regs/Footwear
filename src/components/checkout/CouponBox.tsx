@@ -89,11 +89,11 @@ export default function CouponBox({
   if (!open) {
     return (
       <button
-        className="flex items-center gap-1.5 font-label-uppercase text-label-uppercase text-primary hover:text-secondary"
+        className="flex items-center gap-1.5 font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.16em] text-secondary hover:text-primary"
         onClick={() => setOpen(true)}
         type="button"
       >
-        <span className="material-symbols-outlined text-[18px]">sell</span>
+        <span className="material-symbols-outlined text-[16px]">sell</span>
         <span className="underline underline-offset-4 decoration-secondary">Have a coupon code?</span>
       </button>
     );

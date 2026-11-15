@@ -34,6 +34,8 @@ const gold = (page: Page) =>
   });
 
 test("scratching is rough: one swipe leaves a gold film, a few rubs reveal the code", async ({ page }) => {
+  // Many real mouse strokes: ~35 s alone, longer on a busy machine during the full run.
+  test.setTimeout(150_000);
   await page.setViewportSize({ width: 1280, height: 1500 }); // the whole card on screen
   await logInAs(page, await createUser({ name: "Mehwish", email: "mehwish.scratch@example.com" }), "customer");
   await page.goto("/offers/SCRATCH20");

@@ -18,7 +18,7 @@ import SizeGuideLink from "@/components/SizeGuideLink";
 import { useDialog } from "@/components/header/useDialog";
 
 const sectionTitle =
-  "font-label-uppercase text-label-uppercase text-primary uppercase tracking-wider font-semibold";
+  "font-label-uppercase text-[10px] sm:text-[11px] text-primary uppercase tracking-[0.2em] font-medium whitespace-nowrap";
 /** The price slider: PKR 500 to 10,000 in steps of 500. The top end means "10,000 and above". */
 const PRICE_STEP = 500;
 const PRICE_MIN = 500;
@@ -75,12 +75,12 @@ export default function FilterSidebar({
         role={mobileOpen ? "dialog" : undefined}
         className={[
           // Mobile: bottom sheet
-          "fixed inset-x-0 bottom-0 z-[61] max-h-[85vh] flex flex-col bg-surface-container-low rounded-t-2xl shadow-2xl",
+          "fixed inset-x-0 bottom-0 z-[61] max-h-[85vh] flex flex-col bg-surface rounded-t-2xl shadow-2xl",
           // visibility flips after the slide-out so the sheet animates closed
           "transition-[transform,visibility] duration-500 ease-[cubic-bezier(0.32,0.72,0,1)] motion-reduce:transition-none",
           mobileOpen ? "translate-y-0" : "translate-y-full invisible",
           // Desktop: sticky sidebar
-          "lg:visible lg:translate-y-0 lg:static lg:z-auto lg:max-h-none lg:rounded-xl lg:shadow-sm lg:col-span-3 lg:sticky lg:top-36",
+          "lg:visible lg:translate-y-0 lg:static lg:z-auto lg:max-h-none lg:rounded-none lg:shadow-none lg:bg-transparent lg:col-span-3 lg:sticky lg:top-36",
           desktopOpen ? "lg:flex" : "lg:hidden",
         ].join(" ")}
       >
@@ -100,109 +100,44 @@ export default function FilterSidebar({
           </div>
         </div>
 
-        <div className={`${mobileOpen ? "sheet-content " : ""}flex-1 overflow-y-auto overscroll-contain px-space-lg pb-space-lg lg:pt-space-lg space-y-space-lg`}>
-          <div className="flex items-center justify-between">
-            <div className="flex items-center gap-space-xs">
-              <span className="font-label-uppercase text-label-uppercase tracking-widest uppercase font-semibold text-primary">
-                Active Filters
-              </span>
-              <span className="text-xs px-2 py-0.5 bg-secondary-container text-on-secondary-container rounded-full font-medium">
-                {chips.length} Active
-              </span>
-            </div>
-            <button
-              className="font-label-uppercase text-[10px] text-secondary hover:underline uppercase tracking-wider disabled:opacity-40 disabled:no-underline"
-              disabled={chips.length === 0}
-              onClick={resetFilters}
-              type="button"
-            >
-              Reset All
-            </button>
-          </div>
-
+        <div className={`${mobileOpen ? "sheet-content " : ""}flex-1 overflow-y-auto overscroll-contain px-space-md sm:px-space-lg pb-space-md lg:pt-space-sm divide-y divide-outline-variant/40`}>
+          {/* Active filters: only when there are some, as small removable tags. */}
           {chips.length > 0 && (
-            <div className="flex flex-wrap gap-space-xs">
-              {chips.map((chip) => (
-                <span
-                  key={chip.label}
-                  className="inline-flex items-center gap-1 pl-space-sm pr-1 py-1 bg-surface-container-lowest text-primary text-xs rounded-full shadow-sm"
-                >
-                  {chip.label}
+            <div className="py-space-md flex flex-col gap-2">
+              <div className="flex items-center justify-between">
+                <span className={sectionTitle}>Selected</span>
+                <button className="font-label-uppercase text-[10px] text-secondary underline underline-offset-4 uppercase tracking-[0.14em]" onClick={resetFilters} type="button">
+                  Clear all
+                </button>
+              </div>
+              <div className="flex flex-wrap gap-1.5">
+                {chips.map((chip) => (
                   <button
+                    key={chip.label}
                     aria-label={`Remove ${chip.label}`}
-                    className="material-symbols-outlined text-[14px] w-5 h-5 rounded-full hover:text-error"
+                    className="h-8 inline-flex items-center gap-1 pl-2.5 pr-1.5 bg-primary text-on-primary font-label-uppercase text-[10px] uppercase tracking-[0.12em]"
                     onClick={() => updateFilters(chip.remove)}
                     type="button"
                   >
-                    close
+                    {chip.label}
+                    <span aria-hidden="true" className="material-symbols-outlined text-[14px]">
+                      close
+                    </span>
                   </button>
-                </span>
-              ))}
+                ))}
+              </div>
             </div>
           )}
 
-          {/* Category */}
-          <fieldset className="space-y-space-xs">
-            <legend className={`${sectionTitle} mb-space-xs`}>Category</legend>
-            <div className="space-y-2 font-body-sm text-body-sm text-on-surface-variant">
-              {productCategories.map((c) => {
-                const n = count({ categories: true }, (p) => p.category === c.value);
-                const checked = f.categories.includes(c.value);
-                return (
-                  <label
-                    key={c.value}
-                    className={`flex items-center justify-between cursor-pointer group ${!n && !checked ? "opacity-50" : ""}`}
-                  >
-                    <span className="flex items-center gap-space-xs">
-                      <input
-                        checked={checked}
-                        className="accent-primary rounded w-4 h-4 cursor-pointer"
-                        onChange={() => updateFilters({ categories: toggle(f.categories, c.value) })}
-                        type="checkbox"
-                      />
-                      <span className="group-hover:text-primary transition-colors">{c.label}</span>
-                    </span>
-                    <span className="text-outline text-xs">{n}</span>
-                  </label>
-                );
-              })}
-            </div>
-          </fieldset>
-
-          {/* Heel Height */}
-          <fieldset className="space-y-space-xs">
-            <legend className={`${sectionTitle} mb-space-xs`}>Heel Height</legend>
-            <div className="grid grid-cols-2 gap-space-xs">
-              {heelProfiles.map((h) => {
-                const active = f.heels.includes(h.value);
-                const n = count({ heels: true }, (p) => p.heelMm !== null && h.test(p.heelMm));
-                return (
-                  <button
-                    key={h.value}
-                    aria-pressed={active}
-                    className={`px-space-sm py-2 font-body-sm text-xs rounded-lg text-left shadow-sm transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
-                      active ? "bg-primary text-on-primary" : "bg-surface-container-lowest hover:bg-surface text-on-surface"
-                    }`}
-                    disabled={!n && !active}
-                    onClick={() => updateFilters({ heels: toggle(f.heels, h.value) })}
-                    type="button"
-                  >
-                    {h.label} <span className="opacity-60">({n})</span>
-                  </button>
-                );
-              })}
-            </div>
-          </fieldset>
-
           {/* EU Size */}
-          <fieldset className="space-y-space-xs">
-            <div className="flex items-center justify-between mb-space-xs">
-              <legend className={sectionTitle}>EU Size (in stock)</legend>
-              <SizeGuideLink className="text-xs text-secondary hover:underline font-label-uppercase">
+          <fieldset className="py-space-md">
+            <div className="flex items-center justify-between gap-2">
+              <legend className={sectionTitle}>EU Size</legend>
+              <SizeGuideLink className="text-[10px] uppercase tracking-[0.14em] text-secondary underline underline-offset-4 font-label-uppercase">
                 Size Guide
               </SizeGuideLink>
             </div>
-            <div className="grid grid-cols-4 sm:grid-cols-7 lg:grid-cols-4 gap-1.5">
+            <div className="mt-2.5 grid grid-cols-4 sm:grid-cols-7 lg:grid-cols-4 gap-1.5">
               {ALL_SIZES.map((s) => {
                 const active = f.sizes.includes(s);
                 const available = count({ sizes: true }, (p) => p.inStockSizes.includes(s)) > 0;
@@ -211,12 +146,12 @@ export default function FilterSidebar({
                     key={s}
                     aria-label={`EU ${s}${available ? "" : ", sold out"}`}
                     aria-pressed={active}
-                    className={`h-9 rounded text-xs font-medium shadow-sm transition-colors ${
+                    className={`h-11 lg:h-10 text-[13px] transition-colors ${
                       active
                         ? "bg-primary text-on-primary"
                         : available
-                          ? "bg-surface-container-lowest hover:bg-surface text-on-surface"
-                          : "bg-surface-container text-outline opacity-40 cursor-not-allowed line-through"
+                          ? "ring-1 ring-inset ring-outline-variant/70 hover:ring-primary text-on-surface"
+                          : "text-outline/60 cursor-not-allowed line-through"
                     }`}
                     disabled={!available && !active}
                     onClick={() => updateFilters({ sizes: toggle(f.sizes, s) })}
@@ -229,22 +164,80 @@ export default function FilterSidebar({
             </div>
           </fieldset>
 
+          {/* Category */}
+          <fieldset className="py-space-md">
+            <legend className={`${sectionTitle} float-left w-full`}>Category</legend>
+            <div className="clear-both pt-1 flex flex-col font-body-sm text-[14px] text-on-surface-variant">
+              {productCategories.map((c) => {
+                const n = count({ categories: true }, (p) => p.category === c.value);
+                const checked = f.categories.includes(c.value);
+                return (
+                  <label
+                    key={c.value}
+                    className={`flex items-center justify-between min-h-10 cursor-pointer group ${!n && !checked ? "opacity-50" : ""}`}
+                  >
+                    <span className="flex items-center gap-2.5">
+                      <input
+                        checked={checked}
+                        className="accent-primary w-4 h-4 cursor-pointer"
+                        onChange={() => updateFilters({ categories: toggle(f.categories, c.value) })}
+                        type="checkbox"
+                      />
+                      <span className="group-hover:text-primary transition-colors">{c.label}</span>
+                    </span>
+                    <span className="text-outline text-xs">{n}</span>
+                  </label>
+                );
+              })}
+            </div>
+          </fieldset>
+
+          {/* Price Range */}
+          {ceil > floor && (
+            <div className="py-space-md"><PriceRange ceil={ceil} floor={floor} hi={hi} lo={lo} /></div>
+          )}
+
+          {/* Heel Height */}
+          <fieldset className="py-space-md">
+            <legend className={`${sectionTitle} float-left w-full`}>Heel Height</legend>
+            <div className="clear-both pt-2.5 grid grid-cols-2 lg:grid-cols-1 gap-1.5">
+              {heelProfiles.map((h) => {
+                const active = f.heels.includes(h.value);
+                const n = count({ heels: true }, (p) => p.heelMm !== null && h.test(p.heelMm));
+                return (
+                  <button
+                    key={h.value}
+                    aria-pressed={active}
+                    className={`min-h-10 px-space-sm py-2 font-body-sm text-[12px] text-left transition-colors disabled:opacity-40 disabled:cursor-not-allowed ${
+                      active ? "bg-primary text-on-primary" : "ring-1 ring-inset ring-outline-variant/70 hover:ring-primary text-on-surface"
+                    }`}
+                    disabled={!n && !active}
+                    onClick={() => updateFilters({ heels: toggle(f.heels, h.value) })}
+                    type="button"
+                  >
+                    {h.label} <span className="opacity-60">({n})</span>
+                  </button>
+                );
+              })}
+            </div>
+          </fieldset>
+
           {/* Craft & Material */}
-          <fieldset className="space-y-space-xs">
-            <legend className={`${sectionTitle} mb-space-xs`}>Material</legend>
-            <div className="space-y-2 font-body-sm text-body-sm text-on-surface-variant">
+          <fieldset className="py-space-md">
+            <legend className={`${sectionTitle} float-left w-full`}>Material</legend>
+            <div className="clear-both pt-1 flex flex-col font-body-sm text-[14px] text-on-surface-variant">
               {materialGroups.map((m) => {
                 const checked = f.materials.includes(m.value);
                 const n = count({ materials: true }, (p) => m.rx.test(p.material));
                 return (
                   <label
                     key={m.value}
-                    className={`flex items-center justify-between cursor-pointer ${!n && !checked ? "opacity-50" : ""}`}
+                    className={`flex items-center justify-between min-h-10 cursor-pointer ${!n && !checked ? "opacity-50" : ""}`}
                   >
-                    <span className="flex items-center gap-space-xs">
+                    <span className="flex items-center gap-2.5">
                       <input
                         checked={checked}
-                        className="accent-primary rounded w-4 h-4 cursor-pointer"
+                        className="accent-primary w-4 h-4 cursor-pointer"
                         onChange={() => updateFilters({ materials: toggle(f.materials, m.value) })}
                         type="checkbox"
                       />
@@ -257,17 +250,12 @@ export default function FilterSidebar({
             </div>
           </fieldset>
 
-          {/* Price Range */}
-          {ceil > floor && (
-            <PriceRange ceil={ceil} floor={floor} hi={hi} lo={lo} />
-          )}
-
           {/* On sale */}
-          <label className={`flex items-center justify-between cursor-pointer font-body-sm text-body-sm text-on-surface-variant ${!onSaleCount && !f.onSale ? "opacity-50" : ""}`}>
+          <label className={`py-space-md flex items-center justify-between min-h-10 cursor-pointer font-body-sm text-body-sm text-on-surface-variant ${!onSaleCount && !f.onSale ? "opacity-50" : ""}`}>
             <span className="flex items-center gap-space-xs">
               <input
                 checked={f.onSale}
-                className="accent-primary rounded w-4 h-4 cursor-pointer"
+                className="accent-primary w-4 h-4 cursor-pointer"
                 onChange={() => updateFilters({ onSale: !f.onSale })}
                 type="checkbox"
               />
@@ -278,9 +266,9 @@ export default function FilterSidebar({
         </div>
 
         {/* Mobile footer */}
-        <div className="lg:hidden flex gap-space-sm p-space-md border-t border-outline-variant/30 bg-surface-container-low pb-[max(var(--spacing-space-md),env(safe-area-inset-bottom))]">
+        <div className="lg:hidden flex gap-2 px-space-md pt-space-sm border-t border-outline-variant/40 bg-surface pb-[max(var(--spacing-space-sm),env(safe-area-inset-bottom))]">
           <button
-            className="h-12 px-space-lg rounded-full bg-surface-container text-primary font-label-uppercase text-label-uppercase uppercase tracking-wider disabled:opacity-40"
+            className="h-12 px-space-md ring-1 ring-inset ring-outline-variant text-primary font-label-uppercase text-[11px] uppercase tracking-[0.14em] disabled:opacity-40"
             disabled={chips.length === 0}
             onClick={resetFilters}
             type="button"
@@ -288,7 +276,7 @@ export default function FilterSidebar({
             Reset
           </button>
           <button
-            className="flex-1 h-12 rounded-full bg-primary text-on-primary font-label-uppercase text-label-uppercase uppercase tracking-widest shadow-md"
+            className="flex-1 h-12 bg-primary text-on-primary font-label-uppercase text-[11px] uppercase tracking-[0.18em]"
             onClick={onCloseMobile}
             type="button"
           >
@@ -324,8 +312,8 @@ function PriceRange({ floor, ceil, lo, hi }: { floor: number; ceil: number; lo: 
 
   return (
     <fieldset className="space-y-space-xs">
-      <div className="flex items-center justify-between">
-        <legend className={sectionTitle}>Price Range</legend>
+      <div className="flex flex-wrap items-center justify-between gap-x-2 gap-y-1">
+        <legend className={sectionTitle}>Price</legend>
         <span aria-live="polite" className="font-body-sm text-xs font-semibold text-primary whitespace-nowrap">
           <Price amount={range.lo} /> – <Price amount={range.hi} />
           {range.hi >= ceil && "+"}

@@ -114,6 +114,13 @@ function CheckoutForm({
   const closeCode = useCallback((message?: string) => setClosed({ from: state, message }), [state]);
   const placed = state?.ok ? state.order : placedByCode;
   const errors = state && !state.ok ? state.errors : undefined;
+  // After a refused order: bring the first field with a problem into view and put the cursor there.
+  useEffect(() => {
+    if (!errors) return;
+    const field = document.querySelector<HTMLElement>(`#${FORM_ID} [aria-invalid="true"]`);
+    field?.scrollIntoView({ behavior: "smooth", block: "center" });
+    field?.focus({ preventScroll: true });
+  }, [errors]);
   const formMessage = closed && closed.from === state && closed.message ? closed.message : state && !state.ok ? state.message : undefined;
 
   // Once the server has saved the order, empty the bag: once per order. Effects
@@ -160,8 +167,8 @@ function CheckoutForm({
     <div className="w-full max-w-[1536px] mx-auto px-margin-mobile lg:px-margin py-space-md lg:py-space-xl">
       <CheckoutSteps onSelect={goToStep} />
 
-      <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-space-xl items-start">
-        <form action={formAction} className="lg:col-span-7 flex flex-col gap-space-lg" id={FORM_ID} noValidate>
+      <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-sm sm:gap-space-md lg:gap-space-xl items-start">
+        <form action={formAction} className="lg:col-span-7 flex flex-col gap-space-sm sm:gap-space-md" id={FORM_ID} noValidate>
           <ContactCard errors={errors} user={user} />
           <ShippingForm defaults={saved} errors={errors} />
           <DeliveryOptions onSelect={setDelivery} options={deliveryOptions} selected={delivery} />

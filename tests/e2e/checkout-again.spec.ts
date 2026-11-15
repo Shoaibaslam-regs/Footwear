@@ -79,6 +79,11 @@ test("checkout progress follows the boxes filled in, live @phone", async ({ page
   // Saved details fill every box: all four steps are ticked.
   await expect(step("Step 4: Payment, done")).toBeVisible();
 
+  // A returning customer sees short summaries; the boxes open on "Change" / "Edit".
+  await expect(page.locator("#step-section-shipping address")).toContainText(address.line1);
+  await expect(page.getByLabel("City *")).toBeHidden();
+  await page.locator("#step-section-shipping").getByRole("button", { name: "Change" }).click();
+
   // Empty the city: the bar falls back to Address and the later steps lose their ticks.
   await page.getByLabel("City *").fill("");
   await expect(step("Step 2: Address, to do")).toBeVisible();
@@ -91,6 +96,19 @@ test("checkout progress follows the boxes filled in, live @phone", async ({ page
   await expect(step("Step 4: Payment, done")).toBeVisible();
 
   // A bad email undoes even the first step.
+  await page.locator("#step-section-contact").getByRole("button", { name: "Edit" }).click();
   await page.getByLabel("Email *").fill("zara@");
   await expect(step("Step 1: Contact, to do")).toBeVisible();
+});
+
+test("a refused checkout takes the customer to the first field with a problem @phone", async ({ page }, info) => {
+  const userId = await createUser({ name: "Noor", email: `noor.empty.${info.project.name}@example.com` }); // no saved address
+  const shoe = await pickShoe();
+  await putInBag(userId, shoe.slug, shoe.sizes[0]);
+  await logInAs(page, userId, "customer");
+  await page.goto("/checkout");
+  await expect(page.getByLabel("Address *")).toBeVisible(); // a new customer sees the full form
+  await page.locator('button[type="submit"]:visible', { hasText: "Place Order" }).first().click();
+  await expect(page.getByLabel("Address *")).toBeFocused();
+  await expect(page.getByText("Enter your street address.")).toBeVisible();
 });

@@ -7,7 +7,7 @@ import { useCardPrice } from "./sale/SaleProvider";
 export function SaleTag({ tag, className = "" }: { tag?: string; className?: string }) {
   if (!tag) return null;
   return (
-    <span className={`inline-block self-center bg-primary text-secondary-fixed font-label-uppercase text-[9px] leading-none tracking-[0.18em] uppercase px-1.5 py-1 ${className}`}>
+    <span className={`self-center bg-primary text-secondary-fixed font-label-uppercase text-[9px] leading-none tracking-[0.18em] uppercase px-1.5 py-1 ${className}`}>
       {tag}
     </span>
   );
@@ -24,8 +24,15 @@ export default function SalePrice({
   slug,
   category,
   saleTag,
+  tagClassName = "",
   ...rest
-}: Parameters<typeof PriceView>[0] & { slug?: string; category?: string; saleTag?: string }) {
+}: Parameters<typeof PriceView>[0] & {
+  slug?: string;
+  category?: string;
+  saleTag?: string;
+  /** Classes for the inline sale tag, e.g. "hidden sm:inline-block" when a card shows it elsewhere on phones. */
+  tagClassName?: string;
+}) {
   const live = useCardPrice({ slug, category, price: rest.price, compareAt: rest.compareAt, discountPercent: rest.discountPercent });
   const tag = saleTag ?? live.sale?.tag;
   const view = <PriceView {...rest} compareAt={live.compareAt} discountPercent={live.discountPercent || undefined} price={live.price} />;
@@ -33,7 +40,7 @@ export default function SalePrice({
   return (
     <span className="inline-flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
       {view}
-      <SaleTag tag={tag} />
+      <SaleTag className={tagClassName} tag={tag} />
     </span>
   );
 }
@@ -82,6 +89,16 @@ function PriceView({
           −{discountPercent}%
         </span>
       ) : null}
+    </span>
+  );
+}
+
+/** "−56%" for the right end of a card's price line (calm champagne, never red). */
+export function PercentOff({ percent, className = "" }: { percent?: number; className?: string }) {
+  if (!percent) return null;
+  return (
+    <span className={`shrink-0 self-start px-1.5 py-0.5 bg-secondary-fixed text-on-secondary-fixed font-label-uppercase text-[10px] leading-none tracking-wider tabular-nums ${className}`}>
+      −{percent}%
     </span>
   );
 }

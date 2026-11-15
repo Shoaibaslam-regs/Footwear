@@ -15,8 +15,9 @@ const variants = {
   /** Collection catalog cards */
   catalog: {
     button:
-      "absolute top-3 right-3 w-9 h-9 rounded-full bg-surface-container-lowest/90 backdrop-blur-md flex items-center justify-center hover:text-error transition-all shadow-sm active:scale-90 hover:scale-110 cursor-pointer z-10",
-    icon: "text-[18px]",
+      // Calm: a small round button that doesn't compete with the photo.
+      "absolute top-1.5 right-1.5 sm:top-2 sm:right-2 w-8 h-8 rounded-[999px] bg-surface/80 backdrop-blur-sm flex items-center justify-center text-primary transition-colors active:scale-95 cursor-pointer z-10",
+    icon: "text-[17px]",
   },
 };
 

@@ -1,6 +1,14 @@
-import Link from "next/link";
-import { TextField, type FieldErrors } from "./fields";
+"use client";
 
+import Link from "next/link";
+import { useState } from "react";
+import { quietLink, SectionHead, sectionBox, TextField, type FieldErrors } from "./fields";
+
+/**
+ * Step 1. Logged-in customers (everyone, since checkout needs an account) see one
+ * quiet line with their name and email and an "Edit" link; the fields stay in
+ * the form (hidden), and open by themselves when one of them has an error.
+ */
 export default function ContactCard({
   user,
   errors,
@@ -8,36 +16,40 @@ export default function ContactCard({
   user: { name: string; email: string } | null;
   errors?: FieldErrors;
 }) {
+  const [editing, setEditing] = useState(false);
+  const hasError = !!(errors?.name || errors?.email);
+  const open = !user || editing || hasError;
+
   return (
-    <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm scroll-mt-28" id="step-section-contact">
-      <div className="flex items-baseline justify-between mb-space-md">
-        <div className="flex items-center gap-space-sm">
-          <span className="w-7 h-7 bg-primary text-on-primary font-label-uppercase text-label-uppercase flex items-center justify-center font-semibold">
-            1
-          </span>
-          <h2 className="font-headline-sm text-headline-sm text-primary font-normal">Contact</h2>
-        </div>
-        {user ? (
-          <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-widest flex items-center gap-1">
-            <span className="material-symbols-outlined text-[16px]">verified</span>
-            Logged in
-          </span>
-        ) : (
-          <Link
-            className="font-label-uppercase text-label-uppercase uppercase tracking-wider text-secondary hover:text-primary transition-colors underline underline-offset-4"
-            href="/login?next=/checkout"
-          >
-            Log in for faster checkout
-          </Link>
-        )}
-      </div>
-      <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md">
+    <div className={sectionBox} id="step-section-contact">
+      <SectionHead
+        aside={
+          user ? (
+            !open && (
+              <button className={quietLink} onClick={() => setEditing(true)} type="button">
+                Edit
+              </button>
+            )
+          ) : (
+            <Link className={quietLink} href="/login?next=/checkout">
+              Log in
+            </Link>
+          )
+        }
+        n={1}
+        title="Contact"
+      />
+      {!open && user && (
+        <p className="font-body-md text-[15px] text-primary">
+          {user.name}
+          <span className="block text-[13px] text-on-surface-variant break-all">{user.email}</span>
+        </p>
+      )}
+      <div className="grid grid-cols-1 md:grid-cols-2 gap-space-md" hidden={!open}>
         <TextField autoComplete="name" defaultValue={user?.name} errors={errors} label="Full Name *" name="name" required />
-        <TextField autoComplete="email" defaultValue={user?.email} errors={errors} label="Email *" name="email" required type="email" />
+        <TextField autoComplete="email" defaultValue={user?.email} errors={errors} inputMode="email" label="Email *" name="email" required type="email" />
       </div>
-      <p className="mt-space-sm font-body-sm text-body-sm text-on-surface-variant">
-        Order confirmation and delivery updates are sent to this email.
-      </p>
+      <p className="mt-2 font-body-sm text-[12px] text-on-surface-variant">Order updates are sent to this email.</p>
     </div>
   );
 }

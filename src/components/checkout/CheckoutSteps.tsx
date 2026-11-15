@@ -45,20 +45,18 @@ export default function CheckoutSteps({ onSelect }: { onSelect: (step: number, t
   const fill = (Math.max(0, completed - 1) / (steps.length - 1)) * 100;
 
   return (
-    <div className="w-full mb-space-lg sm:mb-space-xl">
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-sm pb-space-md">
-        <div>
-          <span className="font-label-uppercase text-label-uppercase text-secondary tracking-[0.25em] uppercase">Checkout</span>
-          <h1 className="font-headline-sm text-[26px] leading-tight sm:font-headline-md sm:text-headline-md text-primary font-normal tracking-tight mt-space-xs">
-            Complete Order
-          </h1>
-        </div>
-        <div className="flex items-center gap-space-xs text-on-surface-variant font-label-uppercase text-label-uppercase">
-          <span className="material-symbols-outlined text-[16px] text-secondary">verified_user</span>
-          <span>
-            Secure Checkout<span className="hidden sm:inline"> (256-bit SSL encryption)</span>
+    <div className="w-full mb-space-md sm:mb-space-lg">
+      {/* A short title; the progress bar does the talking. */}
+      <div className="flex items-end justify-between gap-space-sm pb-space-sm sm:pb-space-md">
+        <h1 className="font-headline-sm text-[24px] leading-tight sm:text-[32px] text-primary font-normal tracking-[-0.01em]">
+          Checkout
+        </h1>
+        <span className="flex items-center gap-1 text-on-surface-variant font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.16em]">
+          <span aria-hidden="true" className="material-symbols-outlined text-[15px] text-secondary">
+            lock
           </span>
-        </div>
+          Secure checkout
+        </span>
       </div>
 
       <nav aria-label="Checkout steps" className="pt-space-sm">

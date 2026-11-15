@@ -109,6 +109,15 @@ function priceFields(p: Listing): PriceFields {
     : { price: p.price, ...who };
 }
 
+/**
+ * The one label a card shows (shop and home): the badge set in the admin, else
+ * "Best Seller" for listings ticked as best sellers, else "New" for new
+ * arrivals, else none. Never more than one, so cards stay calm.
+ */
+export function cardLabel(p: Pick<Listing, "badge" | "bestSeller" | "newArrival">): string {
+  return p.badge?.trim() || (p.bestSeller ? "Best Seller" : p.newArrival ? "New" : "");
+}
+
 /* ---------- Storefront view mappers ---------- */
 
 /** First "95mm"-style height in the spec; flats without one count as 0. */
@@ -137,7 +146,7 @@ export function toCatalogCard(
     newArrival: p.newArrival,
     name: p.name,
     href: productHref(p),
-    badge: p.badge || undefined,
+    badge: cardLabel(p) || undefined,
     badgeClass: "bg-primary text-on-primary",
     spec: p.spec,
     tag: categoryLabel(p.category),
@@ -177,7 +186,7 @@ export function toBestSellerCard(p: Listing): BestSeller & PriceFields & { href:
   return {
     name: p.name,
     shortName: p.name.replace(/^The\s+/i, ""),
-    badge: p.badge || "Best Seller",
+    badge: cardLabel(p),
     ...priceFields(p),
     detail: `${p.material} • ${p.spec}`,
     image: p.image,

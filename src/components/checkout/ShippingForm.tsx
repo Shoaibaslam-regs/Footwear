@@ -2,8 +2,16 @@
 
 import { useState } from "react";
 import { countries } from "@/lib/checkout-data";
-import { FieldError, TextField, fieldInput, fieldLabel, type FieldErrors } from "./fields";
+import { FieldError, TextField, fieldInput, fieldLabel, quietLink, SectionHead, sectionBox, type FieldErrors } from "./fields";
 
+const ADDRESS_FIELDS = ["phone", "line1", "line2", "city", "postalCode", "country"];
+
+/**
+ * Step 2. A returning customer's saved address shows as a short summary with
+ * "Change"; the fields stay in the form (hidden) and open on "Change" or when
+ * one has an error. Phones get number keypads for the phone and postal code.
+ * While delivery is Pakistan only, the country is a hidden field, not a box.
+ */
 export default function ShippingForm({
   errors,
   defaults,
@@ -12,79 +20,101 @@ export default function ShippingForm({
   /** Last address used by this client. */
   defaults?: { phone: string; line1: string; line2: string; city: string; postalCode: string } | null;
 }) {
-  const [country, setCountry] = useState("PK");
+  const [changing, setChanging] = useState(false);
+  const [flat, setFlat] = useState(!!defaults?.line2);
+  const [country, setCountry] = useState(countries[0].code);
+  const hasError = ADDRESS_FIELDS.some((f) => errors?.[f]);
+  const saved = !!defaults?.line1 && !!defaults.city && !!defaults.phone;
+  const open = !saved || changing || hasError;
   const dial = countries.find((c) => c.code === country)?.dial ?? "";
 
   return (
-    <div className="bg-surface-container-lowest p-space-md sm:p-space-lg shadow-sm scroll-mt-28" id="step-section-shipping">
-      <div className="flex items-baseline justify-between mb-space-md">
-        <div className="flex items-center gap-space-sm">
-          <span className="w-7 h-7 bg-primary text-on-primary font-label-uppercase text-label-uppercase flex items-center justify-center font-semibold">
-            2
+    <div className={sectionBox} id="step-section-shipping">
+      <SectionHead
+        aside={
+          saved &&
+          !open && (
+            <button className={quietLink} onClick={() => setChanging(true)} type="button">
+              Change
+            </button>
+          )
+        }
+        n={2}
+        title="Delivery Address"
+      />
+
+      {saved && !open && (
+        <address className="not-italic font-body-md text-[15px] text-primary leading-relaxed">
+          {defaults!.line1}
+          {defaults!.line2 && <span className="block">{defaults!.line2}</span>}
+          <span className="block">
+            {defaults!.city} {defaults!.postalCode}
           </span>
-          <h2 className="font-headline-sm text-headline-sm text-primary font-normal">Delivery Address</h2>
-        </div>
-        <span className="hidden sm:inline font-label-uppercase text-label-uppercase text-on-surface-variant tracking-wider uppercase">
-          Where to Deliver
-        </span>
-      </div>
-      {defaults && (
-        <p className="mb-space-sm font-body-sm text-body-sm text-on-surface-variant flex items-center gap-1">
-          <span className="material-symbols-outlined text-[16px] text-secondary">bookmark</span>
-          Filled in from your last order. Change anything you need.
-        </p>
+          <span className="block text-[13px] text-on-surface-variant">
+            {dial} {defaults!.phone}
+          </span>
+        </address>
       )}
-      <div className="space-y-space-md">
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
-          <TextField autoComplete="address-line1" className="md:col-span-2" errors={errors} label="Address *" defaultValue={defaults?.line1} name="line1" placeholder="House number, street and area" required />
-          <TextField autoComplete="address-line2" errors={errors} label="Flat / Floor (optional)" defaultValue={defaults?.line2} name="line2" placeholder="Flat number, floor, building" />
+
+      <div className="flex flex-col gap-space-md" hidden={!open}>
+        <TextField
+          autoComplete="address-line1"
+          defaultValue={defaults?.line1}
+          errors={errors}
+          label="Address *"
+          name="line1"
+          placeholder="House number, street and area"
+          required
+        />
+        {flat ? (
+          <TextField autoComplete="address-line2" defaultValue={defaults?.line2} errors={errors} label="Flat / Floor (optional)" name="line2" placeholder="Flat number, floor, building" />
+        ) : (
+          <>
+            <input name="line2" type="hidden" value="" />
+            <button className={`${quietLink} self-start -mt-2`} onClick={() => setFlat(true)} type="button">
+              + Add flat or floor
+            </button>
+          </>
+        )}
+        <div className="grid grid-cols-2 gap-space-sm sm:gap-space-md">
+          <TextField autoComplete="address-level2" defaultValue={defaults?.city} errors={errors} label="City *" name="city" required />
+          <TextField autoComplete="postal-code" defaultValue={defaults?.postalCode} errors={errors} inputMode="numeric" label="Postal Code *" name="postalCode" required />
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-3 gap-space-md">
-          <TextField autoComplete="address-level2" errors={errors} label="City *" defaultValue={defaults?.city} name="city" required />
-          <TextField autoComplete="postal-code" errors={errors} label="Postal Code *" defaultValue={defaults?.postalCode} name="postalCode" required />
-          <div className="flex flex-col gap-1">
+
+        {countries.length === 1 ? (
+          <input name="country" type="hidden" value={countries[0].code} />
+        ) : (
+          <div className="flex flex-col gap-1.5">
             <label className={fieldLabel} htmlFor="co-country">
               Country *
             </label>
-            <div className="relative">
-              <select
-                autoComplete="country"
-                className={`${fieldInput} appearance-none cursor-pointer`}
-                id="co-country"
-                name="country"
-                onChange={(e) => setCountry(e.target.value)}
-                value={country}
-              >
-                {countries.map((c) => (
-                  <option key={c.code} value={c.code}>
-                    {c.label}
-                  </option>
-                ))}
-              </select>
-              <span className="material-symbols-outlined absolute right-3 top-3.5 text-on-surface-variant pointer-events-none text-[20px]">
-                expand_more
-              </span>
-            </div>
+            <select autoComplete="country" className={`${fieldInput} cursor-pointer`} id="co-country" name="country" onChange={(e) => setCountry(e.target.value)} value={country}>
+              {countries.map((c) => (
+                <option key={c.code} value={c.code}>
+                  {c.label}
+                </option>
+              ))}
+            </select>
             <FieldError errors={errors?.country} id="co-country" />
           </div>
-        </div>
-        <div className="flex flex-col gap-1">
+        )}
+
+        <div className="flex flex-col gap-1.5">
           <label className={fieldLabel} htmlFor="co-phone">
-            Phone number (for the courier) *
+            Phone for the courier *
           </label>
-          <div className="flex gap-2">
-            <span className="h-12 px-space-md bg-surface-container-high text-on-surface flex items-center font-body-sm text-body-sm select-none">
-              {dial}
-            </span>
+          <div className="flex">
+            <span className="h-12 px-3 ring-1 ring-inset ring-outline-variant/80 bg-surface-container-low text-on-surface-variant flex items-center font-body-md text-[15px] select-none">{dial}</span>
             <input
               aria-describedby={errors?.phone ? "co-phone-error" : undefined}
               aria-invalid={errors?.phone ? true : undefined}
               autoComplete="tel"
-              className={`flex-1 ${fieldInput}`}
-              id="co-phone"
+              className={`flex-1 min-w-0 -ml-px ${fieldInput}`}
               defaultValue={defaults?.phone}
+              id="co-phone"
+              inputMode="tel"
               name="phone"
-              placeholder="0314 8428115"
+              placeholder="0300 1234567"
               required
               type="tel"
             />

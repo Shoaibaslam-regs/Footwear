@@ -201,6 +201,7 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
 - Quick View opens on the photos (`components/collection/PhotoZoom.tsx`, the listing's `gallery` via `toCatalogCard`). Hover zoom works only where `(hover: hover) and (pointer: fine)` matches. On touch, a tap zooms in, a drag pans, a second tap zooms out, and a swipe changes the photo. The 360° turntable is the second tab. On phones Quick View is a bottom sheet with Add to Bag pinned. Covered in `tests/e2e/checkout-again.spec.ts`.
 - `?q=` is a text filter. The header search dropdown (`components/header/SearchPanel.tsx`) links to `/collections?q=…`.
 - `FiltersUrlSync` re-reads the URL on client navigations.
+- Infinite scroll, in pages (owner's choice): `Catalog` shows `PAGE_SIZE` (12) shoes, then adds the next page when a sentinel comes within ~800 px of the screen (IntersectionObserver), with a "Show more" button as fallback. Photos load as they appear (`next/image` is lazy). The number loaded is local state, not in the URL (no history entry per batch); any filter or sort change resets it to one page, and an old `?page=N` link opens with N pages. There are no page numbers. Covered by `tests/e2e/shop-scroll.spec.ts`.
 
 ## Testing against another database
 
@@ -220,7 +221,11 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
 
 ## Customer-facing pages to know
 
-- `/account/orders/[number]`: the owner-only order page (timeline from `statusDates`, tracking number, cancel while `pending`, WhatsApp help).
+- `/account/orders/[number]`: the owner-only order page, laid out like the owner's atelier-commission design.
+  - Header with the key facts (ordered by, city, placed, expected delivery), WhatsApp help, and cancel while `pending`.
+  - "Order Journey": the current step as the headline ("Being *Prepared*") with the expected delivery beside it, then a five-step rail (Placed, Confirmed, Being Prepared, On the Way = shipped + out for delivery, Delivered) that fills to the current step; a vertical timeline on phones. Dates come from `statusDates`.
+  - The pairs ordered and totals; the "Delivery Journal · Your Details" card with recipient, address, phone, email, delivery method and tracking number; Payment and Expected delivery cards; a help card.
+  - Only real order data: internal history notes are never shown, and nothing from the design's invented details (craftsman, workshop readings) is used.
 - `/forgot-password` and `/reset-password`.
 - `/policies/[slug]`.
 - `/offers/[CODE]`: the scratch-card coupon page, built from the user's `index.html` design (`components/offers/ScratchCard.tsx`).
@@ -250,4 +255,10 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
   3. The admin writes and sends newsletters in Brevo (Campaigns): Brevo handles the editor, scheduling, unsubscribe links and open/click stats. The free plan sends 300 emails a day.
   - Building a sender inside the admin panel was considered and set aside: more work, no statistics, and long bulk sends don't suit Vercel's time limits.
   - Until then the form promises "news and offers" without sending any; if the plan is dropped, remove the form instead.
+- **SEO (planned, owner's choice 2026-11-15: later).** Today only titles and descriptions exist (`metadata` per page; `generateMetadata` on `/products/[slug]` and `/policies/[slug]`). Nothing else is in place: no sitemap, robots, `metadataBase`, Open Graph/share images or structured data. The plan, best after the store's own domain is live (links and the sitemap should use it, via `SITE_URL`):
+  1. `app/sitemap.ts`: home, `/collections`, every published listing (`/products/<slug>`, `lastModified` from `updatedAt`) and `/policies/*`; never `/account`, `/checkout`, `/admin`, `/offers`. Read listings through `getPublishedProducts()` (cached, `products` tag).
+  2. `app/robots.ts`: allow the shop, disallow `/admin`, `/account`, `/checkout`, `/api`, `/offers`, `/login`, `/register`, `/reset-password`; point to the sitemap. Pages that are already `robots: { index: false }` (orders, offers) stay so.
+  3. `metadataBase` in the root layout from `SITE_URL`, plus Open Graph and Twitter cards: site default (logo/hero), and per product the cover photo, name and price, so links shared on WhatsApp/Instagram show the shoe. Canonical URLs per page; `/collections?…` filter URLs canonical to `/collections`.
+  4. Product structured data (JSON-LD `Product` + `Offer` in PKR + `AggregateRating` only when real reviews exist) on product pages, and `Organization`/`BreadcrumbList`. Prices must follow the live price rule (listing discount; a live sale event changes the price, so keep `Offer.price` to the listing's own price or emit it client-side) and must never invent ratings or "sold" numbers.
+  5. Check with Google Search Console (verify the domain, submit the sitemap) and the Rich Results Test. Keep the brand voice in descriptions (DESIGN.md: plain English, no invented claims).
 

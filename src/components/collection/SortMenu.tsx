@@ -8,8 +8,8 @@ export default function SortMenu({ value, onChange }: { value: SortOption; onCha
   return (
     <SelectMenu
       buttonClassName={(open) =>
-        `h-9 flex items-center gap-1.5 pl-space-md pr-space-sm rounded-full font-label-uppercase text-[10px] sm:text-label-uppercase uppercase tracking-wider transition-colors ${
-          open ? "bg-primary text-on-primary" : "bg-surface-container text-on-surface hover:bg-surface-container-high"
+        `h-9 flex items-center gap-1 pl-3 pr-2 font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.14em] ring-1 ring-inset transition-colors ${
+          open ? "bg-primary text-on-primary ring-primary" : "ring-outline-variant/70 text-primary hover:ring-primary"
         }`
       }
       label="Sort products"
