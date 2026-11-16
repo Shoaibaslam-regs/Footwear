@@ -1,7 +1,8 @@
 import "server-only";
 import { headers } from "next/headers";
 import nodemailer, { type Transporter } from "nodemailer";
-import { etaSentence, orderStatusLabel, paymentMethodLabel, type Order } from "../orders";
+import { etaSentence, orderStatusLabel, type Order } from "../orders";
+import { recordMail, type MailKind } from "./mail-log";
 
 /**
  * Optional email. Configure in .env to switch on:
@@ -69,9 +70,10 @@ function layout(title: string, lines: string[], cta?: { label: string; href: str
 /**
  * Best-effort send; never throws (a failed email must not fail an order).
  * Returns whether it was handed to the mail server. `code` is shown large
- * at the top (one-time codes).
+ * at the top (one-time codes). Every attempt is recorded for the admin
+ * Emails page (lib/server/mail-log.ts), under `kind`.
  */
-export async function sendMail(to: string, subject: string, title: string, lines: string[], cta?: { label: string; href: string }, code?: string) {
+export async function sendMail(kind: MailKind, to: string, subject: string, title: string, lines: string[], cta?: { label: string; href: string }, code?: string) {
   if (!mailConfigured()) return false;
   try {
     await transporter().sendMail({
@@ -81,25 +83,16 @@ export async function sendMail(to: string, subject: string, title: string, lines
       text: [title, "", ...(code ? [code, ""] : []), ...lines, ...(cta ? ["", `${cta.label}: ${cta.href}`] : [])].join("\n"),
       html: layout(title, lines, cta, code),
     });
+    await recordMail(kind, to, subject, true);
     return true;
   } catch (e) {
     console.error("Email failed", e);
+    await recordMail(kind, to, subject, false, e instanceof Error ? e.message : String(e));
     return false;
   }
 }
 
 /* ---------- Messages (email and WhatsApp share the wording) ---------- */
-
-const pkr = (n: number) => `PKR ${n.toLocaleString("en-US")}`;
-
-export function orderPlacedLines(o: Pick<Order, "number" | "items" | "total" | "delivery" | "payment" | "coupon">) {
-  return [
-    `Thank you for your order #${o.number}. Our team will confirm it shortly.`,
-    ...o.items.map((i) => `• ${i.name} — EU ${i.size} × ${i.quantity}`),
-    ...(o.coupon ? [`Coupon ${o.coupon.code}: you saved ${pkr(o.coupon.discount)}`] : []),
-    `Total: ${pkr(o.total)} · ${o.delivery.name} · ${paymentMethodLabel(o.payment.method)}`,
-  ];
-}
 
 export function statusLines(o: Pick<Order, "number" | "status" | "trackingNumber" | "eta">) {
   const lines = [`Your order #${o.number} is now: ${orderStatusLabel[o.status]}.`];

@@ -1,5 +1,6 @@
 import "server-only";
 import { MongoClient, type Db } from "mongodb";
+import { emailKey } from "../identity-keys";
 
 const uri = process.env.MONGODB_URI;
 
@@ -30,5 +31,12 @@ async function ensureIndexes(db: Db) {
     db.collection("orders").createIndex({ createdAt: -1 }),
     db.collection("orders").createIndex({ userId: 1, createdAt: -1 }),
     db.collection("orders").createIndex({ status: 1, createdAt: -1 }),
+    db.collection("users").createIndex({ emailKey: 1 }),
+    db.collection("orders").createIndex({ "customer.phoneKey": 1, "coupon.code": 1 }),
   ]);
+  // Accounts made before emailKey existed get it once (lib/identity-keys.ts).
+  const users = db.collection<{ email: string; emailKey?: string }>("users");
+  for (const u of await users.find({ emailKey: { $exists: false } }, { projection: { email: 1 } }).toArray()) {
+    await users.updateOne({ _id: u._id }, { $set: { emailKey: emailKey(u.email) } });
+  }
 }

@@ -26,13 +26,14 @@ the browser report is attached to the run.
 - Rate limits: counts, windows, case-insensitive keys, parallel attempts, visitor IP.
 - Stock: reserve, release, the last pair to one of two buyers, rollback.
 - Coupons: per-customer and total limits under load, states, surprise cards (one per customer, in range, owner only, paused campaign).
-- Sign-up codes and COD order codes: hashing, tries, expiry, resend, fingerprints.
+- Sign-up codes: hashing, tries, expiry, resend.
+- One coupon per phone number across accounts (`coupon-phone.test.ts`); Gmail-alias and phone-format keys (unit).
 - Order queue order and numbers; two admins changing a status at once; delivery estimates; password-reset links.
 
 **Browser** (`tests/e2e/`, the built store against `<db>_e2e`, desktop and phone)
-- Sign-up with the emailed code (wrong code, then right code).
-- COD checkout for a new customer with the code, and it appears in the admin queue with "Email confirmed".
-- COD for a returning customer without a code; a coupon taken off the total.
+- Sign-up with the emailed code (wrong code, then right code), and a Gmail alias of an existing account refused; a coupon applied with no code.
+- COD checkout for a new customer, placed at once with no emails sent, and it appears in the admin queue.
+- A coupon taken off the total.
 - Hidden admin login; visitors and customers kept out of the admin.
 
 ## Adding a test

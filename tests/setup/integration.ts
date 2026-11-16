@@ -37,7 +37,7 @@ vi.mock("@/lib/server/mail", async (importOriginal) => {
   return {
     ...real,
     mailConfigured: () => true,
-    sendMail: async (to: string, subject: string, title: string, lines: string[], _cta?: unknown, code?: string) => {
+    sendMail: async (_kind: string, to: string, subject: string, title: string, lines: string[], _cta?: unknown, code?: string) => {
       sentMail.push({ to, subject, title, lines, code });
       return true;
     },

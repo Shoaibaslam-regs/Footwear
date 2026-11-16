@@ -219,7 +219,7 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
               )}
             </div>
             <p className="muted text-xs">
-              {mailConfigured() ? "Customers are emailed on every status change." : "Email is not set up: use the WhatsApp update button to notify the customer."}
+              {mailConfigured() ? "The customer is emailed once, when you mark it Shipped. For anything else, use WhatsApp update." : "Email is not set up: use the WhatsApp update button to notify the customer."}
             </p>
             <StatusControl key={`${order.status}-${order.updatedAt}`} order={order} />
           </section>

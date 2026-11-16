@@ -11,6 +11,7 @@ import { mailConfigured, sendMail, siteUrl } from "../server/mail";
 import { createResetToken, consumeResetToken } from "../server/password-reset";
 import { RULES, blocked, clientIp, firstBlocked, hit } from "../server/rate-limit";
 import { checkCode, resendCode, startRegistration } from "../server/email-otp";
+import { emailKey } from "../identity-keys";
 import { adminGateOn, gatePass, isAdminSecret, validGatePass } from "../server/admin-gate";
 
 export type AuthState =
@@ -67,12 +68,14 @@ function safeNext(value: FormDataEntryValue | null, fallback: string) {
 
 /** Creates the account and logs in. The very first account becomes the store administrator. */
 async function createAccount(name: string, email: string, passwordHash: string, next: FormDataEntryValue | null, verified: boolean): Promise<AuthState> {
-  const users = (await getDb()).collection<Omit<UserDoc, "_id"> & { emailVerifiedAt?: Date }>("users");
+  const users = (await getDb()).collection<Omit<UserDoc, "_id"> & { emailKey: string; emailVerifiedAt?: Date }>("users");
+  // Checked again here: two sign-ups for the same inbox (e.g. a Gmail alias) can wait for codes at once.
+  if (await accountForInbox(email)) return { errors: { email: [ACCOUNT_EXISTS] }, values: { name, email } };
   const role = (await users.estimatedDocumentCount()) === 0 ? "admin" : "customer";
   let id: string;
   try {
     const now = new Date();
-    const res = await users.insertOne({ name, email, passwordHash, role, createdAt: now, ...(verified ? { emailVerifiedAt: now } : {}) });
+    const res = await users.insertOne({ name, email, emailKey: emailKey(email), passwordHash, role, createdAt: now, ...(verified ? { emailVerifiedAt: now } : {}) });
     id = res.insertedId.toHexString();
   } catch (e) {
     if (e instanceof MongoServerError && e.code === 11000) {
@@ -84,10 +87,17 @@ async function createAccount(name: string, email: string, passwordHash: string, 
   redirect(role === "admin" ? "/admin" : safeNext(next, "/account"));
 }
 
+const ACCOUNT_EXISTS = "An account with this email already exists. Please log in.";
+
+/** One account per inbox: Gmail aliases (dots, "+tag") count as the same address (lib/identity-keys.ts). */
+async function accountForInbox(address: string) {
+  return (await getDb()).collection("users").findOne({ $or: [{ email: address }, { emailKey: emailKey(address) }] }, { projection: { _id: 1 } });
+}
+
 /**
  * Sign-up, step 1. With email set up, no account is made yet: the details
- * wait while a 6-digit code goes to the address (lib/server/email-otp.ts).
- * Without email, the account is created straight away as before.
+ * wait while a 6-digit code goes to the address (lib/server/email-otp.ts), so
+ * every account has a real inbox. Without email, the account is created at once.
  */
 export async function register(_: AuthState, formData: FormData): Promise<AuthState> {
   const raw = Object.fromEntries(formData);
@@ -100,9 +110,7 @@ export async function register(_: AuthState, formData: FormData): Promise<AuthSt
   if (registerWait) return { retryAfter: registerWait, values };
 
   const { name, email: address, password } = parsed.data;
-  if (await (await getDb()).collection("users").findOne({ email: address }, { projection: { _id: 1 } })) {
-    return { errors: { email: ["An account with this email already exists."] }, values };
-  }
+  if (await accountForInbox(address)) return { errors: { email: [ACCOUNT_EXISTS] }, values };
   const passwordHash = await hashPassword(password);
   if (!mailConfigured()) return createAccount(name, address, passwordHash, formData.get("next"), false);
 
@@ -228,7 +236,7 @@ export async function requestPasswordReset(_: ResetState, formData: FormData): P
     const token = await createResetToken(user._id);
     if (token) {
       const link = `${await siteUrl()}/reset-password?token=${token}`;
-      await sendMail(user.email, "Reset your Ŕose Atelier password", "Reset your password", [
+      await sendMail("password_reset", user.email, "Reset your Ŕose Atelier password", "Reset your password", [
         `Hello ${user.name.split(" ")[0]}, we received a request to reset your password.`,
         "This link works once and expires in 1 hour. If you didn't ask for it, you can ignore this email.",
       ], { label: "Choose a new password", href: link });

@@ -25,7 +25,9 @@ Tests (see `TESTING.md`): `npm test` runs Vitest unit tests (`tests/unit/`) and 
 
 `CRON_SECRET` (optional, 16+ chars) switches on the weekly photo cleanup on Vercel. `ADMIN_SECRET` (optional, 12+ chars) switches on the hidden admin login.
 
-Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, `SMTP_PASS` (or `SMTP_KEY`) and `MAIL_FROM` switches it on. The store uses Brevo (`smtp-relay.brevo.com:587`), plus `SITE_URL` for links in emails. Without them, `lib/server/mail.ts` skips every send: order emails, password-reset emails and back-in-stock alerts. Admins then use the WhatsApp buttons, and the "Reset link" button on `/admin/users`.
+Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, `SMTP_PASS` (or `SMTP_KEY`) and `MAIL_FROM` switches it on. The store uses Brevo (`smtp-relay.brevo.com:587`), plus `SITE_URL` for links in emails. Without them, `lib/server/mail.ts` skips every send (sign-up then has no code): the sign-up code, the "on its way" email, password resets and back-in-stock alerts. Admins then use the WhatsApp buttons, and the "Reset link" button on `/admin/users`.
+
+**What customers are emailed** (owner's choice, 2026-11-16): about orders, only once, when it is on its way (`ORDER_EMAIL_STATUSES` = shipped, sent by `setOrderStatus`). No "order received", other status, cancellation or expected-date emails; the order page and WhatsApp carry those. The sign-up code, password resets and back-in-stock alerts are still emailed.
 
 ## Architecture
 
@@ -58,8 +60,9 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
     - `queuePositions()` numbers the waiting orders across all filters (#1 = oldest); the list and the order page ("#2 of 12 in queue") show it.
     - `?sort=newest|oldest` gives plain date order.
   - Expected delivery: `order.eta = {from, to, note?, setAt}` (Pakistan calendar days, `YYYY-MM-DD`). It is set on the admin order page (`EtaControl` → `setOrderEta`), from a preset range counted from today in PKT (`etaPresets`, e.g. 4–5 days) or picked dates, with an optional reason the customer sees (`etaReasons` suggestions).
-    - Saving notes it in the history and emails the customer.
-    - It shows on the customer's order page, the account order cards, the order slip and the admin list, and `statusLines` adds it to status emails and the WhatsApp update until delivery. Labels come from `etaLabel` (no year).
+    - Saving notes it in the history (no email; it shows on the order page and goes into the shipping email).
+    - It shows on the customer's order page, the account order cards, the order slip and the admin list, and `statusLines` adds it to the "on its way" email and the WhatsApp update until delivery. Labels come from `etaLabel` (no year).
+  - `/admin/emails` counts what the store emails. `sendMail(kind, …)` records every attempt in `mail_log` (`lib/server/mail-log.ts`: kind, recipient, subject with sign-up codes masked, sent or failed with the SMTP error; TTL about a year). The page shows today against Brevo's 300 a day, 7 and 30 days vs the period before, failures, emails per day, a breakdown by kind and the paged list (`?kind=`, `?status=failed`). "Sent" means Brevo accepted it; inbox or spam is only visible in Brevo. New email kinds go in `MAIL_KINDS`. Tested in `tests/integration/mail-log.test.ts`.
   - `setUserRole` returns to the page in its `back` field, but only to `/admin/users` or `/admin/users/<id>`.
   - Charts are client SVG components in `components/admin/charts/`. They take a serialisable `unit` prop (`"pkr"` or `"count"`), not a formatter function, because server pages render them.
 - `src/app/layout.tsx` (root): fonts only, plus `DialogHost` and `CartSync` (both app-wide).
@@ -100,18 +103,13 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - `lib/server/stock.ts` reserves atomically in `placeOrder` (rolling back on failure) and releases on cancel.
   - Cart actions cap quantities at stock.
   - `stock_alerts` holds "notify me" requests; restocking a size in the admin form notifies them.
-- `pending_registrations`: sign-ups waiting for their email code (`lib/server/email-otp.ts`). The record is keyed by email, holds the name, password hash and a hash of the code (peppered with `JWT_SECRET`), and expires 1 hour after the first code (TTL).
-  - With email configured, `register` creates no account. It emails a 6-digit code, and `AuthForm` switches to `VerifyCode`.
-  - `verifyRegistration` creates the account (`users.emailVerifiedAt`) and logs in.
-  - Codes work for 10 minutes with 5 tries. "Resend code" is limited to once a minute (countdown on the button) and 5 per sign-up. Re-submitting the form within a minute keeps the code already sent.
-  - Without email configured, sign-up creates the account at once, as before. Accounts made before this have no `emailVerifiedAt`.
-  - To test without sending real email, start the test server with `SMTP_HOST=127.0.0.1 SMTP_PORT=2525` and a local SMTP sink (`--env-file` doesn't override variables already set).
-- `order_codes`: Cash on Delivery confirmations (`lib/server/order-codes.ts`), one per account, with a TTL of 1 hour.
-  - When email is configured, a COD order from an account with no delivered order is not placed by `placeOrder`. It prices the order, saves the checkout data with a fingerprint of the priced order (lines, prices, coupon, delivery, address, total) and emails a 6-digit code. It returns `{confirm: {email, total}}`, and `Checkout` opens `OrderCodeDialog`.
-  - `confirmCodOrder` checks the code, prices the order again and requires the same fingerprint (otherwise `restart`: "Your bag, prices or details changed…"). Then the shared `finalise` reserves stock, claims the coupon and inserts the order with `codeConfirmed: true`, shown as "Email confirmed" in the admin.
-  - Nothing is reserved before the code is entered. Codes work for 10 minutes with 5 tries; resend once a minute, 5 per hour.
-  - Other payment methods, and customers with a delivered order, place the order directly.
-  - `placeOrder` is split into `orderLimits` → `readForm` → `priceOrder` → `finalise`; keep both paths going through these.
+- **Sign-up confirms the email; checkout and coupons ask for no code** (owner's choice, 2026-11-16: a wrong email found only at payment made customers give up, so it is checked once, at sign-up):
+  - `pending_registrations` (`lib/server/email-otp.ts`): with email set up, `register` creates no account. It stores name and password hash under the email (TTL 1 hour) and emails a 6-digit code (10 minutes, 5 tries, resend once a minute, 5 per sign-up). `verifyRegistration` creates the account with `emailVerifiedAt` and logs in. `AuthForm` shows `VerifyCode` (`#otp-card`) for step 2. Without email set up, `register` creates the account at once.
+  - One account per inbox: `users.emailKey` (`emailKey()` in `lib/identity-keys.ts`: Gmail ignores dots and "+tag", googlemail = gmail) is checked before a code is sent and again in `createAccount`; `getDb()` fills it in once for older accounts.
+  - Cash on Delivery orders are placed at once, with no code. The shop calls or WhatsApps new orders to confirm them ("WhatsApp update" on the admin order page) and cancels unanswered ones before anything ships; the thank-you screen says so. Order limits (`MAX_PENDING_ORDERS`, 5 per hour) still hold. `orders.codeConfirmed` ("Email confirmed" in the admin) exists only on older orders.
+  - Coupons need no code: they are protected by the per-phone rule (below).
+  - `placeOrder` runs `orderLimits` → `readForm` → `priceOrder` → `finalise`.
+  - Tested in `tests/integration/codes.test.ts`, `tests/unit/identity-keys.test.ts`, `tests/e2e/signup.spec.ts` and `tests/e2e/checkout.spec.ts`.
 - `password_resets`: SHA-256 hashes of single-use tokens with a TTL (1 hour). A reset sets `users.passwordChangedAt`, and `getCurrentUser` rejects JWTs issued before it.
 - `users.savedAddress`: the last checkout address, used to prefill the next one.
 - `review_uploads`: ownership of review photos, for the daily cap and so a review can only reference the uploader's own files.
@@ -119,6 +117,7 @@ Email is optional. Setting `SMTP_HOST`, `SMTP_PORT` (default 587), `SMTP_USER`, 
   - Types: `percent` (with an optional `maxDiscount`), `fixed` (PKR) and `free_delivery`.
   - `maxPairs` (percent and surprise campaigns, optional): the percent comes off only the N most expensive eligible pairs, with each pair counted once (`discountBase` in `lib/coupons.ts`), and the rest of the bag is full price. Absent or null means the whole bag, so older coupons are unchanged. Shown to customers as "On 1 pair" / "On up to N pairs". Surprise cards copy it from their campaign.
   - Rules: `minOrder`, `startsAt` / `endsAt` (Pakistan days), `maxUses` (total) and `perCustomer`.
+  - One person, many accounts: `phoneLimitReason()` (in `priceOrder`) also counts other accounts' orders with the same delivery phone (`orders.customer.phoneKey`, `phoneKey()` in `lib/identity-keys.ts`, cancelled ones excluded): `perCustomer` per phone, and one surprise card per campaign per phone. Tested in `tests/integration/coupon-phone.test.ts`.
   - `fullPriceOnly` is on by default, so items with a listing discount don't get the coupon as well.
   - `active` pauses a coupon.
   - Any coupon can be deleted, used or not (`deleteCoupon`). It also removes a campaign's cards, the `coupon_redemptions` rows, and `carts.coupon` references.
@@ -217,7 +216,7 @@ To run `next start` against a throwaway DB, rewrite the database name in `MONGOD
 - Accounts are required to add to the bag or wishlist and to check out; guest checkout is gone. This is enforced in `proxy.ts`, `placeOrder` and the cart actions.
 - A review gets a "Verified purchase" badge only for a delivered order containing that product (`hasPurchased`). Marking an order delivered upgrades the customer's existing reviews.
 - "N sold" = units in orders that aren't cancelled + the listing's `otherSales`. `otherSales` is labelled for real off-site sales only. Never seed or suggest invented numbers.
-- Payment methods (`lib/orders.ts`): COD, EasyPaisa, JazzCash (wallet number stored, normalised to `03XXXXXXXXX`), bank transfer, card payment link. **Checkout offers Cash on Delivery only** (owner's decision, 2026-11-14): `checkoutMethodValues` lists what checkout shows and what `placeOrder` accepts; the other methods stay defined so older orders keep their labels (covered by `tests/e2e/checkout.spec.ts`). Browser tests make customers returning (`makeReturning`) to skip the COD email code. There is no gateway; admins record payment status and a reference (TID). Never collect card numbers or wallet PINs/OTPs.
+- Payment methods (`lib/orders.ts`): COD, EasyPaisa, JazzCash (wallet number stored, normalised to `03XXXXXXXXX`), bank transfer, card payment link. **Checkout offers Cash on Delivery only** (owner's decision, 2026-11-14): `checkoutMethodValues` lists what checkout shows and what `placeOrder` accepts; the other methods stay defined so older orders keep their labels (covered by `tests/e2e/checkout.spec.ts`). There is no gateway; admins record payment status and a reference (TID). Never collect card numbers or wallet PINs/OTPs.
 - Fulfilment follows `nextStatuses`. Shipping requires a tracking number. Status changes are guarded against concurrent admins.
 
 ## Customer-facing pages to know

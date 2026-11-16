@@ -35,6 +35,9 @@ export const nextStatuses: Record<OrderStatus, OrderStatus[]> = {
 };
 
 /** The customer-facing progress line (cancelled is shown separately). */
+/** The only order statuses that email the customer: when the order is on its way (owner's choice 2026-11-16). */
+export const ORDER_EMAIL_STATUSES: OrderStatus[] = ["shipped"];
+
 export const fulfilmentSteps: OrderStatus[] = [
   "pending",
   "confirmed",
@@ -124,7 +127,8 @@ export type Order = {
   id: string;
   number: string;
   userId: string | null;
-  customer: { name: string; email: string; phone: string };
+  /** `phoneKey`: the phone as 03XXXXXXXXX (lib/identity-keys.ts), for per-phone coupon limits. */
+  customer: { name: string; email: string; phone: string; phoneKey?: string };
   address: { line1: string; line2: string; city: string; postalCode: string; country: string };
   items: OrderItem[];
   /** Sum of list prices (PKR). */
@@ -148,7 +152,7 @@ export type Order = {
   trackingNumber: string;
   /** Expected delivery the store told the customer (Pakistan calendar days). */
   eta?: OrderEta;
-  /** Cash on Delivery confirmed with an email code before it was placed. */
+  /** Older orders only: Cash on Delivery confirmed with an email code (that step was removed 2026-11-16). */
   codeConfirmed?: boolean;
   history: OrderEvent[];
   createdAt: string;

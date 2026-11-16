@@ -108,7 +108,7 @@ export default function Footer() {
       {/* The brand, large and light, closing the page. */}
       <div aria-hidden="true" className="overflow-hidden select-none">
         <p className="font-headline-lg font-normal text-primary/[0.07] text-center leading-[0.8] tracking-[0.1em] text-[clamp(72px,21vw,300px)] translate-y-[6%]">
-          ŔOSE
+          R&apos;OSE
         </p>
       </div>
     </footer>

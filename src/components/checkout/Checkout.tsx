@@ -3,7 +3,6 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useActionState, useCallback, useEffect, useLayoutEffect, useRef, useState } from "react";
-import OrderCodeDialog from "./OrderCodeDialog";
 import { useCooldown } from "@/lib/use-cooldown";
 import { placeOrder, type PlaceOrderState } from "@/app/(shop)/checkout/actions";
 import type { DeliveryOption } from "@/lib/site";
@@ -106,13 +105,7 @@ function CheckoutForm({
   const itemDiscount = couponResult?.ok ? couponResult.itemDiscount : 0;
   const deliveryDiscount = couponResult?.ok ? couponResult.deliveryDiscount : 0;
   const total = subtotal - itemDiscount + shipping - deliveryDiscount;
-  // Cash on Delivery from a new customer: Place Order sends a code first, and
-  // the dialog places the order once the code is entered.
-  const [placedByCode, setPlacedByCode] = useState<PlacedOrder | null>(null);
-  const [closed, setClosed] = useState<{ from: PlaceOrderState; message?: string } | null>(null);
-  const askCode = state && !state.ok && state.confirm && closed?.from !== state ? state.confirm : null;
-  const closeCode = useCallback((message?: string) => setClosed({ from: state, message }), [state]);
-  const placed = state?.ok ? state.order : placedByCode;
+  const placed = state?.ok ? state.order : null;
   const errors = state && !state.ok ? state.errors : undefined;
   // After a refused order: bring the first field with a problem into view and put the cursor there.
   useEffect(() => {
@@ -121,7 +114,7 @@ function CheckoutForm({
     field?.scrollIntoView({ behavior: "smooth", block: "center" });
     field?.focus({ preventScroll: true });
   }, [errors]);
-  const formMessage = closed && closed.from === state && closed.message ? closed.message : state && !state.ok ? state.message : undefined;
+  const formMessage = state && !state.ok ? state.message : undefined;
 
   // Once the server has saved the order, empty the bag: once per order. Effects
   // run again when a kept page is shown again, and that must never wipe a bag
@@ -181,7 +174,6 @@ function CheckoutForm({
             wait={orderWait}
           />
         </form>
-        {askCode && <OrderCodeDialog email={askCode.email} onClose={closeCode} onPlaced={setPlacedByCode} total={askCode.total} />}
         <CheckoutSummary
           coupon={coupon}
           couponNote={droppedNote}
@@ -217,7 +209,7 @@ function OrderConfirmation({ order, signedIn }: { order: PlacedOrder; signedIn: 
           Thank You, {order.customer.name.split(" ")[0]}
         </h1>
         <p className="font-body-md text-body-md text-on-surface-variant max-w-xl">
-          Our team will confirm your order soon and send updates to {order.customer.email}.
+          We&apos;ll call or WhatsApp you on {order.customer.phone} to confirm your order, then send it on its way.
           Payment: {paymentMethodLabel(order.payment.method)}. Delivery: {order.delivery.name}.
         </p>
       </div>

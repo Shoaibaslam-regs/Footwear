@@ -50,6 +50,7 @@ const newCode = () => String(randomInt(0, 10 ** OTP.digits)).padStart(OTP.digits
 
 async function sendCode(email: string, name: string, code: string) {
   return sendMail(
+    "signup_code",
     email,
     `${code} is your Ŕose Atelier code`,
     "Confirm your email",

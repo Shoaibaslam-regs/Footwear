@@ -1,6 +1,6 @@
 import { expect, test } from "@playwright/test";
 import { ObjectId } from "mongodb";
-import { address, createUser, db, logInAs, makeReturning, pickShoe, putInBag, setupStore, typeCode, waitForCode } from "./helpers";
+import { address, createUser, db, logInAs, mailTo, pickShoe, putInBag, setupStore } from "./helpers";
 
 let adminId: ObjectId;
 test.beforeAll(async () => {
@@ -10,7 +10,7 @@ test.beforeAll(async () => {
 const placeOrder = (page: import("@playwright/test").Page) =>
   page.locator('button[type="submit"]:visible', { hasText: "Place Order" }).first().click();
 
-test("COD from a new customer: confirmed by email code, then it joins the admin queue @phone", async ({ page, browser }, info) => {
+test("COD from a new customer is placed at once (no code), and joins the admin queue @phone", async ({ page, browser }, info) => {
   const email = `nadia.${info.project.name}@example.com`;
   const userId = await createUser({ name: "Nadia Khan", email, savedAddress: address });
   const shoe = await pickShoe();
@@ -20,43 +20,23 @@ test("COD from a new customer: confirmed by email code, then it joins the admin 
   await page.goto("/checkout");
   await expect(page.getByLabel("Cash on Delivery")).toBeChecked();
   await placeOrder(page);
-  await expect(page.getByRole("heading", { name: "Confirm your order" })).toBeVisible();
-  expect(await (await db()).collection("orders").countDocuments({ userId })).toBe(0); // nothing placed yet
-
-  await typeCode(page, await waitForCode(email));
   await expect(page.getByRole("heading", { name: /Thank You/ })).toBeVisible();
+  await expect(page.getByText(`We'll call or WhatsApp you on ${address.phone}`)).toBeVisible();
 
   const order = await (await db()).collection("orders").findOne({ userId });
-  expect(order?.codeConfirmed).toBe(true);
   expect(order?.payment.method).toBe("cod");
+  expect(order?.customer.phoneKey).toBe("03001234567");
   expect((await (await db()).collection("carts").findOne({ _id: userId }))?.bag).toHaveLength(0);
+  // No emails at all for a placed order (customers are emailed when it's on its way).
+  expect(await mailTo(email)).toEqual([]);
 
-  // The admin sees it in the queue with the tag.
+  // The admin sees it in the queue.
   const admin = await browser.newPage();
   await logInAs(admin, adminId, "admin");
   await admin.goto("/admin/orders");
   const row = admin.locator("tbody tr", { hasText: order!.number });
-  await expect(row).toContainText("Email confirmed");
   await expect(row.locator(".tag", { hasText: /^#\d+$/ })).toBeVisible();
   await admin.close();
-});
-
-test("a customer with a delivered order places COD without a code", async ({ page }) => {
-  const email = "omar@example.com";
-  const userId = await createUser({ name: "Omar", email, savedAddress: address });
-  await (await db()).collection("orders").insertOne({
-    _id: new ObjectId(), number: "EL-PAST01", userId, status: "delivered", customer: { name: "Omar", email, phone: address.phone },
-    address: { ...address, country: "PK" }, items: [], listTotal: 0, discountTotal: 0, shippingFee: 0, total: 0,
-    delivery: { id: "std", name: "Standard" }, payment: { method: "cod", status: "paid", reference: "" }, trackingNumber: "T", history: [],
-    createdAt: new Date(Date.now() - 10 * 86_400_000), updatedAt: new Date(Date.now() - 10 * 86_400_000),
-  });
-  const shoe = await pickShoe();
-  await putInBag(userId, shoe.slug, shoe.sizes[0]);
-  await logInAs(page, userId, "customer");
-  await page.goto("/checkout");
-  await placeOrder(page);
-  await expect(page.getByRole("heading", { name: /Thank You/ })).toBeVisible();
-  await expect(page.getByRole("heading", { name: "Confirm your order" })).toHaveCount(0);
 });
 
 test("a coupon applied at checkout is taken off the order total", async ({ page }) => {
@@ -68,7 +48,6 @@ test("a coupon applied at checkout is taken off the order total", async ({ page 
   });
   const shoe = await pickShoe();
   await putInBag(userId, shoe.slug, shoe.sizes[0]);
-  await makeReturning(userId); // Cash on Delivery without the email code
   await logInAs(page, userId, "customer");
 
   await page.goto("/checkout");
@@ -101,7 +80,6 @@ test("a coupon on 1 pair takes the percent off only the dearest pair", async ({ 
     { $set: { bag: [{ slug: dear.slug, size: dear.sizes[0], quantity: 1, addedAt: new Date() }, { slug: cheap.slug, size: cheap.sizes[0], quantity: 2, addedAt: new Date() }], wishlist: [] } },
     { upsert: true },
   );
-  await makeReturning(userId); // Cash on Delivery without the email code
   await logInAs(page, userId, "customer");
   await page.goto("/checkout");
   await page.getByRole("button", { name: "Have a coupon code?" }).first().click();
@@ -119,7 +97,6 @@ test("checkout offers Cash on Delivery only, and the server refuses any other me
   const userId = await createUser({ name: "Sana", email: "sana.cod@example.com", savedAddress: address });
   const shoe = await pickShoe();
   await putInBag(userId, shoe.slug, shoe.sizes[0]);
-  await makeReturning(userId);
   await logInAs(page, userId, "customer");
   await page.goto("/checkout");
   await expect(page.getByText("Cash on Delivery").filter({ visible: true }).first()).toBeVisible();

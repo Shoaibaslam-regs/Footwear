@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { address, createUser, logInAs, makeReturning, pickShoe, putInBag, setupStore } from "./helpers";
+import { address, createUser, logInAs, pickShoe, putInBag, setupStore } from "./helpers";
 
 test.beforeAll(setupStore);
 
@@ -7,7 +7,6 @@ test("a second order starts a fresh checkout, not the last order's thank-you scr
   const userId = await createUser({ name: "Hina Shah", email: `hina.${info.project.name}@example.com`, savedAddress: address });
   const shoe = await pickShoe();
   await putInBag(userId, shoe.slug, shoe.sizes[0]);
-  await makeReturning(userId); // Cash on Delivery without the email code
   await logInAs(page, userId, "customer");
 
   // First order.

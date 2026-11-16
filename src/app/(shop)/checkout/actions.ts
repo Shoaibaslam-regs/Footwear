@@ -14,13 +14,26 @@ import { carts } from "@/lib/server/carts";
 import { releaseStock, reserveStock } from "@/lib/server/stock";
 import { PRODUCTS_TAG } from "@/lib/server/products";
 import { getDb } from "@/lib/server/db";
-import { orderPlacedLines, sendMail, siteUrl } from "@/lib/server/mail";
 import { updateTag } from "next/cache";
 import { applyCoupon, type CouponLine } from "@/lib/coupons";
-import { claimCoupon, coupons, getCouponByCode, releaseCoupon, toTerms, unavailableReason } from "@/lib/server/coupons";
+import { claimCoupon, coupons, getCouponByCode, phoneLimitReason, releaseCoupon, toTerms, unavailableReason } from "@/lib/server/coupons";
+import { phoneKey } from "@/lib/identity-keys";
 import { MAX_PENDING_ORDERS, RULES, blocked, hit } from "@/lib/server/rate-limit";
-import { mailConfigured } from "@/lib/server/mail";
-import { checkOrderCode, needsOrderCode, orderFingerprint, resendOrderCode, startOrderCode, type CheckoutData } from "@/lib/server/order-codes";
+
+/** The checkout form, after validation. */
+export type CheckoutData = {
+  name: string;
+  email: string;
+  phone: string;
+  line1: string;
+  line2: string;
+  city: string;
+  postalCode: string;
+  country: string;
+  delivery: string;
+  paymentMethod: string;
+  walletNumber: string;
+};
 
 export type PlaceOrderState =
   | {
@@ -29,10 +42,6 @@ export type PlaceOrderState =
       message?: string;
       /** The hourly order limit was reached: seconds until Place Order works again. */
       retryAfter?: number;
-      /** Cash on Delivery from a new customer: a code was emailed; show the code dialog. */
-      confirm?: { email: string; total: number };
-      /** The code dialog should close (expired, or the order changed): place the order again. */
-      restart?: boolean;
     }
   | {
       ok: true;
@@ -173,21 +182,16 @@ async function priceOrder(user: User, data: CheckoutData) {
       const campaign = await (await coupons()).findOne({ _id: couponDoc.campaignId }, { projection: { code: 1 } });
       if (campaign) coupon.campaign = campaign.code;
     }
+    // One person, many accounts: coupons also count per delivery phone number.
+    const byPhone = await phoneLimitReason(couponDoc, coupon.campaign, phoneKey(data.phone), user.id);
+    if (byPhone) return { ok: false as const, state: { message: `Coupon ${couponDoc.code}: ${byPhone} Remove it to continue.` } as Failure };
   }
   const total = subtotal - itemDiscount + option.fee - deliveryDiscount;
-  // Everything that makes this order what it is: a code confirms exactly this.
-  const fingerprint = orderFingerprint({
-    lines: lines.map((l) => [l.slug, l.size, l.quantity, l.unitPrice]),
-    coupon: coupon ? [coupon.code, coupon.discount] : null,
-    delivery: [option.id, option.fee],
-    total,
-    data,
-  });
-  return { ok: true as const, cart, cartCol, lines, option, listTotal, subtotal, couponDoc, coupon, itemDiscount, deliveryDiscount, total, fingerprint };
+  return { ok: true as const, cart, cartCol, lines, option, listTotal, subtotal, couponDoc, coupon, itemDiscount, deliveryDiscount, total };
 }
 
 /** Reserves stock, claims the coupon, saves the order and empties the bag. */
-async function finalise(user: User, data: CheckoutData, priced: Extract<Awaited<ReturnType<typeof priceOrder>>, { ok: true }>, codeConfirmed: boolean): Promise<PlaceOrderState> {
+async function finalise(user: User, data: CheckoutData, priced: Extract<Awaited<ReturnType<typeof priceOrder>>, { ok: true }>): Promise<PlaceOrderState> {
   const { cart, cartCol, lines, option, listTotal, subtotal, couponDoc, coupon, deliveryDiscount, total } = priced;
   const reserved = await reserveStock(lines);
   if (!reserved.ok) return { message: reserved.error };
@@ -203,7 +207,7 @@ async function finalise(user: User, data: CheckoutData, priced: Extract<Awaited<
   try {
     order = await insertOrder({
       userId: new ObjectId(user.id),
-      customer: { name: data.name, email: data.email, phone: data.phone },
+      customer: { name: data.name, email: data.email, phone: data.phone, phoneKey: phoneKey(data.phone) },
       address: {
         line1: data.line1,
         line2: data.line2,
@@ -226,7 +230,6 @@ async function finalise(user: User, data: CheckoutData, priced: Extract<Awaited<
       },
       status: "pending",
       trackingNumber: "",
-      ...(codeConfirmed ? { codeConfirmed: true } : {}),
     });
   } catch (e) {
     await releaseStock(lines);
@@ -236,20 +239,14 @@ async function finalise(user: User, data: CheckoutData, priced: Extract<Awaited<
   // Only orders that were really placed count towards the hourly limit.
   await hit(RULES.orderUser, user.id);
 
-  // Remember delivery details for next time, and confirm by email (if set up).
+  // Remember delivery details for next time. (No "order received" email: customers
+  // are emailed once, when the order is on its way; owner's choice 2026-11-16.)
   await (await getDb())
     .collection("users")
     .updateOne(
       { _id: new ObjectId(user.id) },
       { $set: { savedAddress: { phone: data.phone, line1: data.line1, line2: data.line2, city: data.city, postalCode: data.postalCode } } },
     );
-  await sendMail(
-    data.email,
-    `Order received #${order.number} — Ŕose Atelier`,
-    "Thank you for your order",
-    orderPlacedLines(order),
-    { label: "View your order", href: `${await siteUrl()}/account/orders/${order.number}` },
-  );
 
   // Empty the bag only after the order is safely stored.
   await cartCol.updateOne({ _id: cart._id }, { $set: { bag: [], updatedAt: new Date() }, $unset: { coupon: "" } });
@@ -284,43 +281,7 @@ export async function placeOrder(_: PlaceOrderState, fd: FormData): Promise<Plac
   const priced = await priceOrder(user, form.data);
   if (!priced.ok) return priced.state;
 
-  // Cash on Delivery from a customer with no delivered order yet: confirm by email code first.
-  if (form.data.paymentMethod === "cod" && mailConfigured() && (await needsOrderCode(user.id))) {
-    const started = await startOrderCode(user.id, form.data, priced.fingerprint, priced.total);
-    if (!started.ok) return "retryAfter" in started ? { retryAfter: started.retryAfter } : { message: started.error };
-    return { confirm: { email: form.data.email, total: priced.total } };
-  }
-  return finalise(user, form.data, priced, false);
-}
-
-const codeSchema = z.string().trim().regex(/^\d{6}$/, "Enter the 6-digit code from the email.");
-
-/**
- * The code from the email. The order is priced again now and must be exactly
- * the one the code was sent for; then it is placed as normal.
- */
-export async function confirmCodOrder(_: PlaceOrderState, fd: FormData): Promise<PlaceOrderState> {
-  const user = await getCurrentUser();
-  if (!user) return { message: "Please log in to place your order.", restart: true };
-  const code = codeSchema.safeParse(String(fd.get("code") ?? "").replace(/\s+/g, ""));
-  if (!code.success) return { errors: { code: z.flattenError(code.error).formErrors } };
-  const limited = await orderLimits(user);
-  if (limited) return { ...limited, restart: true };
-  const r = await checkOrderCode(user.id, code.data);
-  if (!r.ok) return { message: r.error, ...(r.expired ? { restart: true } : {}) };
-  const priced = await priceOrder(user, r.data);
-  if (!priced.ok) return { ...priced.state, restart: true };
-  if (priced.fingerprint !== r.fingerprint) {
-    return { restart: true, message: "Your bag, prices or details changed after the code was sent. Please check the order and press Place Order again." };
-  }
-  return finalise(user, r.data, priced, true);
-}
-
-/** "Resend code" in the checkout dialog. */
-export async function resendCodOrderCode(): Promise<{ ok?: true; error?: string; retryAfter?: number }> {
-  const user = await getCurrentUser();
-  if (!user) return { error: "Please log in first." };
-  const r = await resendOrderCode(user.id);
-  if (r.ok) return { ok: true };
-  return "retryAfter" in r ? { retryAfter: r.retryAfter } : { error: r.error };
+  // No code step (owner's choice 2026-11-16): the shop confirms new orders by
+  // phone/WhatsApp, and an unanswered number is cancelled before anything ships.
+  return finalise(user, form.data, priced);
 }

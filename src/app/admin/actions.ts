@@ -22,7 +22,7 @@ import {
   SETTINGS_TAG,
 } from "@/lib/server/settings";
 import { REVIEWS_TAG, reviewsTag } from "@/lib/server/reviews";
-import { etaLabel, etaPresets, etaSentence, nextStatuses, orderStatusLabel, orderStatuses, paymentStatusLabel, paymentStatuses } from "@/lib/orders";
+import { ORDER_EMAIL_STATUSES, etaLabel, etaPresets, etaSentence, nextStatuses, orderStatusLabel, orderStatuses, paymentStatusLabel, paymentStatuses } from "@/lib/orders";
 import { getOrderById, updateOrder } from "@/lib/server/orders";
 import { deleteImages } from "@/lib/server/images";
 import { createResetToken } from "@/lib/server/password-reset";
@@ -284,13 +284,17 @@ export async function setOrderStatus(_: OrderActionState, fd: FormData): Promise
     order.status, // guard against two admins acting at once
   );
   if (!ok) return { error: "The order changed in the meantime. Refresh and try again." };
-  await sendMail(
-    order.customer.email,
-    `Order #${order.number}: ${orderStatusLabel[to.data]} — Ŕose Atelier`,
-    orderStatusLabel[to.data],
-    statusLines({ number: order.number, status: to.data, trackingNumber: tracking || order.trackingNumber, eta: order.eta }),
-    { label: "View your order", href: `${await siteUrl()}/account/orders/${order.number}` },
-  );
+  // Customers get one order email: when it's on its way (owner's choice 2026-11-16).
+  if (ORDER_EMAIL_STATUSES.includes(to.data)) {
+    await sendMail(
+      "shipped",
+      order.customer.email,
+      `Order #${order.number} is on its way — Ŕose Atelier`,
+      "Your order is on its way",
+      statusLines({ number: order.number, status: to.data, trackingNumber: tracking || order.trackingNumber, eta: order.eta }),
+      { label: "Track your order", href: `${await siteUrl()}/account/orders/${order.number}` },
+    );
+  }
   // Cancelling stops an order counting towards "sold" and returns its stock.
   if (to.data === "cancelled") {
     await releaseStock(order.items);
@@ -592,17 +596,8 @@ export async function setOrderEta(mode: "save" | "clear", _: OrderActionState, f
   const ok = await updateOrder(id, { eta }, { kind: "note", text: `${etaSentence(eta)}`, by: me.email });
   if (!ok) return { error: "Order not found." };
 
-  const sent = await sendMail(
-    order.customer.email,
-    `Order #${order.number}: arriving ${etaLabel(eta)} — Ŕose Atelier`,
-    `Your order arrives ${etaLabel(eta)}`,
-    [
-      `Thank you for waiting. Your order #${order.number} should reach you ${from === to ? "on" : "between"} ${etaLabel(eta)}.`,
-      ...(note ? [note] : []),
-      "We'll let you know when it's on its way.",
-    ],
-    { label: "View your order", href: `${await siteUrl()}/account/orders/${order.number}` },
-  );
+  // No email for this (only "on its way" is emailed): the date shows on the
+  // customer's order page and goes into the shipping email and WhatsApp updates.
   refresh();
-  return { ok: `Saved: arriving ${etaLabel(eta)}.${sent ? " The customer was emailed." : ""}` };
+  return { ok: `Saved: arriving ${etaLabel(eta)}. The customer sees it on their order page.` };
 }

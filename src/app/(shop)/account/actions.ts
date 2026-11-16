@@ -2,7 +2,6 @@
 
 import { refresh, updateTag } from "next/cache";
 import { getCurrentUser } from "@/lib/auth/dal";
-import { sendMail, siteUrl, statusLines } from "@/lib/server/mail";
 import { getOrderForUser, updateOrder } from "@/lib/server/orders";
 import { SALES_TAG } from "@/lib/server/sales";
 import { PRODUCTS_TAG } from "@/lib/server/products";
@@ -27,9 +26,5 @@ export async function cancelMyOrder(_: CancelState, formData: FormData): Promise
   updateTag(SALES_TAG);
   updateTag(PRODUCTS_TAG);
   refresh();
-  await sendMail(user.email, `Order #${order.number} cancelled — Ŕose Atelier`, "Order cancelled", statusLines({ ...order, status: "cancelled" }), {
-    label: "Continue shopping",
-    href: `${await siteUrl()}/collections`,
-  });
   return { ok: "Your order has been cancelled." };
 }

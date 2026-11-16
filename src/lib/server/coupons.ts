@@ -156,6 +156,26 @@ export async function claimCoupon(c: CouponDoc, userId: string): Promise<string 
   }
 }
 
+/**
+ * One person, many accounts: a coupon's per-customer limit (and one surprise
+ * card per campaign) also counts orders from OTHER accounts with the same
+ * delivery phone number, since Cash on Delivery needs a real phone. Orders
+ * store `customer.phoneKey` (lib/identity-keys.ts); cancelled ones don't count.
+ * Returns why the coupon can't be used with this phone, or null.
+ */
+export async function phoneLimitReason(c: CouponDoc, campaignCode: string | undefined, phoneKey: string, userId: string): Promise<string | null> {
+  if (!phoneKey) return null;
+  const others = await (await getDb()).collection("orders").countDocuments({
+    "customer.phoneKey": phoneKey,
+    status: { $ne: "cancelled" },
+    userId: { $ne: new ObjectId(userId) },
+    ...(campaignCode ? { "coupon.campaign": campaignCode } : { "coupon.code": c.code }),
+  });
+  if (campaignCode) return others > 0 ? "A surprise card from this offer has already been used with this phone number." : null;
+  const mine = (await (await redemptions()).findOne({ _id: rid(c._id, userId) }))?.n ?? 0;
+  return others + mine >= c.perCustomer ? "This coupon has already been used with this phone number." : null;
+}
+
 /** Gives a use back (order failed or was cancelled). */
 export async function releaseCoupon(code: string, userId: string | null) {
   const col = await coupons();

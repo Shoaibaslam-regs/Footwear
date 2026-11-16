@@ -1,5 +1,5 @@
 import { expect, test } from "@playwright/test";
-import { BASE, address, createUser, db, logInAs, makeReturning, pickShoe, putInBag, setupStore } from "./helpers";
+import { BASE, address, createUser, db, logInAs, pickShoe, putInBag, setupStore } from "./helpers";
 
 let adminId: Awaited<ReturnType<typeof setupStore>>;
 test.beforeAll(async () => {
@@ -56,7 +56,6 @@ test("a sale: created in the admin, shown on the site, charged at checkout, stop
 
   // 3. Checkout charges the sale price, and the order remembers the sale.
   await putInBag(userId, shoe.slug, shoe.sizes[0]);
-  await makeReturning(userId);
   await page.goto("/checkout");
   await page.locator('button[type="submit"]:visible', { hasText: "Place Order" }).first().click();
   await expect(page.getByRole("heading", { name: /Thank You/ })).toBeVisible();
