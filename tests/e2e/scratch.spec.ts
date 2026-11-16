@@ -72,6 +72,7 @@ test("scratching is rough: one swipe leaves a gold film, a few rubs reveal the c
 });
 
 test("the reveal happens once, even when the finger stays down and keeps scratching", async ({ page }) => {
+  test.setTimeout(150_000); // one long mouse stroke across the card
   await page.setViewportSize({ width: 1280, height: 1500 });
   await logInAs(page, await createUser({ name: "Iqra", email: "iqra.scratch@example.com" }), "customer");
   // Each reveal tells the server (a server action POST); count them.

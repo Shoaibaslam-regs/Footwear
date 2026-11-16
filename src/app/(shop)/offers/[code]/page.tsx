@@ -152,7 +152,8 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
 
       <ScratchCard
         code={t.code}
-        conditions={conditions.join(" · ")}
+        // The last condition ("One use per customer") is shown once, on the card's bottom strip.
+        conditions={conditions.slice(0, -1).join(" · ")}
         greetingName={first}
         headline={headline}
         shareText={shareText}

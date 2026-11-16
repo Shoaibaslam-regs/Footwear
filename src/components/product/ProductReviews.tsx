@@ -31,11 +31,9 @@ export default function ProductReviews({
       <div className="space-y-space-lg">
         <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-lg">
           <div className="space-y-space-xs">
-            <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              Customer Reviews
-            </span>
-            <h2 className="font-headline-sm text-[26px] leading-tight lg:font-headline-lg-mobile lg:text-headline-lg-mobile text-primary font-normal">
-              What Customers Say
+            <span className="block font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-secondary">Customer Reviews</span>
+            <h2 className="font-headline-lg text-[28px] sm:text-[36px] leading-[1.1] tracking-[-0.02em] text-primary font-normal">
+              What Customers <em className="italic text-secondary">Say</em>
             </h2>
             {summary.count > 0 ? (
               <div className="flex flex-wrap items-center gap-space-sm pt-space-xs">
@@ -93,7 +91,7 @@ export default function ProductReviews({
         </div>
 
         {/* Write a review (reads the session, so it streams in) */}
-        <div className="p-space-lg bg-surface-container-lowest shadow-sm">
+        <div className="p-space-md sm:p-space-lg ring-1 ring-outline-variant/40">
           <h3 className="font-headline-sm text-headline-sm text-primary mb-space-md">Write a Review</h3>
           <Suspense fallback={<div className="h-12 bg-surface-container motion-safe:animate-pulse" />}>
             <ReviewComposer sizes={sizes} slug={slug} />
@@ -128,7 +126,7 @@ export default function ProductReviews({
 function ReviewCard({ review: r }: { review: PublicReview }) {
   const fit = fitOptions.find((f) => f.value === r.fit)?.label;
   return (
-    <li className="p-space-sm sm:p-space-lg bg-surface-container-lowest flex flex-col justify-between space-y-space-sm sm:space-y-space-md shadow-sm min-w-0">
+    <li className="p-space-sm sm:p-space-lg ring-1 ring-outline-variant/40 flex flex-col justify-between space-y-space-sm sm:space-y-space-md min-w-0">
       <div className="space-y-space-xs">
         <div className="flex items-center justify-between">
           <Stars className="text-sm" size="text-[12px] sm:text-[16px]" value={r.rating} />

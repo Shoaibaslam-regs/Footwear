@@ -27,9 +27,8 @@ test("a cookie from before a password change: Add to Bag shows the login popup a
   // The password was changed after this cookie was issued.
   await (await db()).collection("users").updateOne({ _id: id }, { $set: { passwordChangedAt: new Date(Date.now() + 60_000) } });
   const shoe = await pickShoe();
-  await page.goto("/collections");
-  await page.locator('main h3 button[aria-haspopup="dialog"]:visible', { hasText: shoe.name }).first().click();
-  await page.getByRole("dialog").getByRole("button", { name: /Add to Bag/ }).click();
+  await page.goto(`/products/${shoe.slug}`);
+  await page.getByRole("button", { name: "Add to Bag" }).filter({ visible: true }).first().click();
   await expect(page.getByText("Log in to continue")).toBeVisible();
   expect(await cookie(page)).toBeUndefined();
 });

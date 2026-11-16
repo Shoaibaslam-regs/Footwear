@@ -1,58 +1,42 @@
 import Image from "next/image";
 import { craftImage } from "@/lib/product-data";
 
-export default function CraftSection() {
+/**
+ * "How it's made", for this shoe only: the facts come from its own listing
+ * (heel from the spec, material, sizes), never from another product. It used
+ * to show one shoe's figures (95mm, carbon support) on every page.
+ */
+export default function CraftSection({ spec, material, sizes }: { spec: string; material: string; sizes: number[] }) {
+  const heel = spec.match(/(\d{1,3})\s*mm/i)?.[1];
+  const facts = [
+    heel ? { value: `${heel}mm`, label: "Heel height" } : spec ? { value: spec, label: "Style" } : null,
+    material ? { value: material, label: "Material" } : null,
+    sizes.length ? { value: `EU ${Math.min(...sizes)}–${Math.max(...sizes)}`, label: "Sizes" } : null,
+  ].filter((f): f is { value: string; label: string } => !!f);
+
   return (
-    <section className="w-full bg-surface-container-low py-space-xl my-space-lg">
-      <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
-        <div className="grid grid-cols-1 lg:grid-cols-12 gap-gutter lg:gap-space-xl items-center">
-          <div className="lg:col-span-5 space-y-space-md">
-            <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-              How It&apos;s Made
-            </span>
-            <h2 className="font-headline-sm text-[26px] leading-tight lg:font-headline-lg-mobile lg:text-headline-lg-mobile text-primary font-normal tracking-tight">
-              Comfortable for 8 Hours, Light on the Feet.
-            </h2>
-            <p className="hidden sm:block font-body-lg text-body-lg text-on-surface-variant font-light">
-              Normal stilettos put 85% of your body weight on the front of your
-              foot. The Aurelia moves your balance point 12mm back, using a
-              hidden carbon support inside the sole that spreads the weight
-              across your arch.
-            </p>
-            <div className="grid grid-cols-2 gap-space-md pt-space-xs">
-              <div className="p-space-md bg-surface-container-lowest">
-                <span className="font-headline-md text-headline-md text-primary font-normal">
-                  95mm
-                </span>
-                <p className="font-label-uppercase text-label-uppercase text-on-surface-variant uppercase text-[10px] mt-1">
-                  Stiletto Height
-                </p>
+    <section className="w-full py-space-xl lg:py-24 border-y border-outline-variant/30">
+      <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin grid grid-cols-1 lg:grid-cols-12 gap-space-lg lg:gap-space-xl items-center">
+        <div className="lg:col-span-5 order-2 lg:order-1">
+          <span className="block font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.32em] text-secondary">How It&apos;s Made</span>
+          <h2 className="mt-2 font-headline-lg text-[28px] sm:text-[36px] leading-[1.1] tracking-[-0.02em] text-primary font-normal">
+            Made by Hand <em className="italic text-secondary">in Karachi</em>
+          </h2>
+          <p className="mt-space-sm font-body-md text-[14px] sm:text-[15px] font-light text-on-surface-variant max-w-md">
+            Cut, stitched and finished by hand, then checked pair by pair before it is boxed.
+          </p>
+          <dl className="mt-space-md border-t border-outline-variant/40 divide-y divide-outline-variant/30">
+            {facts.map((f) => (
+              <div key={f.label} className="py-3 flex items-baseline justify-between gap-space-md">
+                <dt className="font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.18em] text-outline">{f.label}</dt>
+                <dd className="font-headline-sm text-[16px] sm:text-[18px] text-primary text-right">{f.value}</dd>
               </div>
-              <div className="p-space-md bg-surface-container-lowest">
-                <span className="font-headline-md text-headline-md text-primary font-normal">
-                  6.2mm
-                </span>
-                <p className="font-label-uppercase text-label-uppercase text-on-surface-variant uppercase text-[10px] mt-1">
-                  Two-Layer Foam Cushion
-                </p>
-              </div>
-            </div>
-          </div>
-          <div className="lg:col-span-7">
-            <div className="relative aspect-[16/10] overflow-hidden bg-surface-container-highest shadow-sm">
-              <Image
-                alt="Shoemaker carving a wooden shoe mould in our Karachi workshop"
-                className="w-full h-full object-cover"
-                src={craftImage}
-                fill
-                sizes="(min-width: 1024px) 55vw, 100vw"
-              />
-              <div className="absolute inset-0 bg-linear-to-t/srgb from-primary/60 via-transparent to-transparent flex items-end p-space-lg">
-                <p className="font-headline-sm text-headline-sm text-on-primary font-normal">
-                  Ŕose Atelier Workshop — Karachi
-                </p>
-              </div>
-            </div>
+            ))}
+          </dl>
+        </div>
+        <div className="lg:col-span-7 order-1 lg:order-2">
+          <div className="relative aspect-[16/10] overflow-hidden rounded-lg bg-surface-container">
+            <Image alt="A shoemaker shaping a shoe by hand" className="object-cover" fill sizes="(min-width: 1024px) 55vw, 92vw" src={craftImage} />
           </div>
         </div>
       </div>

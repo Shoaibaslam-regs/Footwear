@@ -1,5 +1,5 @@
-import type { MouseEvent } from "react";
 import Image from "next/image";
+import Link from "next/link";
 import type { FilterableProduct } from "@/lib/catalog-filters";
 import Stars from "@/components/product/Stars";
 import WishlistButton from "../WishlistButton";
@@ -11,8 +11,11 @@ import CardLabel from "@/components/CardLabel";
  * A shop card, kept calm for phones (most customers): the photo, one small
  * label (`cardLabel`: the admin badge, else Best Seller / New), a quiet heart, the heel height, the name and the price
  * (a sale price in gold with the old one struck through; never red). No badge
- * piles, "N sold", hover toolbars or 360° promises. Tapping anywhere opens
- * Quick View. On a mouse, the second photo wipes in on hover.
+ * piles, "N sold", hover toolbars or 360° promises.
+ * Tapping anywhere on the card opens the product page (the name is a link
+ * stretched over the card). On desktop a small "Quick view" button appears on
+ * hover; phones have no Quick View, just the product page. On a mouse, the
+ * second photo wipes in on hover.
  */
 export default function CatalogProductCard({
   product: p,
@@ -21,15 +24,10 @@ export default function CatalogProductCard({
   product: FilterableProduct;
   onQuickView: (size?: number) => void;
 }) {
-  // Any click on the card opens quick view, except on its own controls.
-  const handleCardClick = (e: MouseEvent<HTMLElement>) => {
-    if ((e.target as HTMLElement).closest("button, a")) return;
-    onQuickView();
-  };
   const second = p.gallery?.[1]?.url;
 
   return (
-    <article className="group relative flex flex-col cursor-pointer" onClick={handleCardClick}>
+    <article className="group relative flex flex-col">
       <div className="relative w-full aspect-[3/4] bg-surface-container overflow-hidden rounded-lg">
         <Image
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
@@ -49,6 +47,19 @@ export default function CatalogProductCard({
           />
         )}
         <CardLabel label={p.badge} />
+        {/* Desktop only: a quiet Quick View on hover (above the card link). */}
+        <button
+          aria-haspopup="dialog"
+          aria-label={`Quick view ${p.name}`}
+          className="hidden lg:flex absolute z-20 left-2 right-2 bottom-2 h-9 items-center justify-center gap-1.5 bg-surface/90 backdrop-blur-sm text-primary font-label-uppercase text-[10px] uppercase tracking-[0.18em] opacity-0 translate-y-1 group-hover:opacity-100 group-hover:translate-y-0 focus-visible:opacity-100 focus-visible:translate-y-0 hover:bg-primary hover:text-on-primary transition-all duration-300"
+          onClick={() => onQuickView()}
+          type="button"
+        >
+          <span aria-hidden="true" className="material-symbols-outlined text-[15px]">
+            zoom_in
+          </span>
+          Quick view
+        </button>
         <WishlistButton
           variant="catalog"
           item={{
@@ -66,9 +77,10 @@ export default function CatalogProductCard({
       <div className="pt-2.5 sm:pt-space-sm flex flex-col gap-0.5 px-0.5">
         <span className="font-label-uppercase text-[9px] sm:text-[10px] text-outline uppercase tracking-[0.18em] truncate">{p.spec}</span>
         <h3 className="font-headline-sm text-[15px] sm:text-[18px] leading-snug text-primary tracking-[-0.01em] font-normal line-clamp-2">
-          <button aria-haspopup="dialog" className="text-left cursor-pointer" onClick={() => onQuickView()} type="button">
+          {/* Stretched over the whole card: a tap anywhere opens the product page. */}
+          <Link className="after:absolute after:inset-0 after:z-[5]" href={p.href ?? "/collections"}>
             {p.name}
-          </button>
+          </Link>
         </h3>
         {/* Price on the left, the percent off at the right end of the line. */}
         <div className="flex items-start justify-between gap-2">

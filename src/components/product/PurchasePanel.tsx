@@ -1,7 +1,8 @@
 "use client";
 
 import { requireLogin } from "@/lib/require-login";
-import { useCallback, useEffect, useState } from "react";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { useBottomBar } from "@/lib/use-bottom-bar";
 import Link from "next/link";
 import { useRouter } from "next/navigation";
 import type { ProductDetail } from "@/lib/product-data";
@@ -15,13 +16,10 @@ import { useCardPrice } from "@/components/sale/SaleProvider";
 import { saleTime } from "@/lib/sale-events";
 import { addToBag, openBag, toggleWishlist as toggleSaved, useInBag, useIsWishlisted } from "@/lib/store";
 
-const MAX_QTY = 5;
-
 export default function PurchasePanel({ product }: { product: ProductDetail }) {
   // One colour per listing: shown as text, no palette to pick from.
   const color = product.defaultColor;
   const [size, setSize] = useState(product.defaultSize);
-  const [qty, setQty] = useState(1);
   const [added, setAdded] = useState(false);
   const saved = useIsWishlisted(product.slug);
   const [tooltip, setTooltip] = useState<string | null>(null);
@@ -42,6 +40,31 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
   }, [tooltip]);
 
   const cover = product.gallery[0];
+  // Is the main Add to Bag on screen? (Phones show the bottom bar when it isn't.)
+  const actions = useRef<HTMLDivElement>(null);
+  const [actionsVisible, setActionsVisible] = useState(true);
+  useEffect(() => {
+    const el = actions.current;
+    if (!el) return;
+    // Checked on scroll (once per frame), not with an IntersectionObserver: a jump
+    // straight past the buttons from below would never "cross" the screen.
+    let frame = 0;
+    const check = () => {
+      frame = 0;
+      setActionsVisible(el.getBoundingClientRect().bottom > 80); // still on screen (below the header) or not reached yet
+    };
+    const onScroll = () => {
+      if (!frame) frame = requestAnimationFrame(check);
+    };
+    check();
+    window.addEventListener("scroll", onScroll, { passive: true });
+    window.addEventListener("resize", onScroll);
+    return () => {
+      cancelAnimationFrame(frame);
+      window.removeEventListener("scroll", onScroll);
+      window.removeEventListener("resize", onScroll);
+    };
+  }, []);
   // The price right now, with any live sale event (the bag is re-priced on the server too).
   const live = useCardPrice(product);
   const euSize = size.startsWith("EU") ? size : `EU ${size}`;
@@ -75,7 +98,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         href: `/products/${product.slug}`,
         collection: product.breadcrumbCategory,
       },
-      qty,
+      1,
       { openBag: !goingToCheckout },
     );
     setAdded(true);
@@ -90,6 +113,12 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
 
   return (
     <div className="lg:col-span-5 flex flex-col gap-space-md sm:gap-space-lg lg:sticky lg:top-28">
+      {/* Phones: once the main buttons scroll away, a slim bar keeps Add to Bag in reach. */}
+      {!actionsVisible && (
+        <BuyBar inBag={inBag} label={added ? "Added to Bag" : inBag ? "In Bag · View" : "Add to Bag"} onAdd={() => (inBag ? openBag() : addSelectionToBag())}>
+          <SalePrice category={product.category} compareAt={product.compareAt} discountPercent={product.discountPercent} price={product.price} quiet slug={product.slug} />
+        </BuyBar>
+      )}
       {/* Header Info */}
       <div className="space-y-space-xs">
         <div className="flex items-center justify-between gap-space-sm">
@@ -178,12 +207,12 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
                 aria-checked={isActive}
                 aria-disabled={s.soldOut || undefined}
                 aria-label={`EU ${s.size}${s.soldOut ? ", sold out" : s.left ? `, only ${s.left} left` : ""}`}
-                className={`relative h-11 sm:h-12 flex flex-col items-center justify-center font-body-sm text-body-sm ring-1 ring-inset ring-outline-variant/40 transition-colors ${
+                className={`relative h-11 sm:h-12 flex flex-col items-center justify-center font-body-sm text-[14px] transition-colors ${
                   s.soldOut
-                    ? "bg-surface-container text-outline line-through cursor-not-allowed opacity-50"
+                    ? "text-outline/60 line-through cursor-not-allowed"
                     : isActive
                       ? "bg-primary text-on-primary"
-                      : "bg-surface-container-lowest hover:bg-surface-container-high text-on-surface"
+                      : "ring-1 ring-inset ring-outline-variant/70 hover:ring-primary text-on-surface"
                 }`}
                 disabled={s.soldOut}
                 onClick={() => setSize(s.size)}
@@ -207,9 +236,9 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
             <strong className="text-primary">{pkSize(size)}</strong>
           </p>
         )}
-        <div className="p-space-sm bg-surface-container-low flex items-start gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
-          <span className="material-symbols-outlined text-[18px] text-secondary shrink-0 mt-0.5">
-            verified_user
+        <div className="flex items-start gap-1.5 font-body-sm text-[13px] text-on-surface-variant">
+          <span aria-hidden="true" className="material-symbols-outlined text-[16px] text-secondary shrink-0 mt-0.5">
+            straighten
           </span>
           <span>
             <span className="text-primary font-medium">Fit tip:</span> {product.fitInsight}
@@ -217,57 +246,28 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         </div>
       </div>
 
-      {/* Quantity & CTAs */}
-      <div className="space-y-space-sm pt-space-xs">
-        <div className="flex items-center gap-space-sm">
-          <div className="flex items-center bg-surface-container-lowest h-[52px] px-space-xs">
-            <button
-              aria-label="Decrease quantity"
-              className="w-9 h-full flex items-center justify-center text-on-surface hover:text-primary transition-colors text-lg"
-              onClick={() => setQty((q) => Math.max(1, q - 1))}
-              type="button"
-            >
-              −
-            </button>
-            <span
-              aria-live="polite"
-              className="w-8 text-center font-body-md text-body-md font-medium text-on-surface"
-            >
-              {qty}
-            </span>
-            <button
-              aria-label="Increase quantity"
-              className="w-9 h-full flex items-center justify-center text-on-surface hover:text-primary transition-colors text-lg"
-              onClick={() => setQty((q) => Math.min(MAX_QTY, q + 1))}
-              type="button"
-            >
-              +
-            </button>
-          </div>
+      {/* One clear action: Add to Bag (with the heart beside it), Buy Now as an outline.
+          The bag lets her change the quantity, so there is no stepper here. */}
+      <div className="flex flex-col gap-2" ref={actions}>
+        <div className="flex items-stretch gap-2">
           <button
-            className="flex-1 h-[52px] bg-primary-container text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed font-label-uppercase text-label-uppercase uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-space-sm shadow-sm"
+            className="flex-1 h-12 sm:h-[52px] bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed font-label-uppercase text-[11px] uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
             onClick={() => (inBag ? openBag() : addSelectionToBag())}
             type="button"
           >
-            <span className="material-symbols-outlined text-[18px]">
+            <span aria-hidden="true" className="material-symbols-outlined text-[18px]">
               {inBag ? "check" : "shopping_bag"}
             </span>
-            <span aria-live="polite">
-              {added ? "Added to Bag ✓" : inBag ? "In Bag · View" : "Add to Bag"}
-            </span>
+            <span aria-live="polite">{added ? "Added to Bag" : inBag ? "In Bag · View" : "Add to Bag"}</span>
           </button>
           <button
             aria-label={saved ? "Remove from Wishlist" : "Add to Wishlist"}
             aria-pressed={saved}
-            className="relative w-[52px] h-[52px] bg-surface-container-lowest text-on-surface-variant hover:text-primary flex items-center justify-center transition-colors group"
+            className="relative w-12 sm:w-[52px] shrink-0 ring-1 ring-inset ring-outline-variant/80 hover:ring-primary text-primary flex items-center justify-center transition-colors"
             onClick={toggleWishlist}
             type="button"
           >
-            <span
-              className={`material-symbols-outlined text-[22px]${
-                saved ? " icon-filled text-secondary" : ""
-              }`}
-            >
+            <span aria-hidden="true" className={`material-symbols-outlined text-[21px]${saved ? " icon-filled text-secondary" : ""}`}>
               favorite
             </span>
             <span
@@ -281,17 +281,16 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
           </button>
         </div>
         <Link
+          className="w-full h-12 sm:h-[52px] ring-1 ring-inset ring-primary text-primary hover:bg-primary hover:text-on-primary font-label-uppercase text-[11px] uppercase tracking-[0.2em] transition-colors flex items-center justify-center"
           href="/checkout"
           onClick={buyNow}
-          className="w-full h-[52px] bg-transparent text-primary ring-1 ring-inset ring-primary hover:bg-primary hover:text-on-primary font-label-uppercase text-label-uppercase uppercase tracking-[0.2em] transition-all duration-300 flex items-center justify-center gap-space-sm"
         >
-          <span className="material-symbols-outlined text-[18px]">bolt</span>
-          <span>Buy Now</span>
+          Buy Now
         </Link>
       </div>
 
       {/* Guarantees */}
-      <ul className="bg-surface-container-lowest divide-y divide-outline-variant/30 px-space-md">
+      <ul className="border-y border-outline-variant/40 divide-y divide-outline-variant/30">
         {product.guarantees.map((g) => (
           <li key={g.title} className="flex items-start gap-space-sm py-space-sm">
             <span className="material-symbols-outlined text-[18px] text-secondary shrink-0 mt-0.5">{g.icon}</span>
@@ -303,10 +302,10 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       </ul>
 
       {/* Accordions */}
-      <div className="space-y-space-xs pt-space-xs">
+      <div className="-mt-space-sm sm:-mt-space-md">
         <Accordion
           title="Product Details & Materials"
-          className="px-space-md pb-space-md space-y-space-xs font-body-sm text-body-sm text-on-surface-variant"
+          className="pb-space-md space-y-space-xs font-body-sm text-[13px] text-on-surface-variant"
         >
           <ul className="space-y-2 list-none">
             {product.specs.map((s) => (
@@ -319,7 +318,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         </Accordion>
         <Accordion
           title="Shoe Care"
-          className="px-space-md pb-space-md font-body-sm text-body-sm text-on-surface-variant space-y-space-xs"
+          className="pb-space-md font-body-sm text-[13px] text-on-surface-variant space-y-space-xs"
         >
           {product.care.map((p) => (
             <p key={p}>{p}</p>
@@ -327,7 +326,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         </Accordion>
         <Accordion
           title="Delivery & Returns"
-          className="px-space-md pb-space-md font-body-sm text-body-sm text-on-surface-variant space-y-space-xs"
+          className="pb-space-md font-body-sm text-[13px] text-on-surface-variant space-y-space-xs"
         >
           {product.shipping.map((p) => (
             <p key={p}>{p}</p>
@@ -336,6 +335,28 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       </div>
 
       <SizeGuideModal open={guideOpen} onClose={closeGuide} />
+    </div>
+  );
+}
+
+/** The phones' bottom bar: price on the left, Add to Bag on the right. */
+function BuyBar({ children, label, inBag, onAdd }: { children: React.ReactNode; label: string; inBag: boolean; onAdd: () => void }) {
+  useBottomBar(68);
+  return (
+    <div className="lg:hidden fixed inset-x-0 bottom-0 z-40 bg-surface/95 backdrop-blur-xl border-t border-outline-variant/50 pb-[env(safe-area-inset-bottom)]">
+      <div className="h-[68px] px-margin-mobile flex items-center justify-between gap-space-md">
+        <span className="min-w-0 font-body-md text-[15px] text-primary tabular-nums">{children}</span>
+        <button
+          className="h-11 px-5 shrink-0 bg-primary text-on-primary font-label-uppercase text-[11px] uppercase tracking-[0.18em] flex items-center gap-2"
+          onClick={onAdd}
+          type="button"
+        >
+          <span aria-hidden="true" className="material-symbols-outlined text-[17px]">
+            {inBag ? "check" : "shopping_bag"}
+          </span>
+          {label}
+        </button>
+      </div>
     </div>
   );
 }

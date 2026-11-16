@@ -18,12 +18,13 @@ test("a second order starts a fresh checkout, not the last order's thank-you scr
   // Keep shopping inside the app (client navigation keeps pages alive in the background).
   await page.getByRole("link", { name: "Continue Shopping" }).click();
   await expect(page).toHaveURL(/\/collections/);
-  // Add another shoe from Quick View on the collections page (no full page load:
-  // that would clear the kept pages and hide the problem).
+  // Tap a shoe on the shop page: it opens its product page (a client navigation,
+  // no full page load: that would clear the kept pages and hide the problem).
   // A shoe that exists in the test database (the built pages may also list real-only products).
   const next = await pickShoe();
-  await page.locator('main h3 button[aria-haspopup="dialog"]:visible', { hasText: next.name }).first().click();
-  await page.getByRole("dialog").getByRole("button", { name: /Add to Bag/ }).click();
+  await page.locator("#catalog-grid article", { hasText: next.name }).first().getByRole("link", { name: next.name }).click();
+  await expect(page).toHaveURL(new RegExp(`/products/${next.slug}`));
+  await page.getByRole("button", { name: "Add to Bag" }).filter({ visible: true }).first().click();
 
   // Back to checkout from the mini bag.
   await page.getByRole("link", { name: /checkout/i }).first().click();
@@ -36,18 +37,33 @@ test("a second order starts a fresh checkout, not the last order's thank-you scr
   await expect(page.getByRole("link", { name: /Shopping Bag \(1 items?\)/ })).toBeVisible();
 });
 
-test("quick view photos zoom on a tap and back on a second tap @phone", async ({ page }, info) => {
-  test.skip(info.project.name !== "phone", "touch only");
+test("a tap on a shop card opens the product page; desktop also has Quick View with hover zoom @phone", async ({ page }, info) => {
   const shoe = await pickShoe();
   await page.goto("/collections");
-  await page.locator('main h3 button[aria-haspopup="dialog"]:visible', { hasText: shoe.name }).first().click();
+  const card = page.locator("#catalog-grid article", { hasText: shoe.name }).first();
+  const quick = card.getByRole("button", { name: `Quick view ${shoe.name}` });
+  if (info.project.name === "phone") {
+    // Phones: no Quick View; a tap on the photo goes straight to the shoe.
+    await expect(quick).toBeHidden();
+    // Tap the middle of the photo, as a finger would (the card's link covers it).
+    await card.scrollIntoViewIfNeeded();
+    const box = (await card.locator("img").first().boundingBox())!;
+    await page.touchscreen.tap(box.x + box.width / 2, box.y + box.height / 2);
+    await expect(page).toHaveURL(new RegExp(`/products/${shoe.slug}`));
+    return;
+  }
+  // Desktop: the heart doesn't open the page; Quick View appears on hover and zooms on hover.
+  await card.hover();
+  await quick.click();
   const dialog = page.getByRole("dialog");
   const photo = dialog.getByRole("group", { name: /photo 1 of/ });
-  await expect(photo).toBeVisible();
-  await photo.tap();
+  await photo.hover();
   await expect(dialog.getByRole("button", { name: "Zoom out" })).toBeVisible();
-  await photo.tap();
+  await page.mouse.move(5, 5);
   await expect(dialog.getByRole("button", { name: "Zoom in" })).toBeVisible();
+  await page.keyboard.press("Escape");
+  await card.getByRole("link", { name: shoe.name }).click();
+  await expect(page).toHaveURL(new RegExp(`/products/${shoe.slug}`));
 });
 
 test("the sort menu is a themed list that sorts the shoes", async ({ page }) => {

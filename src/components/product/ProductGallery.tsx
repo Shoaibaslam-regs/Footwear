@@ -33,7 +33,8 @@ export default function ProductGallery({
   return (
     <div className="lg:col-span-7 flex flex-col gap-space-md">
       {/* Main stage: swipe on touch, arrows/thumbnails on desktop */}
-      <div className="relative w-full aspect-[4/5] bg-surface-container-lowest overflow-hidden shadow-sm">
+      {/* Phones: edge to edge, the photo first. */}
+      <div className="relative -mx-margin-mobile sm:mx-0 aspect-[4/5] bg-surface-container overflow-hidden sm:rounded-lg">
         <div
           ref={track}
           aria-label="Product photos"
@@ -64,16 +65,12 @@ export default function ProductGallery({
           ))}
         </div>
 
-        <div className="absolute top-space-md left-space-md flex flex-col gap-space-xs pointer-events-none">
-          {product.badges.map((b) => (
-            <span
-              key={b.label}
-              className={`px-space-sm py-1 ${b.className} font-label-uppercase text-label-uppercase uppercase tracking-wider text-[10px]`}
-            >
-              {b.label}
-            </span>
-          ))}
-        </div>
+        {/* One small label, as on the shop cards. */}
+        {product.badges[0] && (
+          <span className="absolute top-3 left-margin-mobile sm:left-3 z-10 px-2 py-1 bg-primary text-secondary-fixed font-label-uppercase text-[9px] sm:text-[10px] leading-none uppercase tracking-[0.16em] pointer-events-none">
+            {product.badges[0].label}
+          </span>
+        )}
 
         {views.length > 1 && (
           <>
@@ -109,7 +106,7 @@ export default function ProductGallery({
               {views.map((v, i) => (
                 <span
                   key={`dot-${i}`}
-                  className={`h-1.5 rounded-full transition-all ${i === active ? "w-5 bg-primary" : "w-1.5 bg-primary/30"}`}
+                  className={`h-0.5 transition-all ${i === active ? "w-6 bg-primary" : "w-3 bg-primary/30"}`}
                 />
               ))}
             </div>

@@ -87,7 +87,7 @@ export default async function ProductPage({
         </div>
       </section>
 
-      <CraftSection />
+      <CraftSection material={listing.material} sizes={listing.sizes} spec={listing.spec} />
       <ProductReviews reviews={reviews} sizes={listing.sizes} slug={slug} summary={summary} />
       <Recommendations items={pairings} />
       <RecentlyViewed catalogue={others.map(toSearchEntry)} current={slug} />

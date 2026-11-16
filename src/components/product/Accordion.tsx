@@ -15,11 +15,12 @@ export default function Accordion({
   const panelId = useId();
 
   return (
-    <div className="bg-surface-container-lowest">
+    // A hairline row: no box, so the details read as one calm list.
+    <div className="border-b border-outline-variant/40">
       <button
         aria-controls={panelId}
         aria-expanded={open}
-        className="w-full p-space-md flex items-center justify-between font-label-uppercase text-label-uppercase text-primary uppercase tracking-widest text-left"
+        className="w-full min-h-12 py-space-sm flex items-center justify-between font-label-uppercase text-[11px] text-primary uppercase tracking-[0.16em] text-left"
         onClick={() => setOpen((o) => !o)}
         type="button"
       >
