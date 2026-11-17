@@ -143,3 +143,18 @@ export async function listMail(f: LogFilter & { skip: number; limit: number }) {
     rows: rows.map((r) => ({ id: r._id.toHexString(), kind: r.kind, to: r.to, subject: r.subject, ok: r.ok, error: r.error ?? null, at: r.at.toISOString() })),
   };
 }
+
+/** Log rows older than `days` days (or every row, with null). */
+const olderThan = (days: number | null, now: number) => (days === null ? {} : { at: { $lt: new Date(now - days * DAY) } });
+
+/** How many rows "Delete older than 30 / 60 days" and "Delete all" would remove. */
+export async function mailLogCounts(now = Date.now()) {
+  const c = await col();
+  const [d30, d60, all] = await Promise.all([c.countDocuments(olderThan(30, now)), c.countDocuments(olderThan(60, now)), c.countDocuments({})]);
+  return { 30: d30, 60: d60, all };
+}
+
+/** Deletes log rows older than `days` days, or all of them with null. Returns how many went. */
+export async function clearMailLog(days: number | null, now = Date.now()) {
+  return (await (await col()).deleteMany(olderThan(days, now))).deletedCount;
+}

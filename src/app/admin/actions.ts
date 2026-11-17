@@ -23,7 +23,7 @@ import {
 } from "@/lib/server/settings";
 import { REVIEWS_TAG, reviewsTag } from "@/lib/server/reviews";
 import { ORDER_EMAIL_STATUSES, etaLabel, etaPresets, etaSentence, nextStatuses, orderStatusLabel, orderStatuses, paymentStatusLabel, paymentStatuses } from "@/lib/orders";
-import { getOrderById, updateOrder } from "@/lib/server/orders";
+import { CLEAR_AGES, finishedOlderThan, getOrderById, updateOrder } from "@/lib/server/orders";
 import { deleteImages } from "@/lib/server/images";
 import { createResetToken } from "@/lib/server/password-reset";
 import { releaseStock } from "@/lib/server/stock";
@@ -379,6 +379,26 @@ export async function deleteOrders(formData: FormData) {
   await requireAdmin();
   const ids = readIds(formData);
   if (ids.length === 0) redirect("/admin/orders");
+  const deletedCount = await removeOrders(ids);
+  redirect(`/admin/orders?deleted=${deletedCount}`);
+}
+
+/**
+ * "Delete older than 30 / 60 days": finished orders only (cancelled, or
+ * delivered and paid; see finishedOlderThan). Open orders and money still to
+ * collect are never touched.
+ */
+export async function deleteOldOrders(formData: FormData) {
+  await requireAdmin();
+  const days = Number(formData.get("days"));
+  if (!(CLEAR_AGES as readonly number[]).includes(days)) redirect("/admin/orders");
+  const ids = (await (await getDb()).collection("orders").find(finishedOlderThan(days), { projection: { _id: 1 } }).toArray()).map((d) => d._id);
+  const deletedCount = ids.length ? await removeOrders(ids) : 0;
+  redirect(`/admin/orders?deleted=${deletedCount}`);
+}
+
+/** Deletes orders, then any order photos nothing else uses. Returns how many went. */
+async function removeOrders(ids: ObjectId[]): Promise<number> {
   const db = await getDb();
   const col = db.collection("orders");
   const docs = await col.find({ _id: { $in: ids } }, { projection: { "items.image": 1 } }).toArray();
@@ -398,7 +418,7 @@ export async function deleteOrders(formData: FormData) {
   }
   await deleteImages(orphanKeys);
   updateTag(SALES_TAG);
-  redirect(`/admin/orders?deleted=${deletedCount}`);
+  return deletedCount;
 }
 
 /** Removes one entry from an order's history; `at` guards against index drift. */

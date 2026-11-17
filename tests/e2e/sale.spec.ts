@@ -73,5 +73,20 @@ test("a sale: created in the admin, shown on the site, charged at checkout, stop
   await page.goto("/");
   await page.waitForTimeout(500);
   await expect(page.getByRole("region", { name: /11\.11 Sale/ })).toHaveCount(0);
+
+  // 5. A stopped sale can still be edited: saving it with new dates brings it back.
+  await admin.goto("/admin/sales");
+  await admin.locator("tbody tr", { hasText: "11.11 Sale" }).getByRole("link", { name: "Edit" }).click();
+  await expect(admin.getByText("This sale has been stopped.")).toBeVisible();
+  await admin.getByLabel("Name", { exact: true }).fill("11.11 Sale Again");
+  await admin.getByRole("button", { name: "Save changes" }).click();
+  await expect(admin.getByText("Saved 11.11 Sale Again.")).toBeVisible();
+  await expect(admin.locator("tbody tr", { hasText: "11.11 Sale Again" }).getByText("Live")).toBeVisible();
+  await page.goto(`/products/${shoe.slug}`);
+  await expect(page.locator("main").getByText(rs(salePrice)).first()).toBeVisible();
+  // Stop it again so the other tests see normal prices.
+  await admin.locator("tbody tr", { hasText: "11.11 Sale Again" }).getByRole("button", { name: "Stop" }).click();
+  await admin.getByRole("button", { name: "Stop sale" }).click();
+  await expect(admin.getByText("Sale stopped. Every price is back to normal.")).toBeVisible();
   await admin.close();
 });

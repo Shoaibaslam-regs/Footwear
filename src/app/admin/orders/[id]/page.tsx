@@ -14,6 +14,7 @@ import { pkr } from "@/components/admin/format";
 import { mailConfigured, siteUrl, statusLines } from "@/lib/server/mail";
 import ConfirmButton from "@/components/admin/ConfirmButton";
 import { clearOrderHistory, deleteOrderEvent, deleteOrders } from "../../actions";
+import PrintSlipButton from "@/components/admin/PrintSlipButton";
 
 export const metadata = { title: "Order" };
 
@@ -60,9 +61,7 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
           <p className="muted">Placed {when(order.createdAt)}</p>
         </div>
         <div className="flex flex-wrap items-center gap-2">
-        <Link className="btn" href={`/admin/orders/${order.id}/slip?print=1`} target="_blank">
-          Print slip
-        </Link>
+        <PrintSlipButton orderId={order.id} />
         <form action={deleteOrders}>
           <input name="ids" type="hidden" value={order.id} />
           <ConfirmButton

@@ -89,8 +89,8 @@ export async function saveSale(_: SaleFormState, fd: FormData): Promise<SaleForm
     if (!ObjectId.isValid(id)) return { message: "Unknown sale." };
     const before = await col.findOne({ _id: new ObjectId(id) });
     if (!before) return { message: "This sale no longer exists." };
-    if (before.stoppedAt) return { message: "This sale was stopped. Create a new one instead." };
-    await col.updateOne({ _id: before._id }, { $set: fields });
+    // Saving a stopped sale brings it back on the dates given.
+    await col.updateOne({ _id: before._id }, { $set: { ...fields, stoppedAt: null } });
   } else {
     const doc: SaleEventDoc = { _id: new ObjectId(), ...fields, stoppedAt: null, createdAt: now };
     await col.insertOne(doc);

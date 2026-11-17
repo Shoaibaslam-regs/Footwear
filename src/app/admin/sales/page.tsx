@@ -90,13 +90,9 @@ async function AdminSalesContent({ searchParams }: PageProps<"/admin/sales">) {
                 return (
                   <tr key={e.id}>
                     <td>
-                      {e.stoppedAt ? (
-                        <span className="font-semibold">{e.name}</span>
-                      ) : (
-                        <Link className="link font-semibold" href={`/admin/sales/${e.id}`}>
-                          {e.name}
-                        </Link>
-                      )}
+                      <Link className="link font-semibold" href={`/admin/sales/${e.id}`}>
+                        {e.name}
+                      </Link>
                       <div className="muted text-xs">Tag {e.tag}</div>
                     </td>
                     <td className="min-w-[14rem]">
@@ -116,6 +112,9 @@ async function AdminSalesContent({ searchParams }: PageProps<"/admin/sales">) {
                     </td>
                     <td className="text-right whitespace-nowrap">
                       <div className="inline-flex gap-2">
+                        <Link className="btn btn-sm" href={`/admin/sales/${e.id}`}>
+                          Edit
+                        </Link>
                         {state !== "ended" && (
                           <form action={stopSale}>
                             <input name="id" type="hidden" value={e.id} />

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { usePathname, useRouter } from "next/navigation";
 import { useEffect, useRef, useState } from "react";
+import PrintSlipButton from "./PrintSlipButton";
 
 type NewOrder = { id: string; number: string; name: string; total: number };
 type Change = { id: string };
@@ -140,9 +141,7 @@ export default function LiveOrders() {
                 <Link className="btn btn-primary btn-sm" href={`/admin/orders/${o.id}`} onClick={() => dismiss(o.id)}>
                   Open order
                 </Link>
-                <Link className="btn btn-sm" href={`/admin/orders/${o.id}/slip?print=1`} onClick={() => dismiss(o.id)} target="_blank">
-                  Print slip
-                </Link>
+                <PrintSlipButton className="btn btn-sm" onPrint={() => dismiss(o.id)} orderId={o.id} />
               </div>
             </div>
             <button aria-label="Dismiss" className="muted hover:text-[var(--a-text)] text-lg leading-none px-1" onClick={() => dismiss(o.id)} type="button">

@@ -12,7 +12,8 @@ import {
   type OrderStatus,
   type PaymentStatus,
 } from "@/lib/orders";
-import { listOrders, queuePositions } from "@/lib/server/orders";
+import { listOrders, oldOrderCounts, queuePositions } from "@/lib/server/orders";
+import ClearOlder from "@/components/admin/ClearOlder";
 import { pkToday } from "@/lib/server/attention";
 import { io } from "next/cache";
 import { campaignOfCards, couponFilterOptions, orderCodesFor } from "@/lib/server/coupons";
@@ -20,7 +21,8 @@ import { PaymentTag, StatusTag } from "@/components/admin/OrderTags";
 import { pkr } from "@/components/admin/format";
 import ConfirmButton from "@/components/admin/ConfirmButton";
 import SelectAll from "@/components/admin/SelectAll";
-import { deleteOrders } from "../actions";
+import { deleteOldOrders, deleteOrders } from "../actions";
+import PrintSlipButton from "@/components/admin/PrintSlipButton";
 
 export const metadata = { title: "Orders" };
 
@@ -52,12 +54,13 @@ async function AdminOrdersContent({
   const sort = (["queue", "newest", "oldest"] as const).find((v) => v === one(sp.sort)) ?? "queue";
   // From "Needs attention": waiting orders without an expected date, or open ones past it.
   const etaParam = one(sp.eta) === "late" ? "late" : one(sp.eta) === "none" ? "none" : undefined;
-  if (etaParam === "late") await io(); // compares with today's date
+  await io(); // "late" and the old-order counts compare with today's date
   const eta = etaParam === "late" ? { lateBefore: pkToday() } : etaParam === "none" ? ({ missing: true } as const) : undefined;
-  const [orders, couponOptions, queue] = await Promise.all([
+  const [orders, couponOptions, queue, old] = await Promise.all([
     listOrders({ q, status, payment, coupon: couponFilter, sort, eta }),
     couponFilterOptions(),
     queuePositions(),
+    oldOrderCounts(),
   ]);
   // Queue view: a divider row where the orders still to be sent end.
   const firstDone = sort === "queue" ? orders.findIndex((o) => !inQueue(o.status)) : -1;
@@ -316,6 +319,9 @@ async function AdminOrdersContent({
                       <Link className="btn btn-sm" href={`/admin/orders/${o.id}`}>
                         Open
                       </Link>
+                      <PrintSlipButton className="btn btn-sm" orderId={o.id}>
+                        Print
+                      </PrintSlipButton>
                       <form action={deleteOrders}>
                         <input name="ids" type="hidden" value={o.id} />
                         <ConfirmButton
@@ -340,6 +346,21 @@ async function AdminOrdersContent({
         {sort === "queue" && waitingShown > 0 ? ` · ${waitingShown} waiting to be sent` : ""}
         {orders.length >= 500 ? " (showing up to 500 sent and finished)" : ""}
       </p>
+
+      <ClearOlder
+        action={deleteOldOrders}
+        choices={([30, 60] as const).map((d) => ({
+          value: String(d),
+          label: `Older than ${d} days`,
+          count: old[d],
+          title: `Delete ${old[d]} finished ${old[d] === 1 ? "order" : "orders"} older than ${d} days?`,
+          message:
+            "They also disappear from customers' accounts, from your sales figures, and from the \"N sold\" count on those shoes. Orders still in progress, and delivered orders not yet marked paid, are kept. This cannot be undone.",
+        }))}
+        heading="Clear old orders"
+        name="days"
+        note="Deletes finished orders only: cancelled ones, and delivered ones marked paid. Orders in progress and money still to collect are never deleted."
+      />
     </div>
   );
 }

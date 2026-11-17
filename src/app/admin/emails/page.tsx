@@ -3,7 +3,9 @@ import Link from "next/link";
 import { io } from "next/cache";
 import { requireAdmin } from "@/lib/auth/dal";
 import { mailConfigured } from "@/lib/server/mail";
-import { DAILY_LIMIT, MAIL_KINDS, countMail, isMailKind, listMail, mailStats } from "@/lib/server/mail-log";
+import { DAILY_LIMIT, MAIL_KINDS, countMail, isMailKind, listMail, mailLogCounts, mailStats } from "@/lib/server/mail-log";
+import ClearOlder from "@/components/admin/ClearOlder";
+import { clearEmailHistory } from "./actions";
 import StatTile from "@/components/admin/charts/StatTile";
 import ChartCard from "@/components/admin/charts/ChartCard";
 import ColumnChart from "@/components/admin/charts/ColumnChart";
@@ -22,7 +24,8 @@ async function EmailsContent({ searchParams }: PageProps<"/admin/emails">) {
   await io(); // the figures count days back from now
   const kind = isMailKind(sp.kind) ? sp.kind : undefined;
   const failed = sp.status === "failed";
-  const [stats, total] = await Promise.all([mailStats(), countMail({ kind, failed })]);
+  const [stats, total, old] = await Promise.all([mailStats(), countMail({ kind, failed }), mailLogCounts()]);
+  const cleared = typeof sp.cleared === "string" ? Number(sp.cleared) : null;
   const { from, per } = pageOf(sp, total);
   const { rows } = await listMail({ kind, failed, skip: from, limit: per });
   const usedToday = Math.min(100, Math.round((stats.today.sent / DAILY_LIMIT) * 100));
@@ -35,6 +38,12 @@ async function EmailsContent({ searchParams }: PageProps<"/admin/emails">) {
           Every email the store sends: sign-up codes, &quot;on its way&quot; emails, password resets and back-in-stock alerts. Days are Pakistan time.
         </p>
       </div>
+
+      {cleared !== null && (
+        <p className="notice notice-ok" role="status">
+          {cleared === 0 ? "Nothing to delete." : `Deleted ${n(cleared)} ${cleared === 1 ? "email" : "emails"} from the history.`}
+        </p>
+      )}
 
       {!mailConfigured() && (
         <p className="notice notice-bad" role="status">
@@ -181,6 +190,36 @@ async function EmailsContent({ searchParams }: PageProps<"/admin/emails">) {
           <Pager noun={["email", "emails"]} path="/admin/emails" sp={sp} total={total} />
         </div>
       </section>
+
+      <ClearOlder
+        action={clearEmailHistory}
+        choices={[
+          {
+            value: "30",
+            label: "Older than 30 days",
+            count: old[30],
+            title: `Delete ${n(old[30])} emails older than 30 days?`,
+            message: "Only the history goes: the emails were already sent. The counts above will no longer include them.",
+          },
+          {
+            value: "60",
+            label: "Older than 60 days",
+            count: old[60],
+            title: `Delete ${n(old[60])} emails older than 60 days?`,
+            message: "Only the history goes: the emails were already sent. The counts above will no longer include them.",
+          },
+          {
+            value: "all",
+            label: "Delete all",
+            count: old.all,
+            title: `Delete all ${n(old.all)} emails from the history?`,
+            message: "The list and every count on this page start again from zero. The emails themselves were already sent. This cannot be undone.",
+          },
+        ]}
+        heading="Clear history"
+        name="range"
+        note="Remove old entries from this list. Emails already sent are not affected."
+      />
 
       <p className="muted text-xs">
         &quot;Sent&quot; means Brevo accepted the email. Whether it reached the inbox or spam is shown in Brevo (Transactional → Logs). The list keeps about a year.

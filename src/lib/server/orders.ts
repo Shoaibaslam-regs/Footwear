@@ -125,6 +125,29 @@ export async function queuePositions(): Promise<{ positions: Map<string, number>
   return { positions: new Map(docs.map((d, i) => [d._id.toHexString(), i + 1])), total: docs.length };
 }
 
+/** How old "Delete older than…" can go (days). */
+export const CLEAR_AGES = [30, 60] as const;
+export type ClearAge = (typeof CLEAR_AGES)[number];
+
+/**
+ * Finished orders placed more than `days` days ago: cancelled ones, and
+ * delivered ones already marked paid. Orders still in progress, or delivered
+ * with money still to collect, are never matched.
+ */
+export function finishedOlderThan(days: number, now = Date.now()) {
+  return {
+    createdAt: { $lt: new Date(now - days * 86_400_000) },
+    $or: [{ status: "cancelled" }, { status: "delivered", "payment.status": "paid" }],
+  };
+}
+
+/** How many orders each "Delete older than…" choice would remove. */
+export async function oldOrderCounts(now = Date.now()): Promise<Record<ClearAge, number>> {
+  const col = (await getDb()).collection("orders");
+  const [a, b] = await Promise.all(CLEAR_AGES.map((d) => col.countDocuments(finishedOlderThan(d, now))));
+  return { 30: a, 60: b };
+}
+
 export async function getOrderById(id: string): Promise<Order | null> {
   if (!ObjectId.isValid(id)) return null;
   const doc = await (await orders()).findOne({ _id: new ObjectId(id) });
