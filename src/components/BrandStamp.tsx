@@ -1,7 +1,7 @@
 /**
- * The Ŕose Atelier seal, drawn in SVG so it prints sharp at any size: a
+ * The R'ose Atelier seal, drawn in SVG so it prints sharp at any size: a
  * dark-gold wax rim, a gold ring, an ivory face with the name around the
- * edge, and the stiletto logo with ŔOSE / ATELIER in the middle. Only real
+ * edge, and the stiletto logo with R'OSE / ATELIER in the middle. Only real
  * details (name, city, country); no invented founding dates or addresses.
  * One per page: the gradient ids are fixed.
  */
@@ -46,7 +46,7 @@ export default function BrandStamp({ className = "" }: { className?: string }) {
       {/* Name around the edge */}
       <text fill={ink} fontFamily="var(--font-playfair), Georgia, serif" fontSize="9.5" fontWeight="700" letterSpacing="2.2">
         <textPath href="#rs-top" startOffset="50%" textAnchor="middle">
-          ŔOSE ATELIER • KARACHI
+          R&apos;OSE ATELIER • KARACHI
         </textPath>
       </text>
       <text fill={ink} fontFamily="var(--font-playfair), Georgia, serif" fontSize="9.5" fontWeight="700" letterSpacing="2.6">
@@ -69,7 +69,7 @@ export default function BrandStamp({ className = "" }: { className?: string }) {
       {/* Centre: logo, name, line */}
       <image height="36" href="/icon.png" width="36" x="82" y="54" />
       <text fill={ink} fontFamily="var(--font-playfair), Georgia, serif" fontSize="19" fontWeight="700" letterSpacing="3.5" textAnchor="middle" x="101.75" y="109">
-        ŔOSE
+        R&apos;OSE
       </text>
       <line stroke="url(#rs-gold)" strokeWidth="0.8" x1="80" x2="120" y1="115" y2="115" />
       <text fill={brown} fontFamily="var(--font-jakarta), system-ui, sans-serif" fontSize="7" fontWeight="700" letterSpacing="2.6" textAnchor="middle" x="101.3" y="125">

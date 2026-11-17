@@ -11,7 +11,7 @@ process.env.JWT_SECRET ||= "test-secret-that-is-at-least-32-characters-long";
 process.env.SMTP_HOST = "test.invalid";
 process.env.SMTP_USER = "test";
 process.env.SMTP_PASS = "test";
-process.env.MAIL_FROM = "Ŕose Atelier <shop@example.com>";
+process.env.MAIL_FROM = "R'ose Atelier <shop@example.com>";
 process.env.SITE_URL = "https://shop.example.com";
 
 /** Request headers the next/headers stand-in returns (set per test). */

@@ -7,8 +7,8 @@ import { getCurrentUser } from "@/lib/auth/dal";
 import { safeNextPath } from "@/lib/safe-next";
 
 export const metadata: Metadata = {
-  title: "Log In — Ŕose Atelier",
-  description: "Log in to your Ŕose Atelier account.",
+  title: "Log In — R'ose Atelier",
+  description: "Log in to your R'ose Atelier account.",
 };
 
 async function LoginForm({ searchParams }: PageProps<"/login">) {

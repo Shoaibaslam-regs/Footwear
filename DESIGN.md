@@ -1,15 +1,15 @@
-# Ŕose Atelier — Design System
+# R'ose Atelier — Design System
 
 How the storefront looks and reads, and the patterns to reuse when building new screens. How the code works (data, auth, caching) lives in `CLAUDE.md`.
 
 ## 1. Brand Voice
 
 - **Positioning:** Italian luxury women's shoes, sold in Pakistan with prices in PKR. The look stays premium; the **words stay simple**, for shoppers with basic English.
-- **Brand name:** **Ŕose Atelier**. The R carries an acute accent (Ŕ), as the old É did; the logo shows it uppercase as ŔOSE ATELIER. The fonts load `latin-ext` for it. Handles and hashtags have no accent: #RoseAtelier, @RoseAtelier.
+- **Brand name:** **R'ose Atelier**, written with a plain R and a straight apostrophe (owner, 2026-11-18; it used to have an accent on the R). The logo shows it uppercase as R'OSE ATELIER. In JSX text write it `R&apos;ose` (the lint rule refuses a bare `'`). Handles and hashtags have no apostrophe: #RoseAtelier, @RoseAtelier.
 - **Place and time:** the workshop is in **Karachi**; don't name other cities. Never show a year in marketing text (no "2025", "SS25", "©" year). Order and review dates keep their year.
 - **Plain English rules:**
   - Short sentences and everyday words, like a good local shopping site.
-  - No fancy or foreign words: maison, bespoke, curated, silhouette, concierge, couture, complimentary, acquisition, grazie. "Atelier" appears only inside the brand name "Ŕose Atelier".
+  - No fancy or foreign words: maison, bespoke, curated, silhouette, concierge, couture, complimentary, acquisition, grazie. "Atelier" appears only inside the brand name "R'ose Atelier".
   - Don't translate into Urdu or Roman Urdu.
   - British spelling (colour, favourite).
   - No "Your" / "My" in front of labels, headings, buttons or page titles: "Account", "Orders", "Coupons", "Shopping Bag", "Choose Size", "In Bag · View", "Track Order". Full sentences may keep "your" ("Your password has been changed.").
@@ -100,7 +100,7 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
   - **Buttons:** outlined, filling from left to right on hover (`.btn-fill`; `--fill` / `--fill-text` change the colours, as on the hero).
   - **Hero:** eyebrow, headline (last words italic gold), one line, one button; full height on desktop; 8 s slides with a thin progress line and a 01 / 03 counter.
   - **WhatsApp button:** a small espresso circle with a gold icon that opens to "Chat" on hover. `rounded-full` is only 0.75rem here, so true circles use `rounded-[999px]`.
-  - **Footer:** the newsletter is one underlined line with an arrow; a large, faint ŔOSE wordmark closes the page.
+  - **Footer:** the newsletter is one underlined line with an arrow; a large, faint R'OSE wordmark closes the page.
   - **Sale banner** (`components/sale/SaleBanner.tsx`): while a sale is live, an espresso glass band (`bg-primary/85`, gold hairlines) sits over the top of the hero, under the header: the sale name in italic gold serif, "Up to X% off · headline", a tabular countdown and "Shop the Sale →". Sale prices on cards carry a small square tag in espresso and gold (`SaleTag`, e.g. "11.11"); the product page adds "11.11 Sale ends 12 Nov, 11:59 pm".
   - **3D backdrop:** `components/SilkBackdrop.tsx` draws ivory silk with a satin sheen and floating gold dust behind the whole home page (plain WebGL, no library, colours from the theme tokens). Scrolling glides the camera along the silk, warming it towards champagne lower down, and carries the dust past. Home sections have no background of their own so it shows through; the hero slideshow and footer stay opaque. The component adds `.has-backdrop` to `<main>` while it is showing (not a `:has()` rule: Next.js keeps the hidden home page in the DOM on other pages). Phones get fewer grains, lower resolution and 30 fps; it starts after page load, stops when the tab is hidden, draws one still frame with "reduce motion", and falls back to the plain surface colour without WebGL. Keep it faint: text must read on it without a panel.
   - Other effects: `animate-marquee`, `animate-heart-pop`, `btn-shimmer`, `animate-kenburns` (hero, plus a gentle scroll parallax), and `dialogIn`. Every new animation needs a reduced-motion fallback.
@@ -112,7 +112,7 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
 
 ### Admin panel
 - **Layout** (`src/app/admin/layout.tsx`):
-  - A simple Microsoft-style layout in the website's colours. A 48px espresso app bar (`.a-topbar`, sticky): the emblem on a white tile, "Ŕose Atelier | Admin", "View store", then the Live dot, the admin's first name and **Log out**.
+  - A simple Microsoft-style layout in the website's colours. A 48px espresso app bar (`.a-topbar`, sticky): the emblem on a white tile, "R'ose Atelier | Admin", "View store", then the Live dot, the admin's first name and **Log out**.
   - A navigation pane on the left (`components/admin/AdminNav.tsx`, `.a-pane` / `.a-side-link`): 20px line icons drawn inline as SVG, 40px rows; the current page gets a warm grey fill, bold text, a warm-brown icon and a 3px warm-brown bar on its left edge. On phones it becomes a row that scrolls sideways, with the bar underneath.
   - Content sits on the ivory page in white cards (`.panel`: 4px corners, a soft Fluent shadow, no border), up to 1800px wide, so build pages as responsive grids rather than one narrow column.
 - **Overview dashboard** (`src/app/admin/page.tsx`, data from `lib/server/dashboard.ts`):
@@ -138,7 +138,7 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
 - Flex or grid children holding wide tables or `<fieldset>`s need `min-w-0` so they scroll inside their card on phones.
 
 ### Code entry and coupon tickets
-- **Email code card** (`components/auth/VerifyCode.tsx`, `#otp-card`): centred, with a lock icon tile, the eyebrow "Ŕose Atelier · Email check", a serif title and the email masked (`sa•••a@gmail.com`).
+- **Email code card** (`components/auth/VerifyCode.tsx`, `#otp-card`): centred, with a lock icon tile, the eyebrow "R'ose Atelier · Email check", a serif title and the email masked (`sa•••a@gmail.com`).
   - Six separate digit boxes: each box moves on, Backspace goes back, and paste or autofill fills all six. The last digit submits by itself.
   - A "Valid 9:42" pill, then the black Verify button and a secondary Resend button with its countdown.
   - Nothing else: no passkey, help desk or security badges. While it shows, `AuthShell` hides its own heading.
@@ -190,7 +190,7 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
 4. Prices are stored in PKR and always rendered with `<Price>` / `<SalePrice>`, never formatted by hand.
 5. Never use `window.confirm`, `alert` or `prompt`. Use the shared dialogs. Destructive actions use `tone: "danger"`, so focus starts on Cancel.
 6. Shared class strings become a `const` at the top of the file (see `iconBtn` and `chipBase`).
-7. Every new page exports `metadata` (or `generateMetadata`) titled `"<Page> — Ŕose Atelier"`.
+7. Every new page exports `metadata` (or `generateMetadata`) titled `"<Page> — R'ose Atelier"`.
 
 ## 4. Open Design Work
 

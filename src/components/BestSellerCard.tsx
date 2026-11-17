@@ -5,7 +5,7 @@ import Image from "next/image";
 import Link from "next/link";
 import { useState } from "react";
 import { sizes, type BestSeller } from "@/lib/data";
-import SalePrice, { PercentOff, SaleTag } from "@/components/SalePrice";
+import { CardPriceRow } from "@/components/CardPriceRow";
 import CardLabel from "@/components/CardLabel";
 import SelectMenu from "@/components/SelectMenu";
 import { useCardPrice } from "@/components/sale/SaleProvider";
@@ -94,24 +94,15 @@ export default function BestSellerCard({
           <p className="hidden sm:block font-body-sm text-[12px] md:text-body-sm text-on-surface-variant font-light mt-0.5 sm:line-clamp-1 md:line-clamp-none">
             {item.detail}
           </p>
-          {/* Price on the left, the percent off (live sales included) at the right end. */}
-          <div className="mt-1 flex items-start justify-between gap-2">
-            <span className={`${quietPrice} min-w-0`}>
-              <SalePrice
-                category={item.category}
-                compareAt={item.compareAt}
-                discountPercent={item.discountPercent}
-                price={item.price}
-                quiet
-                slug={item.slug}
-                tagClassName="hidden sm:inline-block"
-              />
-            </span>
-            {/* Right end: on phones the sale tag (e.g. 12.12) sits above the percent off. */}
-            <span className="shrink-0 flex flex-col items-end gap-1 mt-0.5">
-              <SaleTag className="sm:hidden" tag={live.sale?.tag} />
-              <PercentOff percent={live.discountPercent} />
-            </span>
+          {/* The shop cards' price line (components/CardPriceRow.tsx), live sales included. */}
+          <div className="mt-1">
+            <CardPriceRow
+              compareAt={live.compareAt}
+              discountPercent={live.discountPercent || undefined}
+              price={live.price}
+              priceClassName={quietPrice}
+              saleTag={live.sale?.tag}
+            />
           </div>
         </div>
 

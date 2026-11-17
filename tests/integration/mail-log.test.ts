@@ -8,12 +8,12 @@ const log = async () => (await getDb()).collection("mail_log");
 
 describe("email log (admin Emails page)", () => {
   it("records each send, without the one-time code from the subject", async () => {
-    await recordMail("signup_code", " Sana@Example.com ", "123456 is your Ŕose Atelier code", true);
-    await recordMail("shipped", "nadia@example.com", "Order #EL-100001 is on its way — Ŕose Atelier", false, "550 mailbox unavailable");
+    await recordMail("signup_code", " Sana@Example.com ", "123456 is your R'ose Atelier code", true);
+    await recordMail("shipped", "nadia@example.com", "Order #EL-100001 is on its way — R'ose Atelier", false, "550 mailbox unavailable");
     const { rows } = await listMail({ skip: 0, limit: 25 });
     expect(rows.map((r) => [r.kind, r.to, r.subject, r.ok, r.error])).toEqual([
-      ["shipped", "nadia@example.com", "Order #EL-100001 is on its way — Ŕose Atelier", false, "550 mailbox unavailable"],
-      ["signup_code", "sana@example.com", "•••••• is your Ŕose Atelier code", true, null],
+      ["shipped", "nadia@example.com", "Order #EL-100001 is on its way — R'ose Atelier", false, "550 mailbox unavailable"],
+      ["signup_code", "sana@example.com", "•••••• is your R'ose Atelier code", true, null],
     ]);
     expect(await countMail({ failed: true })).toBe(1);
     expect(await countMail({ kind: "signup_code" })).toBe(1);

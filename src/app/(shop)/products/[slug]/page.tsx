@@ -26,7 +26,7 @@ export async function generateMetadata({
   const listing = await getPublishedProduct(slug);
   if (!listing) return {};
   return {
-    title: `${listing.name} — Ŕose Atelier`,
+    title: `${listing.name} — R'ose Atelier`,
     description: listing.description || `${listing.name}, handmade in Karachi. ${listing.material}.`,
   };
 }

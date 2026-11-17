@@ -6,8 +6,8 @@ import { getSiteSettings } from "@/lib/server/settings";
 import { appliedCouponFor, publicCouponsFor } from "@/lib/server/coupons";
 
 export const metadata: Metadata = {
-  title: "Checkout — Ŕose Atelier",
-  description: "Place your Ŕose Atelier order securely.",
+  title: "Checkout — R'ose Atelier",
+  description: "Place your R'ose Atelier order securely.",
 };
 
 /** Checkout is for signed-in clients only (proxy.ts redirects others first). */

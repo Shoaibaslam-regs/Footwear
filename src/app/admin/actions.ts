@@ -289,7 +289,7 @@ export async function setOrderStatus(_: OrderActionState, fd: FormData): Promise
     await sendMail(
       "shipped",
       order.customer.email,
-      `Order #${order.number} is on its way — Ŕose Atelier`,
+      `Order #${order.number} is on its way — R'ose Atelier`,
       "Your order is on its way",
       statusLines({ number: order.number, status: to.data, trackingNumber: tracking || order.trackingNumber, eta: order.eta }),
       { label: "Track your order", href: `${await siteUrl()}/account/orders/${order.number}` },

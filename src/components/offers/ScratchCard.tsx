@@ -84,9 +84,9 @@ export default function ScratchCard({
     if (!canvas || !stage) return;
     const serif = getComputedStyle(stage.querySelector("h2") ?? stage).fontFamily;
     const sans = getComputedStyle(document.body).fontFamily;
-    // The Ŕ needs the latin-ext font file; wait for it so the foil isn't drawn in a fallback face.
+    // Wait for the brand fonts so the foil isn't drawn in a fallback face.
     try {
-      await Promise.all([document.fonts.load(`700 30px ${serif}`, "ŔOSE"), document.fonts.load(`600 11px ${sans}`, "SCRATCH")]);
+      await Promise.all([document.fonts.load(`700 30px ${serif}`, "R'OSE"), document.fonts.load(`600 11px ${sans}`, "SCRATCH")]);
     } catch {
       /* draw with whatever is available */
     }
@@ -159,7 +159,7 @@ export default function ScratchCard({
     ctx.fillStyle = "#4a3311";
     ctx.font = `700 ${width < 380 ? 24 : 30}px ${serif}`;
     spaced.letterSpacing = "2px";
-    ctx.fillText("ŔOSE ATELIER", cx, cy - 8);
+    ctx.fillText("R'OSE ATELIER", cx, cy - 8);
 
     ctx.font = `600 9px ${sans}`;
     spaced.letterSpacing = "5px";
@@ -523,7 +523,7 @@ export default function ScratchCard({
                 <circle cx="300" cy="200" r="100" stroke="currentColor" strokeDasharray="6 4" strokeWidth="1.2" />
                 <path d="M150 200 C 220 100, 380 100, 450 200 C 380 300, 220 300, 150 200 Z" stroke="currentColor" strokeWidth="0.8" />
                 <text className="font-headline-md" fill="currentColor" fontSize="28" letterSpacing="12" textAnchor="middle" x="300" y="210">
-                  ŔOSE ATELIER
+                  R&apos;OSE ATELIER
                 </text>
               </svg>
             </div>
@@ -534,7 +534,7 @@ export default function ScratchCard({
                 {/* The site icon (src/app/icon.png, served at /icon.png). */}
                 <Image alt="" className="w-8 h-8 sm:w-10 sm:h-10 shrink-0 object-contain" height={40} src="/icon.png" width={40} />
                 <div className="min-w-0">
-                  <span className="font-label-uppercase text-label-uppercase tracking-[0.2em] text-primary font-bold block truncate">ŔOSE ATELIER</span>
+                  <span className="font-label-uppercase text-label-uppercase tracking-[0.2em] text-primary font-bold block truncate">R&apos;OSE ATELIER</span>
                   <span className="font-body-sm text-body-sm text-on-surface-variant text-[11px] block">Karachi, Pakistan</span>
                 </div>
               </div>
@@ -562,7 +562,7 @@ export default function ScratchCard({
                   <div className="hidden sm:flex flex-col items-center justify-center p-3 rounded-md bg-surface-container-highest/60 text-center min-w-[110px]">
                     <span className="material-symbols-outlined text-secondary text-[24px]">verified</span>
                     <span className="font-label-uppercase text-[9px] tracking-wider text-on-surface mt-1">GENUINE OFFER</span>
-                    <span className="font-label-sm text-[10px] text-outline">ŔOSE ATELIER</span>
+                    <span className="font-label-sm text-[10px] text-outline">R&apos;OSE ATELIER</span>
                   </div>
                 </div>
 
@@ -684,7 +684,7 @@ export default function ScratchCard({
                   <span className="material-symbols-outlined text-[14px] text-secondary">lock</span>
                   {usesNote}
                 </span>
-                <span className="hidden sm:inline">ŔOSE ATELIER • KARACHI</span>
+                <span className="hidden sm:inline">R&apos;OSE ATELIER • KARACHI</span>
               </div>
               <div className="flex items-center gap-space-sm">
                 {!revealed ? (

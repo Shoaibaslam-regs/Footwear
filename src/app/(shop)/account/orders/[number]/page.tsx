@@ -11,7 +11,7 @@ import { getOrderForUser, statusDates } from "@/lib/server/orders";
 import Price from "@/components/Price";
 import CancelOrderButton from "@/components/account/CancelOrderButton";
 
-export const metadata: Metadata = { title: "Order — Ŕose Atelier", robots: { index: false } };
+export const metadata: Metadata = { title: "Order — R'ose Atelier", robots: { index: false } };
 
 /**
  * The customer's order tracking page, laid out like an atelier commission
@@ -47,7 +47,7 @@ const stepOf = (s: OrderStatus) => journey.findIndex((j) => j.statuses.includes(
 /** The latest real news for the banner under the journey. */
 function latestNews(o: Order, reached: ReturnType<typeof statusDates>): { label: string; text: string } {
   if (o.status === "cancelled") return { label: "Cancelled", text: `This order was cancelled${reached.cancelled ? ` on ${day(reached.cancelled)}` : ""}.` };
-  if (o.status === "delivered") return { label: "Delivered", text: `Your order was delivered${reached.delivered ? ` on ${day(reached.delivered)}` : ""}. Thank you for shopping with Ŕose Atelier.` };
+  if (o.status === "delivered") return { label: "Delivered", text: `Your order was delivered${reached.delivered ? ` on ${day(reached.delivered)}` : ""}. Thank you for shopping with R'ose Atelier.` };
   if (o.status === "out_for_delivery") return { label: "Out for delivery", text: "The courier has your parcel and is delivering it today." };
   if (o.status === "shipped") return { label: "Shipped", text: o.trackingNumber ? `Your parcel is with the courier. Tracking number ${o.trackingNumber}.` : "Your parcel is with the courier." };
   if (o.eta) return { label: "Expected delivery", text: `${etaLabel(o.eta)}${o.eta.note ? `. ${o.eta.note}` : ""}` };
@@ -81,7 +81,7 @@ async function OrderDetail({ params }: PageProps<"/account/orders/[number]">) {
           [order.status === "out_for_delivery" ? "Out for" : "On Its", order.status === "out_for_delivery" ? "Delivery" : "Way"],
           ["Delivered,", "Enjoy"],
         ][current] as [string, string]);
-  const help = `${whatsappUrl}?text=${encodeURIComponent(`Hello Ŕose Atelier, I have a question about my order #${order.number}.`)}`;
+  const help = `${whatsappUrl}?text=${encodeURIComponent(`Hello R'ose Atelier, I have a question about my order #${order.number}.`)}`;
   const country = countries.find((c) => c.code === order.address.country)?.label ?? order.address.country;
   const pairs = order.items.reduce((n, i) => n + i.quantity, 0);
   const [first, ...rest] = order.items;
@@ -120,7 +120,7 @@ async function OrderDetail({ params }: PageProps<"/account/orders/[number]">) {
       <section className={`${card} p-space-md sm:p-space-lg`}>
         <div className="flex flex-col lg:flex-row lg:items-end justify-between gap-space-md">
           <div className="min-w-0">
-            <span className={eyebrow}>Ŕose Atelier · Karachi</span>
+            <span className={eyebrow}>R&apos;ose Atelier · Karachi</span>
             <h1 className="mt-1 font-headline-lg text-[30px] leading-tight sm:text-[40px] text-primary tracking-[-0.02em] font-normal">
               Order <span className="italic text-secondary">Nº</span> {order.number}
             </h1>

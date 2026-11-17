@@ -257,7 +257,7 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
             <h2 className="mb-1">Customer</h2>
             <p className="font-medium">{order.customer.name}</p>
             <p>
-              <a className="link" href={`mailto:${order.customer.email}?subject=${encodeURIComponent(`Your Ŕose Atelier order ${order.number}`)}`}>
+              <a className="link" href={`mailto:${order.customer.email}?subject=${encodeURIComponent(`Your R'ose Atelier order ${order.number}`)}`}>
                 {order.customer.email}
               </a>
             </p>

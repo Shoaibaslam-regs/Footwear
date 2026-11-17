@@ -2,7 +2,7 @@ import type { Metadata } from "next";
 import AuthShell from "@/components/auth/AuthShell";
 import { ForgotPasswordForm } from "@/components/auth/ResetForms";
 
-export const metadata: Metadata = { title: "Forgot Password — Ŕose Atelier" };
+export const metadata: Metadata = { title: "Forgot Password — R'ose Atelier" };
 
 export default function ForgotPasswordPage() {
   return (

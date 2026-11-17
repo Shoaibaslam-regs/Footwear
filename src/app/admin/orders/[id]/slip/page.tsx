@@ -4,7 +4,7 @@ import { notFound } from "next/navigation";
 import { requireAdmin } from "@/lib/auth/dal";
 import { countries } from "@/lib/checkout-data";
 import { whatsappNumber } from "@/lib/data";
-import { etaLabel, orderStatusLabel, paymentMethodLabel } from "@/lib/orders";
+import { orderStatusLabel, paymentMethodLabel } from "@/lib/orders";
 import { getOrderById } from "@/lib/server/orders";
 import { pkr } from "@/components/admin/format";
 import PrintButton, { type Paper } from "@/components/admin/PrintButton";
@@ -60,6 +60,7 @@ const css = (p: (typeof PAPERS)[Paper], s: boolean) => `
 .order-slip .facts b { display: block; font-size: ${s ? 9 : 11}px; font-weight: 600; margin-top: 0.8mm; overflow-wrap: anywhere; }
 .order-slip .people { display: grid; grid-template-columns: 1fr 1fr; gap: ${s ? 4 : 8}mm; padding: ${s ? 2.5 : 4}mm 0; }
 .order-slip .people .name { font-weight: 700; margin-top: 1mm; }
+.order-slip .people .dest { display: block; margin-top: ${s ? 1.8 : 2.5}mm; margin-bottom: 0.5mm; }
 .order-slip h3 { font-size: ${s ? 12 : 15}px; margin: ${s ? 2 : 3}mm 0 ${s ? 1.5 : 2}mm; display: flex; align-items: baseline; justify-content: space-between; }
 .order-slip h3 span { font-family: var(--font-jakarta), system-ui, sans-serif; font-size: ${s ? 8 : 9}px; color: var(--muted); }
 .order-slip .item { display: grid; grid-template-columns: ${s ? 10 : 15}mm minmax(0, 1fr) auto; gap: ${s ? 3 : 5}mm; align-items: center;
@@ -144,7 +145,6 @@ async function SlipContent({
       ? order.coupon.discount
       : 0;
   const base = `/admin/orders/${order.id}/slip`;
-  const open = order.status !== "delivered" && order.status !== "cancelled";
   const toCollect =
     order.payment.method === "cod" &&
     order.payment.status !== "paid" &&
@@ -214,7 +214,7 @@ async function SlipContent({
           <header className="band">
             {/* eslint-disable-next-line @next/next/no-img-element -- printed at its natural size */}
             <img alt="" height={60} src="/icon.png" width={60} />
-            <div className="serif word">ŔOSE ATELIER</div>
+            <div className="serif word">R&apos;OSE ATELIER</div>
             <div className="loc">Karachi · Pakistan</div>
           </header>
 
@@ -255,11 +255,6 @@ async function SlipContent({
                   <span className="eyebrow">Tracking</span>
                   <b>{order.trackingNumber}</b>
                 </>
-              ) : order.eta && open ? (
-                <>
-                  <span className="eyebrow">Expected</span>
-                  <b>{etaLabel(order.eta)}</b>
-                </>
               ) : (
                 <>
                   <span className="eyebrow">Status</span>
@@ -274,6 +269,7 @@ async function SlipContent({
             <div>
               <span className="eyebrow">Delivering to</span>
               <div className="name">{order.customer.name}</div>
+              <span className="eyebrow dest">Destination</span>
               <div>{order.address.line1}</div>
               {order.address.line2 && <div>{order.address.line2}</div>}
               <div>
@@ -288,9 +284,6 @@ async function SlipContent({
               <div className="muted" style={{ overflowWrap: "anywhere" }}>
                 {order.customer.email}
               </div>
-              {order.trackingNumber && order.eta && open && (
-                <div className="muted">Expected {etaLabel(order.eta)}</div>
-              )}
             </div>
           </section>
 

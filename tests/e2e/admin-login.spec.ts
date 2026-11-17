@@ -39,5 +39,5 @@ test("visitors and customers are kept out of the admin panel", async ({ page }) 
   await logInAs(page, id, "customer");
   await page.goto("/admin");
   await expect(page).toHaveURL(/\/account\?denied=admin/);
-  await expect(page.getByText("Only Ŕose Atelier admins can open the admin panel.")).toBeVisible();
+  await expect(page.getByText("Only R'ose Atelier admins can open the admin panel.")).toBeVisible();
 });

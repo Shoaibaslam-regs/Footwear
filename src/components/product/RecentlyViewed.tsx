@@ -3,7 +3,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { useEffect, useSyncExternalStore } from "react";
-import SalePrice from "@/components/SalePrice";
+import { LiveCardPriceRow } from "@/components/CardPriceRow";
 import type { SearchEntry } from "@/lib/search-data";
 
 const KEY = "elora:recently-viewed";
@@ -31,12 +31,16 @@ export default function RecentlyViewed({ current, catalogue }: { current: string
   } catch {}
 
   useEffect(() => {
-    const next = [current, ...slugs].slice(0, MAX);
+    // Read the saved list fresh: during hydration `slugs` is still the server's
+    // empty snapshot, and saving from it wiped the history on every visit.
+    let saved: string[] = [];
     try {
-      window.localStorage.setItem(KEY, JSON.stringify(next));
+      const parsed = JSON.parse(read());
+      if (Array.isArray(parsed)) saved = parsed.filter((s): s is string => typeof s === "string" && s !== current);
     } catch {}
-    // Only re-record when the product changes.
-    // eslint-disable-next-line react-hooks/exhaustive-deps
+    try {
+      window.localStorage.setItem(KEY, JSON.stringify([current, ...saved].slice(0, MAX)));
+    } catch {}
   }, [current]);
 
   const bySlug = new Map(catalogue.map((e) => [e.id, e]));
@@ -47,16 +51,18 @@ export default function RecentlyViewed({ current, catalogue }: { current: string
     <section className="max-w-[1536px] w-full mx-auto px-margin-mobile lg:px-margin pb-space-xl">
       <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">You Looked At</span>
       <h2 className="font-headline-md text-headline-md text-primary mb-space-md">Recently Viewed</h2>
-      <ul className="grid grid-cols-2 lg:grid-cols-4 gap-space-sm sm:gap-gutter">
+      <ul className="grid grid-cols-2 lg:grid-cols-4 gap-x-3 gap-y-space-lg sm:gap-x-gutter">
         {items.map((r) => (
           <li key={r.id}>
-            <Link className="group block bg-surface-container-lowest rounded-lg p-1.5 sm:p-space-sm shadow-sm hover:shadow-xl transition-shadow" href={r.href}>
-              <span className="relative block aspect-[3/4] rounded overflow-hidden bg-surface-container mb-space-sm">
-                <Image alt={r.alt} className="object-cover transition-transform duration-700 group-hover:scale-105" fill sizes="(min-width: 1024px) 25vw, 50vw" src={r.image} />
+            {/* The same card as the shop: photo, detail line, name, price line (sale tag and percent at the right). */}
+            <Link className="group flex flex-col" href={r.href}>
+              <span className="relative block aspect-[3/4] rounded-lg overflow-hidden bg-surface-container">
+                <Image alt={r.alt} className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]" fill sizes="(min-width: 1024px) 22vw, 50vw" src={r.image} />
               </span>
-              <span className="block font-headline-sm text-body-lg sm:text-headline-sm text-primary truncate group-hover:text-secondary transition-colors">{r.name}</span>
-              <span className="block font-label-md text-label-sm sm:text-label-md font-semibold text-primary">
-                <SalePrice category={r.category} compareAt={r.compareAt} discountPercent={r.discountPercent} price={r.price} slug={r.id} />
+              <span className="pt-2.5 sm:pt-space-sm flex flex-col gap-0.5 px-0.5">
+                <span className="font-label-uppercase text-[9px] sm:text-[10px] text-outline uppercase tracking-[0.18em] truncate">{r.detail}</span>
+                <span className="font-headline-sm text-[15px] sm:text-[18px] leading-snug text-primary tracking-[-0.01em] font-normal line-clamp-2">{r.name}</span>
+                <LiveCardPriceRow category={r.category} compareAt={r.compareAt} discountPercent={r.discountPercent} price={r.price} slug={r.id} />
               </span>
             </Link>
           </li>

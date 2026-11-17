@@ -8,7 +8,7 @@ export default function Craft() {
         <div data-reveal className="max-w-2xl mx-auto text-center mb-space-lg sm:mb-space-xl">
           <span className={eyebrow}>Made in Karachi</span>
           <h2 className={`${sectionTitle} mt-2 mb-space-xs`}>
-            What Goes Into an <em className={accent}>Ŕose Atelier</em> Shoe
+            What Goes Into an <em className={accent}>R&apos;ose Atelier</em> Shoe
           </h2>
           <p className="hidden sm:block font-body-md text-body-md text-on-surface-variant font-light">
             Made in our family workshops in Karachi, run by the third
@@ -78,7 +78,7 @@ export default function Craft() {
             </div>
             <div>
               <h4 className="font-label-md text-label-md font-semibold text-primary">
-                Ŕose Atelier Workshop
+                R&apos;ose Atelier Workshop
               </h4>
               <p className="font-body-sm text-body-sm text-on-surface-variant">
                 Karachi, Pakistan

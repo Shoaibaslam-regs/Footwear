@@ -124,7 +124,7 @@ async function AdminCouponsContent({ searchParams }: PageProps<"/admin/coupons">
                 const tagText = c.type === "random" && c.state === "used_up" ? "All cards given" : baseText;
                 const url = `${base}/offers/${c.code}`;
                 // Neither the code nor the discount: customers find out when they scratch.
-                const message = `${c.type === "random" ? "A surprise discount is waiting for you" : "You have a special offer"} at Ŕose Atelier${c.endsAt ? ` (until ${dayMonth(c.endsAt)})` : ""}. Scratch your card to see it: ${url}`;
+                const message = `${c.type === "random" ? "A surprise discount is waiting for you" : "You have a special offer"} at R'ose Atelier${c.endsAt ? ` (until ${dayMonth(c.endsAt)})` : ""}. Scratch your card to see it: ${url}`;
                 return (
                   <tr key={c.id}>
                     <td>

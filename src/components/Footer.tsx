@@ -82,7 +82,7 @@ export default function Footer() {
         <div className="pt-space-lg border-t border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-space-md font-label-uppercase text-label-uppercase text-outline">
           <div className="flex items-center gap-space-sm flex-wrap justify-center md:justify-start">
             <span className="tracking-wider">
-              © ŔOSE ATELIER. ALL RIGHTS RESERVED.
+              © R&apos;OSE ATELIER. ALL RIGHTS RESERVED.
             </span>
             <span className="hidden md:inline">•</span>
             <span className="tracking-wider uppercase">

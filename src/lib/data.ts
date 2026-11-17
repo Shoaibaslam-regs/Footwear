@@ -327,7 +327,7 @@ export type FooterLink = { label: string; href?: string; sizeGuide?: boolean };
 
 export const footerColumns: { title: string; links: FooterLink[] }[] = [
   {
-    title: "About Ŕose Atelier",
+    title: "About R'ose Atelier",
     links: [
       { label: "Our Story", href: "/#craft" },
       { label: "Eco-Friendly Making", href: "/#craft" },

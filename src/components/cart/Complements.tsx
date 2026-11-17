@@ -1,6 +1,6 @@
 import Image from "next/image";
 import Link from "next/link";
-import SalePrice from "@/components/SalePrice";
+import { LiveCardPriceRow } from "@/components/CardPriceRow";
 
 export type Suggestion = {
   slug: string;
@@ -35,31 +35,24 @@ export default function Complements({ suggestions }: { suggestions: Suggestion[]
           <span className="material-symbols-outlined text-[16px]">arrow_forward</span>
         </Link>
       </div>
-      <div className="grid grid-cols-2 sm:grid-cols-3 gap-space-sm sm:gap-gutter">
+      <div className="grid grid-cols-2 sm:grid-cols-3 gap-x-3 gap-y-space-lg sm:gap-x-gutter">
         {suggestions.map((c) => (
-          <Link
-            key={c.slug}
-            className="bg-surface-container-lowest p-space-sm rounded-xl shadow-sm hover:shadow-xl transition-shadow flex flex-col group"
-            href={c.href}
-          >
-            <div className="aspect-square bg-surface-container rounded-lg overflow-hidden relative">
+          // The same card as the shop: photo, detail line, name, price line (sale tag and percent at the right).
+          <Link key={c.slug} className="group flex flex-col" href={c.href}>
+            <span className="relative block aspect-[3/4] rounded-lg overflow-hidden bg-surface-container">
               <Image
                 alt={c.alt}
-                className="object-cover transition-transform duration-500 group-hover:scale-105"
+                className="object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
                 fill
                 sizes="(min-width: 640px) 20vw, 50vw"
                 src={c.image}
               />
-            </div>
-            <div className="mt-space-sm flex-1 flex flex-col">
-              <h4 className="font-body-md text-body-md font-medium text-primary truncate group-hover:text-secondary transition-colors">
-                {c.name}
-              </h4>
-              <p className="font-body-sm text-body-sm text-on-surface-variant truncate">{c.detail}</p>
-              <span className="mt-auto pt-2 font-body-md text-body-md text-primary font-semibold">
-                <SalePrice category={c.category} compareAt={c.compareAt} discountPercent={c.discountPercent} price={c.price} slug={c.slug} />
-              </span>
-            </div>
+            </span>
+            <span className="pt-2.5 sm:pt-space-sm flex flex-col gap-0.5 px-0.5">
+              <span className="font-label-uppercase text-[9px] sm:text-[10px] text-outline uppercase tracking-[0.18em] truncate">{c.detail}</span>
+              <span className="font-headline-sm text-[15px] sm:text-[18px] leading-snug text-primary tracking-[-0.01em] font-normal line-clamp-2">{c.name}</span>
+              <LiveCardPriceRow category={c.category} compareAt={c.compareAt} discountPercent={c.discountPercent} price={c.price} slug={c.slug} />
+            </span>
           </Link>
         ))}
       </div>

@@ -610,3 +610,79 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
     --zig: 8px;
   }
 }
+
+/* Sale petals (components/sale/SaleBanner.tsx): a few blush rose petals drift
+   down inside the sale ribbon only (it clips them), behind its text, swaying
+   and turning slowly. Gone with the ribbon, and not shown at all for visitors
+   who ask for less motion. */
+.sale-petals {
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+}
+.sale-petal {
+  position: absolute;
+  top: -16px;
+  left: var(--x);
+  width: var(--s);
+  opacity: 0;
+}
+.sale-petal > span {
+  display: block;
+}
+.sale-petal svg {
+  display: block;
+  width: 100%;
+  height: auto;
+  filter: drop-shadow(0 1px 2px rgb(0 0 0 / 0.4));
+}
+@media (prefers-reduced-motion: reduce) {
+  .sale-petals {
+    display: none;
+  }
+}
+@media (prefers-reduced-motion: no-preference) {
+  .sale-petal {
+    animation: petalFall var(--t) linear var(--d) infinite;
+  }
+  .sale-petal > span {
+    animation: petalSway calc(var(--t) / 3) ease-in-out var(--d) infinite alternate;
+  }
+  .sale-petal svg {
+    animation: petalTurn calc(var(--t) / 2) ease-in-out var(--d) infinite alternate;
+  }
+}
+/* `top` in % follows the ribbon's height, whatever the screen. */
+@keyframes petalFall {
+  0% {
+    top: -16px;
+    opacity: 0;
+  }
+  12% {
+    opacity: 0.9;
+  }
+  82% {
+    opacity: 0.85;
+  }
+  100% {
+    top: 100%;
+    opacity: 0;
+  }
+}
+@keyframes petalSway {
+  from {
+    transform: translateX(calc(var(--w) * -1));
+  }
+  to {
+    transform: translateX(var(--w));
+  }
+}
+@keyframes petalTurn {
+  from {
+    transform: rotate(-35deg) rotateX(0deg);
+  }
+  to {
+    transform: rotate(40deg) rotateX(55deg);
+  }
+}

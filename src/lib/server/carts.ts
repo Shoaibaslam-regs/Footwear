@@ -55,7 +55,7 @@ function toCartItem(p: Listing, size: number, quantity: number, pricing: Pricing
     stockNote: soldOut ? "This size has just sold out" : "In stock",
     stockNoteClass: soldOut ? "text-error" : "text-on-surface-variant",
     stockDotClass: soldOut ? "bg-error" : "bg-primary",
-    packaging: { title: "Ŕose Atelier Gift Box:", text: "Comes with a silk shoe bag with our logo." },
+    packaging: { title: "R'ose Atelier Gift Box:", text: "Comes with a silk shoe bag with our logo." },
     quantity,
     image: p.image,
     alt: p.alt,

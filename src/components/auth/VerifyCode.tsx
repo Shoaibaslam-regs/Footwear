@@ -158,7 +158,7 @@ export default function VerifyCode({
           </span>
         </span>
         <span className="mt-space-xs font-label-uppercase text-[10px] sm:text-label-uppercase uppercase tracking-[0.24em] text-secondary">
-          Ŕose Atelier · Email check
+          R&apos;ose Atelier · Email check
         </span>
         <h1 className="font-headline-md text-headline-md sm:font-headline-lg-mobile sm:text-headline-lg-mobile text-primary tracking-tight">
           Confirm your email

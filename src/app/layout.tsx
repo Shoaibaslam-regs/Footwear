@@ -8,22 +8,22 @@ import "./globals.css";
 
 const playfair = Playfair_Display({
   variable: "--font-playfair",
-  // latin-ext carries the Ŕ of the logo; browsers fetch it only for pages that use such letters.
+  // latin-ext covers accented letters in names; browsers fetch it only for pages that use them.
   subsets: ["latin", "latin-ext"],
   style: ["normal", "italic"],
 });
 
 const jakarta = Plus_Jakarta_Sans({
   variable: "--font-jakarta",
-  // latin-ext carries the Ŕ of the logo; browsers fetch it only for pages that use such letters.
+  // latin-ext covers accented letters in names; browsers fetch it only for pages that use them.
   subsets: ["latin", "latin-ext"],
   weight: ["300", "400", "500", "600", "700"],
 });
 
 export const metadata: Metadata = {
-  title: "Ŕose Atelier — Luxury Women's Shoes",
+  title: "R'ose Atelier — Luxury Women's Shoes",
   description:
-    "Luxury women's shoes by Ŕose Atelier, handmade in Karachi. Delivery across Pakistan.",
+    "Luxury women's shoes by R'ose Atelier, handmade in Karachi. Delivery across Pakistan.",
 };
 
 export default function RootLayout({ children }: LayoutProps<"/">) {

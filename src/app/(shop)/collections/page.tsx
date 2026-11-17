@@ -8,7 +8,7 @@ import { getRatingsBySlug } from "@/lib/server/reviews";
 import { getOnlineSales } from "@/lib/server/sales";
 
 export const metadata: Metadata = {
-  title: "Shop All Shoes — Ŕose Atelier",
+  title: "Shop All Shoes — R'ose Atelier",
   description:
     "Shop handmade shoes for women: heels, sandals, flats and bridal shoes. Cash on Delivery across Pakistan.",
 };

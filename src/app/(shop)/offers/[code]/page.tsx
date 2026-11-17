@@ -16,7 +16,7 @@ import Price from "@/components/Price";
 import ScratchCard from "@/components/offers/ScratchCard";
 import { RevealProvider, WhenRevealed } from "@/components/offers/Reveal";
 
-export const metadata: Metadata = { title: "Coupon — Ŕose Atelier", robots: { index: false } };
+export const metadata: Metadata = { title: "Coupon — R'ose Atelier", robots: { index: false } };
 
 const label = "font-label-uppercase text-label-uppercase";
 
@@ -118,8 +118,8 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
   const shoes = pickShoes(all, t, sold, pricing);
   // Shares the campaign link (each friend gets their own card), never the code or the discount.
   const shareText = surprise
-    ? `A surprise discount is waiting for you at Ŕose Atelier. Scratch your card: /offers/${code}`
-    : `You have a special offer at Ŕose Atelier. Scratch your card to see it: /offers/${t.code}`;
+    ? `A surprise discount is waiting for you at R'ose Atelier. Scratch your card: /offers/${code}`
+    : `You have a special offer at R'ose Atelier. Scratch your card to see it: /offers/${t.code}`;
 
   return (
     <RevealProvider initial={revealedBefore}>
@@ -313,7 +313,7 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
             </div>
             <div>
               <div className="flex items-center gap-2">
-                <span className="font-headline-sm text-headline-sm text-primary font-normal">Ŕose Atelier Help</span>
+                <span className="font-headline-sm text-headline-sm text-primary font-normal">R&apos;ose Atelier Help</span>
                 <span className="material-symbols-outlined text-secondary text-[18px]">verified</span>
               </div>
               <span className={`${label} text-secondary tracking-widest block`}>Customer Help • Karachi</span>
@@ -326,11 +326,11 @@ async function Offer({ params }: PageProps<"/offers/[code]">) {
             <div className="bg-surface-container-lowest p-space-md rounded-lg shadow-sm w-full sm:w-auto">
               <span className="font-label-uppercase text-[10px] text-outline tracking-wider block">WHATSAPP</span>
               <span className="font-body-md text-body-md text-primary font-semibold block">0314 8428115</span>
-              <span className="font-body-sm text-body-sm text-on-surface-variant text-[12px]">Ŕose Atelier, Karachi</span>
+              <span className="font-body-sm text-body-sm text-on-surface-variant text-[12px]">R&apos;ose Atelier, Karachi</span>
             </div>
             <a
               className={`w-full sm:w-auto inline-flex items-center justify-center gap-2 px-space-lg py-3.5 rounded-full bg-primary text-on-primary hover:bg-secondary transition-all ${label} tracking-widest shadow-md`}
-              href={`${whatsappUrl}?text=${encodeURIComponent("Hello Ŕose Atelier, I have a question about my coupon.")}`}
+              href={`${whatsappUrl}?text=${encodeURIComponent("Hello R'ose Atelier, I have a question about my coupon.")}`}
               rel="noopener noreferrer"
               target="_blank"
             >

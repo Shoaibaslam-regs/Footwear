@@ -1,11 +1,11 @@
 import Image from "next/image";
 import Link from "next/link";
 import CardLabel from "@/components/CardLabel";
-import SalePrice, { PercentOff } from "@/components/SalePrice";
+import { LiveCardPriceRow } from "@/components/CardPriceRow";
 import WishlistButton from "@/components/WishlistButton";
 import { cardLabel, productHref, salePrice, type Listing } from "@/lib/products";
 
-/** "Complete the Look": the shop's quiet cards (one label, gold sale price, percent at the right). */
+/** "Complete the Look": the same quiet cards as the shop (one label, gold sale price, sale tag and percent at the right). */
 export default function Recommendations({ items }: { items: Listing[] }) {
   if (items.length === 0) return null;
   return (
@@ -41,19 +41,14 @@ export default function Recommendations({ items }: { items: Listing[] }) {
                   {r.name}
                 </Link>
               </h3>
-              <div className="flex items-start justify-between gap-2">
-                <span className="font-body-md text-[13px] sm:text-[15px] text-primary tracking-wide tabular-nums min-w-0">
-                  <SalePrice
-                    category={r.category}
-                    compareAt={r.discountPercent ? r.price : undefined}
-                    discountPercent={r.discountPercent || undefined}
-                    price={salePrice(r)}
-                    quiet
-                    slug={r.slug}
-                  />
-                </span>
-                <PercentOff className="mt-0.5" percent={r.discountPercent || undefined} />
-              </div>
+              {/* Same price line as the shop cards, re-priced for any live sale (percent and 12.12-style tag). */}
+              <LiveCardPriceRow
+                category={r.category}
+                compareAt={r.discountPercent ? r.price : undefined}
+                discountPercent={r.discountPercent || undefined}
+                price={salePrice(r)}
+                slug={r.slug}
+              />
             </div>
           </article>
         ))}

@@ -132,7 +132,7 @@ export const products: Record<string, ProductDetail> = {
     ],
     care: [
       "Keep away from water, oil and rough surfaces. Clean satin gently with a soft, dry microfiber cloth.",
-      "Keep each shoe in its Ŕose Atelier silk shoe bag, filled with tissue paper, so it keeps its shape.",
+      "Keep each shoe in its R'ose Atelier silk shoe bag, filled with tissue paper, so it keeps its shape.",
     ],
     shipping: [
       "We deliver across Pakistan. Delivery options, times and charges are shown at checkout before you place your order.",

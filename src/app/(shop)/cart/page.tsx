@@ -6,8 +6,8 @@ import { toSearchEntry } from "@/lib/products";
 import { getPublishedProducts } from "@/lib/server/products";
 
 export const metadata: Metadata = {
-  title: "Shopping Bag — Ŕose Atelier",
-  description: "See the items in your Ŕose Atelier shopping bag.",
+  title: "Shopping Bag — R'ose Atelier",
+  description: "See the items in your R'ose Atelier shopping bag.",
 };
 
 export default async function CartPage() {

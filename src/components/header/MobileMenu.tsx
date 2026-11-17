@@ -51,7 +51,7 @@ function MenuPanel({ onClose }: { onClose: () => void }) {
       >
         <div className="h-20 px-margin-mobile flex items-center justify-between">
           <span className="font-headline-md text-[20px] tracking-[0.16em] uppercase text-surface-container-lowest whitespace-nowrap">
-            Ŕose Atelier
+            R&apos;ose Atelier
           </span>
           <button
             aria-label="Close Menu"

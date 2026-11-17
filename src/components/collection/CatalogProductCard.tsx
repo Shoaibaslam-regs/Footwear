@@ -4,7 +4,7 @@ import type { FilterableProduct } from "@/lib/catalog-filters";
 import Stars from "@/components/product/Stars";
 import WishlistButton from "../WishlistButton";
 import { productId } from "@/lib/product-id";
-import SalePrice, { PercentOff, SaleTag } from "@/components/SalePrice";
+import { CardPriceRow } from "@/components/CardPriceRow";
 import CardLabel from "@/components/CardLabel";
 
 /**
@@ -82,17 +82,8 @@ export default function CatalogProductCard({
             {p.name}
           </Link>
         </h3>
-        {/* Price on the left, the percent off at the right end of the line. */}
-        <div className="flex items-start justify-between gap-2">
-          <span className="font-body-md text-[13px] sm:text-[15px] text-primary tracking-wide tabular-nums min-w-0">
-            <SalePrice compareAt={p.compareAt} discountPercent={p.discountPercent} price={p.price} quiet saleTag={p.saleTag} tagClassName="hidden sm:inline-block" />
-          </span>
-          {/* Right end: on phones the sale tag (e.g. 12.12) sits above the percent off. */}
-          <span className="shrink-0 flex flex-col items-end gap-1 mt-0.5">
-            <SaleTag className="sm:hidden" tag={p.saleTag} />
-            <PercentOff percent={p.discountPercent} />
-          </span>
-        </div>
+        {/* Price on the left, the percent off (and on phones the sale tag) at the right end. */}
+        <CardPriceRow compareAt={p.compareAt} discountPercent={p.discountPercent} price={p.price} saleTag={p.saleTag} />
         {p.rating && p.rating.count > 0 && (
           <span className="hidden sm:flex items-center gap-1 text-[11px] text-on-surface-variant">
             <Stars size="text-[12px]" value={p.rating.average} />({p.rating.count})

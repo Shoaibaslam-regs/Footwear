@@ -8,7 +8,7 @@ export default function NotFound() {
         className="mb-space-xl font-headline-md text-[20px] sm:text-headline-md tracking-[0.22em] uppercase text-primary hover:text-secondary transition-colors"
         href="/"
       >
-        Ŕose Atelier
+        R&apos;ose Atelier
       </Link>
       <section className="w-full max-w-xl flex flex-col items-center text-center gap-space-md">
         <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.25em]">

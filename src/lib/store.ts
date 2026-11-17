@@ -183,7 +183,7 @@ function optimisticLine(p: BagProduct, quantity: number): CartItem {
     stockNote: "Saving to your bag…",
     stockNoteClass: "text-on-surface-variant",
     stockDotClass: "bg-primary",
-    packaging: { title: "Ŕose Atelier Gift Box:", text: "Comes with a silk shoe bag with our logo." },
+    packaging: { title: "R'ose Atelier Gift Box:", text: "Comes with a silk shoe bag with our logo." },
     quantity,
     image: p.image,
     alt: p.alt,

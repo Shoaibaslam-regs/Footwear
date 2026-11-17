@@ -12,7 +12,7 @@ import Price from "@/components/Price";
 import ConfirmButton from "@/components/ConfirmButton";
 
 export const metadata: Metadata = {
-  title: "Account — Ŕose Atelier",
+  title: "Account — R'ose Atelier",
 };
 
 const card = "bg-surface-container-lowest rounded-xl shadow-sm p-space-md sm:p-space-lg flex flex-col gap-space-sm";
@@ -62,7 +62,7 @@ async function AccountDetails({ searchParams }: PageProps<"/account">) {
       )}
       {denied === "admin" && (
         <p className="mb-space-md font-body-sm text-[12px] sm:text-body-sm bg-error-container text-on-error-container rounded-lg px-space-md py-space-sm" role="alert">
-          Only Ŕose Atelier admins can open the admin panel.
+          Only R&apos;ose Atelier admins can open the admin panel.
         </p>
       )}
 

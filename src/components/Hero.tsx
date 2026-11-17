@@ -24,7 +24,7 @@ export default async function Hero() {
             className="hero-rise font-label-uppercase text-[10px] sm:text-[11px] font-medium uppercase tracking-[0.36em] text-secondary-fixed"
             style={{ "--d": "160ms" } as React.CSSProperties}
           >
-            Handmade in Karachi
+            Beauty-Begins-Below
           </p>
           <h1 className="font-headline-lg text-[38px] leading-[1.02] sm:text-[56px] lg:text-display-hero lg:leading-[1.02] text-surface-container-lowest font-normal tracking-[-0.025em] drop-shadow-md">
             {/* Word-by-word reveal from a mask (CSS only, see globals.css); the last two words in italic gold. */}

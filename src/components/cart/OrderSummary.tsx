@@ -108,7 +108,7 @@ export default function OrderSummary({
           <div className="flex items-center gap-space-md pt-1">
             <a
               className="font-label-uppercase text-label-uppercase text-primary underline underline-offset-4 decoration-secondary hover:text-secondary transition-colors"
-              href={`${whatsappUrl}?text=${encodeURIComponent("Hello Ŕose Atelier, I'd like help with sizing.")}`}
+              href={`${whatsappUrl}?text=${encodeURIComponent("Hello R'ose Atelier, I'd like help with sizing.")}`}
               rel="noopener noreferrer"
               target="_blank"
             >

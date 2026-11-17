@@ -52,7 +52,7 @@ async function sendCode(email: string, name: string, code: string) {
   return sendMail(
     "signup_code",
     email,
-    `${code} is your Ŕose Atelier code`,
+    `${code} is your R'ose Atelier code`,
     "Confirm your email",
     [
       `Hello ${name.split(" ")[0]}, enter this code on the sign-up page to finish creating your account.`,

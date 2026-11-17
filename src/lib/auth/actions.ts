@@ -236,7 +236,7 @@ export async function requestPasswordReset(_: ResetState, formData: FormData): P
     const token = await createResetToken(user._id);
     if (token) {
       const link = `${await siteUrl()}/reset-password?token=${token}`;
-      await sendMail("password_reset", user.email, "Reset your Ŕose Atelier password", "Reset your password", [
+      await sendMail("password_reset", user.email, "Reset your R'ose Atelier password", "Reset your password", [
         `Hello ${user.name.split(" ")[0]}, we received a request to reset your password.`,
         "This link works once and expires in 1 hour. If you didn't ask for it, you can ignore this email.",
       ], { label: "Choose a new password", href: link });

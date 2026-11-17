@@ -84,7 +84,7 @@ const child = spawn("node_modules/.bin/next", ["start", "-p", "3457"], {
     SMTP_PORT: "2525",
     SMTP_USER: "test",
     SMTP_PASS: "test",
-    MAIL_FROM: "Ŕose Atelier <shop@example.com>",
+    MAIL_FROM: "R'ose Atelier <shop@example.com>",
     SITE_URL: "http://localhost:3457",
     ADMIN_SECRET: "e2e-admin-door-secret",
     CRON_SECRET: "",

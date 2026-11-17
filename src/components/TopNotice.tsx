@@ -48,7 +48,7 @@ export default function TopNotice() {
               <span className="material-symbols-outlined icon-filled text-[22px]">{notice.icon ?? "redeem"}</span>
             </span>
             <div className="min-w-0 flex-1">
-              <span className="block font-label-uppercase text-[10px] tracking-[0.2em] uppercase text-secondary-fixed">Ŕose Atelier</span>
+              <span className="block font-label-uppercase text-[10px] tracking-[0.2em] uppercase text-secondary-fixed">R&apos;ose Atelier</span>
               <p className="font-headline-sm text-headline-sm text-surface-container-lowest leading-tight">{notice.title}</p>
               {notice.message && <p className="mt-0.5 font-body-sm text-body-sm text-primary-fixed">{notice.message}</p>}
             </div>

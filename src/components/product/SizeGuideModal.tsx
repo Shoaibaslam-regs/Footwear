@@ -42,7 +42,7 @@ function SizeGuidePanel({ onClose }: { onClose: () => void }) {
           <div className="flex items-center justify-between pb-space-md border-b border-outline-variant/30">
             <div>
               <span className="font-label-uppercase text-label-uppercase text-secondary uppercase tracking-[0.2em]">
-                Ŕose Atelier Size Help
+                R&apos;ose Atelier Size Help
               </span>
               <h3
                 id="size-guide-title"
@@ -155,7 +155,7 @@ function SizeGuidePanel({ onClose }: { onClose: () => void }) {
               </span>
               <a
                 className="font-label-uppercase text-label-uppercase uppercase text-primary underline underline-offset-4 hover:text-secondary whitespace-nowrap"
-                href={`${whatsappUrl}?text=${encodeURIComponent("Hello Ŕose Atelier, I need help choosing my shoe size.")}`}
+                href={`${whatsappUrl}?text=${encodeURIComponent("Hello R'ose Atelier, I need help choosing my shoe size.")}`}
                 rel="noopener noreferrer"
                 target="_blank"
               >

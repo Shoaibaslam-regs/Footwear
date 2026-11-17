@@ -7,8 +7,8 @@ import { getCurrentUser } from "@/lib/auth/dal";
 import { safeNextPath } from "@/lib/safe-next";
 
 export const metadata: Metadata = {
-  title: "Create Account — Ŕose Atelier",
-  description: "Create your free Ŕose Atelier account.",
+  title: "Create Account — R'ose Atelier",
+  description: "Create your free R'ose Atelier account.",
 };
 
 async function RegisterForm({ searchParams }: PageProps<"/register">) {

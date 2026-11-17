@@ -26,7 +26,7 @@ export default async function Header() {
           </Suspense>
           <MobileMenu />
           <div className="flex items-center justify-center">
-            <Link aria-label="Ŕose Atelier, home" className="flex items-center gap-1.5 sm:gap-2.5 group" href="/">
+            <Link aria-label="R'ose Atelier, home" className="flex items-center gap-1.5 sm:gap-2.5 group" href="/">
               {/* The site icon (src/app/icon.png), before the name. */}
               <Image
                 alt=""

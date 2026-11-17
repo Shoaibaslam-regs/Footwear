@@ -11,7 +11,7 @@ import LiveOrders from "@/components/admin/LiveOrders";
 import "./admin.css";
 
 export const metadata: Metadata = {
-  title: { default: "Admin — Ŕose Atelier", template: "%s — Ŕose Atelier Admin" },
+  title: { default: "Admin — R'ose Atelier", template: "%s — R'ose Atelier Admin" },
   robots: { index: false, follow: false },
 };
 
@@ -54,7 +54,7 @@ export default function AdminLayout({
               <span className="a-appicon">
                 <Image alt="" className="w-5 h-5 object-contain" height={20} src="/icon.png" width={20} />
               </span>
-              <span className="a-brand">Ŕose Atelier</span>
+              <span className="a-brand">R&apos;ose Atelier</span>
             </Link>
             <span aria-hidden="true" className="h-4 w-px bg-white/40" />
             <span className="font-semibold">Admin</span>
