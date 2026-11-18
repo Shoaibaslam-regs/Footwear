@@ -243,7 +243,7 @@ async function AdminOrdersContent({
                     </td>
                   </tr>
                 )}
-                <tr>
+                <tr className={o.viewedAt ? undefined : "row-unviewed"}>
                   <td>
                     <input
                       aria-label={`Select order ${o.number}`}
@@ -263,6 +263,8 @@ async function AdminOrdersContent({
                     >
                       {o.number}
                     </Link>
+                    {/* Not opened by any admin yet (the row is highlighted too). */}
+                    {!o.viewedAt && <span className="tag tag-warn ml-1.5">New</span>}
                   </td>
                   <td className="muted whitespace-nowrap">
                     {when(o.createdAt)}

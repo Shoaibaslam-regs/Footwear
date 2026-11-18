@@ -90,7 +90,8 @@ export default function LiveOrders() {
         unseen.current += 1;
         setTitle();
       }
-      if (watches(path.current)) refreshSoon();
+      // Every admin page: the sidebar's unviewed count changes with each new order.
+      refreshSoon();
     });
     es.addEventListener("change", (e) => {
       const { id } = JSON.parse((e as MessageEvent).data) as Change;

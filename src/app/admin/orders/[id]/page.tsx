@@ -15,6 +15,7 @@ import { mailConfigured, siteUrl, statusLines } from "@/lib/server/mail";
 import ConfirmButton from "@/components/admin/ConfirmButton";
 import { clearOrderHistory, deleteOrderEvent, deleteOrders } from "../../actions";
 import PrintSlipButton from "@/components/admin/PrintSlipButton";
+import MarkViewed from "@/components/admin/MarkViewed";
 
 export const metadata = { title: "Order" };
 
@@ -50,6 +51,7 @@ async function AdminOrderContent({ params }: PageProps<"/admin/orders/[id]">) {
           <Link className="link muted" href="/admin/orders">
             ← Orders
           </Link>
+          <MarkViewed id={order.id} viewed={!!order.viewedAt} />
           <h1 className="mt-1 flex items-center gap-3">
             {order.number} <StatusTag status={order.status} /> <PaymentTag status={order.payment.status} />
             {place && queue && (

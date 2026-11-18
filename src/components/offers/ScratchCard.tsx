@@ -10,6 +10,7 @@ import { requireLogin } from "@/lib/require-login";
 import { showToast } from "@/lib/toast";
 import { showNotice } from "@/lib/notice";
 import { alertDialog } from "@/components/Dialogs";
+import MiniPlaque from "@/components/MiniPlaque";
 
 const REVEAL_AT = 50; // % scratched before the rest of the foil falls away
 /** Brush radius in CSS px: a coin's edge, not a fingertip. */
@@ -552,10 +553,10 @@ export default function ScratchCard({
               >
                 <div className="flex items-start justify-between">
                   <div className="space-y-1">
-                    <span className="inline-flex items-center gap-1.5 px-2.5 sm:px-3 py-0.5 sm:py-1 rounded-full bg-secondary text-on-secondary font-label-uppercase text-[9px] sm:text-[10px] tracking-widest">
-                      <span className="material-symbols-outlined icon-filled text-[12px] sm:text-[13px]">workspace_premium</span>
-                      {surprise ? "SURPRISE DISCOUNT" : "COUPON"}
-                    </span>
+                    {/* The same champagne mini plaque as the shop's percent chips. */}
+                    <MiniPlaque className="!ml-1" tone="champagne">
+                      {surprise ? "Surprise discount" : "Coupon"}
+                    </MiniPlaque>
                     <h2 className="font-headline-md text-[28px] leading-tight sm:text-headline-md text-primary pt-1 sm:pt-space-xs font-normal">{headline}</h2>
                     <p className="font-body-sm text-[12px] leading-snug sm:text-body-sm md:font-body-md md:text-body-md text-secondary font-medium">{conditions}</p>
                   </div>

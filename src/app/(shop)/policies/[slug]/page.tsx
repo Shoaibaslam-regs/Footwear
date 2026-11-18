@@ -56,9 +56,7 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
       {paragraphs.length > 0 ? (
         <div className="space-y-space-md font-body-md text-body-md text-on-surface-variant leading-relaxed">
           {paragraphs.map((p, i) => (
-            <p key={i} className="whitespace-pre-line">
-              {p}
-            </p>
+            <PolicyBlock key={i} text={p} />
           ))}
         </div>
       ) : (
@@ -80,4 +78,47 @@ export default async function PolicyPage({ params }: PageProps<"/policies/[slug]
       </nav>
     </article>
   );
+}
+
+/**
+ * One block of policy text, in the simple format the admin types: a line
+ * starting "## " is a heading, lines starting "- " are a list, anything else
+ * is a paragraph (line breaks kept).
+ */
+function PolicyBlock({ text }: { text: string }) {
+  const out: React.ReactNode[] = [];
+  let list: string[] = [];
+  let para: string[] = [];
+  const flush = () => {
+    if (para.length) out.push(<p key={out.length} className="whitespace-pre-line">{para.join("\n")}</p>);
+    if (list.length)
+      out.push(
+        <ul key={out.length} className="list-disc pl-5 space-y-1.5 marker:text-secondary">
+          {list.map((l, i) => (
+            <li key={i}>{l}</li>
+          ))}
+        </ul>,
+      );
+    para = [];
+    list = [];
+  };
+  for (const raw of text.split("\n")) {
+    const line = raw.trimEnd();
+    if (line.startsWith("## ")) {
+      flush();
+      out.push(
+        <h2 key={out.length} className="font-headline-sm text-[20px] sm:text-headline-sm text-primary font-normal pt-space-sm">
+          {line.slice(3)}
+        </h2>,
+      );
+    } else if (/^\s*-\s+/.test(line)) {
+      if (para.length) { out.push(<p key={out.length} className="whitespace-pre-line">{para.join("\n")}</p>); para = []; }
+      list.push(line.replace(/^\s*-\s+/, ""));
+    } else {
+      if (list.length) flush();
+      para.push(line);
+    }
+  }
+  flush();
+  return <>{out}</>;
 }

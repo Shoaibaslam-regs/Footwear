@@ -111,14 +111,15 @@ export default function SettingsForm({
         <div>
           <h2>Policy pages</h2>
           <p className="muted">
-            Linked from the footer and checkout. Plain text: leave a blank line between paragraphs. Pages left empty show
-            &ldquo;being prepared&rdquo; with your WhatsApp contact.
+            Linked from the footer and checkout. Leave a blank line between paragraphs; start a line with{" "}
+            <code>## </code> for a heading and <code>- </code> for a list item. A page left empty shows the store&apos;s
+            standard text again.
           </p>
         </div>
         {POLICY_PAGES.map((p) => (
           <label key={p.slug} className="field">
             {p.title} <span className="muted font-normal">(/policies/{p.slug})</span>
-            <textarea defaultValue={policies[p.slug]} name={`policy:${p.slug}`} rows={6} />
+            <textarea defaultValue={policies[p.slug]} name={`policy:${p.slug}`} rows={16} />
           </label>
         ))}
       </section>

@@ -1,5 +1,6 @@
 import Link from "next/link";
 import { publicCouponsFor } from "@/lib/server/coupons";
+import MiniPlaque from "@/components/MiniPlaque";
 
 /** "My Coupons" on the account page: tickets that open their scratch card. */
 export default async function MyCoupons({ userId }: { userId: string }) {
@@ -25,10 +26,10 @@ export default async function MyCoupons({ userId }: { userId: string }) {
                   <span aria-hidden="true" className="absolute inset-y-0 right-0 w-2 bg-gradient-to-b from-[#dfbe76] via-[#d4af37] to-[#aa771c]" />
                   <span className="flex items-start justify-between gap-space-sm pr-1 sm:pr-space-sm">
                     <span>
-                      <span className="inline-flex items-center gap-1 sm:gap-1.5 px-2 sm:px-3 py-0.5 sm:py-1 rounded-full bg-secondary text-on-secondary font-label-uppercase text-[8px] sm:text-[10px] tracking-widest">
-                        <span className="material-symbols-outlined icon-filled text-[11px] sm:text-[13px]">workspace_premium</span>
-                        {o.surprise ? "SURPRISE" : "COUPON"}
-                      </span>
+                      {/* The same champagne mini plaque as the shop's percent chips. */}
+                      <MiniPlaque className="!ml-1" tone="champagne">
+                        {o.surprise ? "Surprise" : "Coupon"}
+                      </MiniPlaque>
                       {o.headline ? (
                         <span className="block font-headline-sm text-[19px] leading-tight sm:font-headline-md sm:text-headline-md text-primary pt-space-xs">{o.headline}</span>
                       ) : (

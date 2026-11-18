@@ -77,7 +77,7 @@ const links = [
 ];
 
 /** Navigation pane: a vertical list on desktop, a sideways-scrolling row on phones. */
-function NavList({ pathname }: { pathname: string | null }) {
+function NavList({ pathname, counts = {} }: { pathname: string | null; counts?: Record<string, number> }) {
   const ref = useRef<HTMLElement>(null);
   // Phones: bring the current page into view in the sideways-scrolling row.
   useEffect(() => {
@@ -95,6 +95,11 @@ function NavList({ pathname }: { pathname: string | null }) {
           <Link key={l.href} aria-current={active ? "page" : undefined} className="a-side-link" href={l.href}>
             <Icon name={l.icon} />
             {l.label}
+            {counts[l.href] ? (
+              <span aria-label={`${counts[l.href]} new`} className="a-count">
+                {counts[l.href] > 99 ? "99+" : counts[l.href]}
+              </span>
+            ) : null}
           </Link>
         );
       })}
@@ -102,8 +107,9 @@ function NavList({ pathname }: { pathname: string | null }) {
   );
 }
 
-export default function AdminNav() {
-  return <NavList pathname={usePathname()} />;
+/** `counts`: a small badge per link, e.g. unviewed orders on "Orders". */
+export default function AdminNav({ counts }: { counts?: Record<string, number> }) {
+  return <NavList counts={counts} pathname={usePathname()} />;
 }
 
 /** Prerendered placeholder shown until the current path is known. */

@@ -756,85 +756,88 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
   pointer-events: none;
 }
 
-/* Mini plaque (components/MiniPlaque.tsx): the sale plaque in miniature for
-   the 12.12 tag and the percent chip on shoe cards. Same layers as
-   .sale-plaque; --p is how far the points reach in. */
-.mini-plaque {
-  --p: 6px;
-  position: relative;
-  isolation: isolate;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  height: 18px;
-  margin-inline: 3px;
-  padding: 0 calc(var(--p) + 4px);
-  font-family: var(--font-label-uppercase, inherit);
-  font-size: 9px;
-  line-height: 1;
-  letter-spacing: 0.16em;
-  text-transform: uppercase;
-  white-space: nowrap;
-  font-variant-numeric: tabular-nums;
-}
-@media (min-width: 640px) {
+/* In @layer components, so utilities (absolute, hidden, ml-2…) still apply to a plaque. */
+@layer components {
+  /* Mini plaque (components/MiniPlaque.tsx): the sale plaque in miniature for
+     the 12.12 tag and the percent chip on shoe cards. Same layers as
+     .sale-plaque; --p is how far the points reach in. */
   .mini-plaque {
-    --p: 7px;
-    height: 20px;
-    font-size: 10px;
+    --p: 6px;
+    position: relative;
+    isolation: isolate;
+    display: inline-flex;
+    align-items: center;
+    justify-content: center;
+    height: 18px;
+    margin-inline: 3px;
+    padding: 0 calc(var(--p) + 4px);
+    font-family: var(--font-label-uppercase, inherit);
+    font-size: 9px;
+    line-height: 1;
+    letter-spacing: 0.16em;
+    text-transform: uppercase;
+    white-space: nowrap;
+    font-variant-numeric: tabular-nums;
   }
-}
-.mini-plaque .mp {
-  position: absolute;
-  inset: var(--i, 0);
-  z-index: -1;
-  --q: calc(var(--p) - var(--i, 0px) * 0.6);
-  clip-path: polygon(var(--q) 0, calc(100% - var(--q)) 0, 100% 50%, calc(100% - var(--q)) 100%, var(--q) 100%, 0 50%);
-}
-.mini-plaque .mp-frame {
-  background: linear-gradient(180deg, #f6e3a1 0%, #d8b062 30%, #8e6a2c 55%, #f4dc94 100%);
-}
-.mini-plaque .mp-groove {
-  --i: 1px;
-  background: #4a3410;
-}
-.mini-plaque .mp-line {
-  --i: 1.5px;
-  background: linear-gradient(180deg, #f8e7ae, #b98d3f 50%, #f1d88e);
-}
-.mini-plaque .mp-panel {
-  --i: 2px;
-  background-size: 9px 9px, auto;
-}
-.mini-plaque-dark {
-  color: var(--color-secondary-fixed);
-}
-.mini-plaque-dark .mp-panel {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 1c1 1.2 1.8 1.8 1.8 2.9S5.5 5.5 4.5 5.5 2.7 5 2.7 3.9 3.5 2.2 4.5 1z' fill='none' stroke='%23d9c3a6' stroke-opacity='.16' stroke-width='.5'/%3E%3C/svg%3E"),
-    linear-gradient(180deg, #24201a, #050403);
-}
-.mini-plaque-champagne {
-  color: var(--color-on-secondary-fixed);
-}
-.mini-plaque-champagne .mp-panel {
-  background-image:
-    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 1c1 1.2 1.8 1.8 1.8 2.9S5.5 5.5 4.5 5.5 2.7 5 2.7 3.9 3.5 2.2 4.5 1z' fill='none' stroke='%236c5c44' stroke-opacity='.18' stroke-width='.5'/%3E%3C/svg%3E"),
-    linear-gradient(180deg, #fbead2, var(--color-secondary-fixed) 55%, #ecd0aa);
-}
-.mini-plaque .mp-text {
-  position: relative;
-  padding-top: 1px;
-}
-.mini-plaque .mp-tip,
-.mini-plaque .mp-crest {
-  position: absolute;
-  z-index: 1;
-  fill: #c99a49;
-  stroke: #5a3f12;
-  stroke-width: 0.5px;
-  pointer-events: none;
-  filter: drop-shadow(0 0.5px 0.5px rgb(0 0 0 / 0.35));
+  @media (min-width: 640px) {
+    .mini-plaque {
+      --p: 7px;
+      height: 20px;
+      font-size: 10px;
+    }
+  }
+  .mini-plaque .mp {
+    position: absolute;
+    inset: var(--i, 0);
+    z-index: -1;
+    --q: calc(var(--p) - var(--i, 0px) * 0.6);
+    clip-path: polygon(var(--q) 0, calc(100% - var(--q)) 0, 100% 50%, calc(100% - var(--q)) 100%, var(--q) 100%, 0 50%);
+  }
+  .mini-plaque .mp-frame {
+    background: linear-gradient(180deg, #f6e3a1 0%, #d8b062 30%, #8e6a2c 55%, #f4dc94 100%);
+  }
+  .mini-plaque .mp-groove {
+    --i: 1px;
+    background: #4a3410;
+  }
+  .mini-plaque .mp-line {
+    --i: 1.5px;
+    background: linear-gradient(180deg, #f8e7ae, #b98d3f 50%, #f1d88e);
+  }
+  .mini-plaque .mp-panel {
+    --i: 2px;
+    background-size: 9px 9px, auto;
+  }
+  .mini-plaque-dark {
+    color: var(--color-secondary-fixed);
+  }
+  .mini-plaque-dark .mp-panel {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 1c1 1.2 1.8 1.8 1.8 2.9S5.5 5.5 4.5 5.5 2.7 5 2.7 3.9 3.5 2.2 4.5 1z' fill='none' stroke='%23d9c3a6' stroke-opacity='.16' stroke-width='.5'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, #24201a, #050403);
+  }
+  .mini-plaque-champagne {
+    color: var(--color-on-secondary-fixed);
+  }
+  .mini-plaque-champagne .mp-panel {
+    background-image:
+      url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 1c1 1.2 1.8 1.8 1.8 2.9S5.5 5.5 4.5 5.5 2.7 5 2.7 3.9 3.5 2.2 4.5 1z' fill='none' stroke='%236c5c44' stroke-opacity='.18' stroke-width='.5'/%3E%3C/svg%3E"),
+      linear-gradient(180deg, #fbead2, var(--color-secondary-fixed) 55%, #ecd0aa);
+  }
+  .mini-plaque .mp-text {
+    position: relative;
+    padding-top: 1px;
+  }
+  .mini-plaque .mp-tip,
+  .mini-plaque .mp-crest {
+    position: absolute;
+    z-index: 1;
+    fill: #c99a49;
+    stroke: #5a3f12;
+    stroke-width: 0.5px;
+    pointer-events: none;
+    filter: drop-shadow(0 0.5px 0.5px rgb(0 0 0 / 0.35));
+  }
 }
 .mini-plaque .mp-tip {
   top: 50%;

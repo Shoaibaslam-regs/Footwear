@@ -10,8 +10,9 @@ import type {
 } from "../orders";
 import { getDb } from "./db";
 
-export type OrderDoc = Omit<Order, "id" | "userId" | "createdAt" | "updatedAt" | "history"> & {
+export type OrderDoc = Omit<Order, "id" | "userId" | "createdAt" | "updatedAt" | "history" | "viewedAt"> & {
   _id: ObjectId;
+  viewedAt?: Date;
   userId: ObjectId | null;
   history: (Omit<OrderEvent, "at"> & { at: Date })[];
   createdAt: Date;
@@ -19,9 +20,10 @@ export type OrderDoc = Omit<Order, "id" | "userId" | "createdAt" | "updatedAt" |
 };
 
 function toOrder(d: OrderDoc): Order {
-  const { _id, userId, history, createdAt, updatedAt, ...rest } = d;
+  const { _id, userId, history, createdAt, updatedAt, viewedAt, ...rest } = d;
   return {
     ...rest,
+    ...(viewedAt ? { viewedAt: viewedAt.toISOString() } : {}),
     id: _id.toHexString(),
     userId: userId ? userId.toHexString() : null,
     history: history.map((h) => ({ ...h, at: h.at.toISOString() })),
@@ -146,6 +148,21 @@ export async function oldOrderCounts(now = Date.now()): Promise<Record<ClearAge,
   const col = (await getDb()).collection("orders");
   const [a, b] = await Promise.all(CLEAR_AGES.map((d) => col.countDocuments(finishedOlderThan(d, now))));
   return { 30: a, 60: b };
+}
+
+/** Orders no admin has opened yet (the badge on "Orders" in the admin sidebar). */
+export async function unviewedOrderCount(): Promise<number> {
+  return (await orders()).countDocuments({ viewedAt: { $exists: false } });
+}
+
+/**
+ * An admin opened the order: it stops being highlighted, for every admin.
+ * Leaves `updatedAt` alone (viewing isn't a change to the order).
+ */
+export async function markOrderViewed(id: string): Promise<boolean> {
+  if (!ObjectId.isValid(id)) return false;
+  const r = await (await orders()).updateOne({ _id: new ObjectId(id), viewedAt: { $exists: false } }, { $set: { viewedAt: new Date() } });
+  return r.modifiedCount > 0;
 }
 
 export async function getOrderById(id: string): Promise<Order | null> {

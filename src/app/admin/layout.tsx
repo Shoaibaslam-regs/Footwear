@@ -8,12 +8,19 @@ import ActionToast from "@/components/ActionToast";
 import ConfirmButton from "@/components/ConfirmButton";
 import AdminNav, { AdminNavFallback } from "@/components/admin/AdminNav";
 import LiveOrders from "@/components/admin/LiveOrders";
+import { unviewedOrderCount } from "@/lib/server/orders";
 import "./admin.css";
 
 export const metadata: Metadata = {
   title: { default: "Admin — R'ose Atelier", template: "%s — R'ose Atelier Admin" },
   robots: { index: false, follow: false },
 };
+
+/** The sidebar with live counts: unviewed orders on "Orders". */
+async function NavWithCounts() {
+  await requireAdmin();
+  return <AdminNav counts={{ "/admin/orders": await unviewedOrderCount() }} />;
+}
 
 async function SignedInAs() {
   const user = await requireAdmin();
@@ -78,7 +85,7 @@ export default function AdminLayout({
         <aside className="a-pane px-2 py-2 md:py-3">
           <div className="md:sticky md:top-[60px]">
             <Suspense fallback={<AdminNavFallback />}>
-              <AdminNav />
+              <NavWithCounts />
             </Suspense>
           </div>
         </aside>

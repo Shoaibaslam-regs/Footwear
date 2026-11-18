@@ -11,7 +11,9 @@ import Stars from "./Stars";
 import StockAlert from "./StockAlert";
 import Accordion from "./Accordion";
 import SizeGuideModal from "./SizeGuideModal";
-import SalePrice from "@/components/SalePrice";
+import SalePrice, { OffChip } from "@/components/SalePrice";
+import Price from "@/components/Price";
+import MiniPlaque from "@/components/MiniPlaque";
 import { useCardPrice } from "@/components/sale/SaleProvider";
 import { saleTime } from "@/lib/sale-events";
 import { addToBag, openBag, toggleWishlist as toggleSaved, useInBag, useIsWishlisted } from "@/lib/store";
@@ -116,7 +118,10 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       {/* Phones: once the main buttons scroll away, a slim bar keeps Add to Bag in reach. */}
       {!actionsVisible && (
         <BuyBar inBag={inBag} label={added ? "Added to Bag" : inBag ? "In Bag · View" : "Add to Bag"} onAdd={() => (inBag ? openBag() : addSelectionToBag())}>
-          <SalePrice category={product.category} compareAt={product.compareAt} discountPercent={product.discountPercent} price={product.price} quiet slug={product.slug} />
+          <span className="inline-flex items-center gap-2">
+            <SalePrice compareAt={live.compareAt} price={live.price} quiet />
+            {live.sale && <MiniPlaque tone="dark">{live.sale.tag}</MiniPlaque>}
+          </span>
         </BuyBar>
       )}
       {/* Header Info */}
@@ -147,20 +152,41 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         <h1 className="font-headline-lg text-[28px] leading-tight sm:text-[36px] sm:leading-[44px] text-primary tracking-tight font-normal">
           {product.name}
         </h1>
-        <div className="flex items-baseline gap-space-sm pt-space-xs">
-          <span className="font-headline-sm text-[22px] sm:text-[24px] text-primary font-normal">
-            <SalePrice category={product.category} chipOnPhones compareAt={product.compareAt} discountPercent={product.discountPercent} price={product.price} slug={product.slug} />
-          </span>
-          <span className="hidden sm:inline font-body-sm text-body-sm text-on-surface-variant">
-            Tax included
-          </span>
+        {/* Price line: gold price, the old price struck through (never red) and the percent beside
+            them; the sale's 12.12 at the right end. Mini sale plaques while a sale sets the price,
+            else the plain percent. Then when the sale ends. */}
+        <div className="pt-space-xs flex flex-col gap-2.5">
+          <div className="flex items-center justify-between gap-3">
+            {/* Price, the old price, "Tax included" (larger screens), then the percent (owner, 2026-11-18). */}
+            <div className="flex flex-wrap items-center gap-x-2 sm:gap-x-2.5 gap-y-1.5 min-w-0">
+              <span className="font-headline-sm text-[22px] sm:text-[24px] leading-none font-normal tabular-nums text-secondary whitespace-nowrap">
+                <Price amount={live.price} />
+              </span>
+              {live.compareAt && live.compareAt > live.price ? (
+                <s className="font-headline-sm text-[16px] sm:text-[17px] leading-none text-outline tabular-nums whitespace-nowrap">
+                  <span className="sr-only">was </span>
+                  <Price amount={live.compareAt} />
+                </s>
+              ) : null}
+              {/* "Tax included" and the percent move as one unit, so the percent always follows it. */}
+              <span className="inline-flex items-center gap-2 whitespace-nowrap">
+                <span className="hidden sm:inline font-body-sm text-[12px] text-on-surface-variant">Tax included</span>
+                <OffChip percent={live.discountPercent || undefined} sale={!!live.sale} />
+              </span>
+            </div>
+            {live.sale && <MiniPlaque className="shrink-0" tone="dark">{live.sale.tag}</MiniPlaque>}
+          </div>
+          {live.sale && (
+            <p className="flex items-center gap-1.5 font-label-uppercase text-[10px] sm:text-[11px] leading-snug uppercase tracking-[0.1em] sm:tracking-[0.18em] text-secondary">
+              <span aria-hidden="true" className="material-symbols-outlined text-[15px] shrink-0">
+                schedule
+              </span>
+              <span>
+                {live.sale.name} ends {saleTime(live.sale.endsAt)}
+              </span>
+            </p>
+          )}
         </div>
-        {live.sale && (
-          <p className="flex items-center gap-1.5 font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-secondary">
-            <span aria-hidden="true" className="material-symbols-outlined text-[15px]">schedule</span>
-            {live.sale.name} ends {saleTime(live.sale.endsAt)}
-          </p>
-        )}
         {product.sold ? (
           <p className="flex items-center gap-1.5 py-space-xs font-body-sm text-body-sm text-on-surface-variant">
             <span className="material-symbols-outlined text-[18px] text-secondary">local_mall</span>

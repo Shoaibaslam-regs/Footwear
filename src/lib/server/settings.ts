@@ -3,6 +3,7 @@ import { cacheLife, cacheTag } from "next/cache";
 import { heroSlides as defaultHeroSlides } from "../data";
 import type { GalleryImage } from "../products";
 import type { DeliveryOption, PolicySlug } from "../site";
+import { DEFAULT_POLICIES } from "../policy-text";
 import { getDb } from "./db";
 
 export const SETTINGS_TAG = "settings";
@@ -58,7 +59,10 @@ export async function getSiteSettings(): Promise<SiteSettings> {
     announcements: doc?.announcements?.length ? doc.announcements : DEFAULT_SETTINGS.announcements,
     heroSlides: doc?.heroSlides?.length ? doc.heroSlides : DEFAULT_SETTINGS.heroSlides,
     deliveryOptions: doc?.deliveryOptions?.length ? doc.deliveryOptions : DEFAULT_SETTINGS.deliveryOptions,
-    policies: { ...DEFAULT_SETTINGS.policies, ...(doc?.policies ?? {}) },
+    // An empty policy shows (and prefills in the admin) the store's written text (lib/policy-text.ts).
+    policies: Object.fromEntries(
+      (Object.keys(DEFAULT_POLICIES) as PolicySlug[]).map((k) => [k, doc?.policies?.[k]?.trim() || DEFAULT_POLICIES[k]]),
+    ) as Record<PolicySlug, string>,
     deliveryConfigured: !!doc?.deliveryOptions?.length,
   };
 }

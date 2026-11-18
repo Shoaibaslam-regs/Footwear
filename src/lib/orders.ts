@@ -154,6 +154,8 @@ export type Order = {
   eta?: OrderEta;
   /** Older orders only: Cash on Delivery confirmed with an email code (that step was removed 2026-11-16). */
   codeConfirmed?: boolean;
+  /** When an admin first opened the order (unset = not seen yet; highlighted in the admin list). */
+  viewedAt?: string;
   history: OrderEvent[];
   createdAt: string;
   updatedAt: string;

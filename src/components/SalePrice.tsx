@@ -1,15 +1,31 @@
 "use client";
 
 import Price from "./Price";
+import MiniPlaque from "./MiniPlaque";
 import { useCardPrice } from "./sale/SaleProvider";
 
-/** The small tag next to a sale price, e.g. "11.11". */
+/** The small tag next to a sale price, e.g. "11.11": always the mini sale plaque (components/MiniPlaque.tsx). */
 export function SaleTag({ tag, className = "" }: { tag?: string; className?: string }) {
   if (!tag) return null;
   return (
-    <span className={`self-center bg-primary text-secondary-fixed font-label-uppercase text-[9px] leading-none tracking-[0.18em] uppercase px-1.5 py-1 ${className}`}>
+    <MiniPlaque className={`self-center ${className}`} tone="dark">
       {tag}
-    </span>
+    </MiniPlaque>
+  );
+}
+
+/**
+ * The percent chip anywhere outside the card price line: the champagne mini
+ * plaque while a sale sets the price (`sale`), else the plain chip.
+ */
+export function OffChip({ percent, sale, className = "" }: { percent?: number; sale: boolean; className?: string }) {
+  if (!percent) return null;
+  return sale ? (
+    <MiniPlaque className={className} tone="champagne">
+      −{percent}%
+    </MiniPlaque>
+  ) : (
+    <PercentOff className={className} percent={percent} />
   );
 }
 
@@ -35,7 +51,7 @@ export default function SalePrice({
 }) {
   const live = useCardPrice({ slug, category, price: rest.price, compareAt: rest.compareAt, discountPercent: rest.discountPercent });
   const tag = saleTag ?? live.sale?.tag;
-  const view = <PriceView {...rest} compareAt={live.compareAt} discountPercent={live.discountPercent || undefined} price={live.price} />;
+  const view = <PriceView {...rest} compareAt={live.compareAt} discountPercent={live.discountPercent || undefined} onSale={!!tag} price={live.price} />;
   if (!tag) return view;
   return (
     <span className="inline-flex flex-wrap items-baseline gap-x-1.5 gap-y-1">
@@ -52,6 +68,7 @@ function PriceView({
   className = "",
   chipOnPhones = false,
   quiet = false,
+  onSale = false,
 }: {
   price: number;
   compareAt?: number;
@@ -61,6 +78,8 @@ function PriceView({
   chipOnPhones?: boolean;
   /** Home cards: the sale price in gold, the old price struck through, no red chip. */
   quiet?: boolean;
+  /** A live sale sets this price: the percent chip is the mini sale plaque. */
+  onSale?: boolean;
 }) {
   if (!compareAt || compareAt <= price) return <Price amount={price} />;
   if (quiet)
@@ -84,11 +103,7 @@ function PriceView({
         <span className="sr-only">was </span>
         <Price amount={compareAt} />
       </s>
-      {discountPercent ? (
-        <span className={`${chipOnPhones ? "" : "hidden sm:inline "}font-label-uppercase text-[10px] uppercase tracking-wider bg-secondary-fixed text-on-secondary-fixed rounded-full px-1.5 py-0.5 self-center`}>
-          −{discountPercent}%
-        </span>
-      ) : null}
+      {discountPercent ? <OffChip className={`${chipOnPhones ? "" : "hidden sm:inline-flex "}self-center`} percent={discountPercent} sale={onSale} /> : null}
     </span>
   );
 }

@@ -68,6 +68,11 @@
 .admin .a-side-link:hover { background: var(--a-hover); }
 .admin .a-side-link:active { background: var(--a-pressed); }
 .admin .a-side-link[aria-current="page"] { background: var(--a-selected); font-weight: 600; }
+/* Count badge on a sidebar link (unviewed orders), and the light highlight on unviewed order rows. */
+.admin .a-count { margin-left: auto; min-width: 20px; height: 18px; padding: 0 6px; border-radius: 999px; display: inline-flex; align-items: center; justify-content: center; background: var(--a-gold); color: #fff; font-size: 11px; font-weight: 600; line-height: 1; font-variant-numeric: tabular-nums; }
+.admin tr.row-unviewed > td { background: color-mix(in srgb, var(--a-gold) 9%, transparent); }
+.admin tr.row-unviewed > td:first-child { box-shadow: inset 3px 0 0 var(--a-gold); }
+.admin tr.row-unviewed .link { font-weight: 700; }
 .admin .a-side-link[aria-current="page"] svg { color: var(--a-gold); }
 /* The selection bar, as in Windows Settings (warm brown). */
 .admin .a-side-link[aria-current="page"]::before {

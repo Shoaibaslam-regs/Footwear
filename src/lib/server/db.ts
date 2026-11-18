@@ -34,6 +34,13 @@ async function ensureIndexes(db: Db) {
     db.collection("users").createIndex({ emailKey: 1 }),
     db.collection("orders").createIndex({ "customer.phoneKey": 1, "coupon.code": 1 }),
   ]);
+  // Orders placed before "unviewed" highlighting existed count as seen, once
+  // (owner, 2026-11-18), so only new orders light up in the admin.
+  const meta = db.collection<{ _id: string; at: Date }>("meta");
+  if (!(await meta.findOne({ _id: "orders-viewed-v1" }))) {
+    await db.collection("orders").updateMany({ viewedAt: { $exists: false } }, [{ $set: { viewedAt: "$createdAt" } }]);
+    await meta.updateOne({ _id: "orders-viewed-v1" }, { $setOnInsert: { at: new Date() } }, { upsert: true });
+  }
   // Accounts made before emailKey existed get it once (lib/identity-keys.ts).
   const users = db.collection<{ email: string; emailKey?: string }>("users");
   for (const u of await users.find({ emailKey: { $exists: false } }, { projection: { email: 1 } }).toArray()) {

@@ -23,7 +23,7 @@ import {
 } from "@/lib/server/settings";
 import { REVIEWS_TAG, reviewsTag } from "@/lib/server/reviews";
 import { ORDER_EMAIL_STATUSES, etaLabel, etaPresets, etaSentence, nextStatuses, orderStatusLabel, orderStatuses, paymentStatusLabel, paymentStatuses } from "@/lib/orders";
-import { CLEAR_AGES, finishedOlderThan, getOrderById, updateOrder } from "@/lib/server/orders";
+import { CLEAR_AGES, finishedOlderThan, getOrderById, markOrderViewed, updateOrder } from "@/lib/server/orders";
 import { deleteImages } from "@/lib/server/images";
 import { createResetToken } from "@/lib/server/password-reset";
 import { releaseStock } from "@/lib/server/stock";
@@ -420,6 +420,12 @@ async function removeOrders(ids: ObjectId[]): Promise<number> {
   await deleteImages(orphanKeys);
   updateTag(SALES_TAG);
   return deletedCount;
+}
+
+/** The admin opened the order: it stops being highlighted, and the sidebar count updates. */
+export async function markOrderViewedAction(id: string) {
+  await requireAdmin();
+  if (await markOrderViewed(id)) refresh();
 }
 
 /** Removes one entry from an order's history; `at` guards against index drift. */
