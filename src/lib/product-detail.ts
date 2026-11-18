@@ -1,5 +1,5 @@
 import { products as richDetails, type ProductDetail } from "./product-data";
-import { categoryLabel, LOW_STOCK, salePrice, stockLeft, type Listing } from "./products";
+import { cardLabel, categoryLabel, LOW_STOCK, salePrice, stockLeft, type Listing } from "./products";
 
 /**
  * Builds the product page model from an admin listing.
@@ -56,8 +56,8 @@ export function toProductDetail(p: Listing): ProductDetail {
     rating: 4.8,
     reviewCount: 0,
     ...pricing,
-    badges: p.badge
-      ? [{ label: p.badge, className: "bg-surface/90 backdrop-blur-md text-on-surface" }]
+    badges: cardLabel(p)
+      ? [{ label: cardLabel(p), className: "bg-surface/90 backdrop-blur-md text-on-surface" }]
       : [],
     gallery,
     quote: p.description || "“Made to look beautiful and feel comfortable.”",

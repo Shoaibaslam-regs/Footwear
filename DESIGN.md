@@ -62,7 +62,7 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
 
 ### Spacing & layout
 - Container: `max-w-[1536px] mx-auto px-margin-mobile lg:px-margin`.
-- Section rhythm: `py-space-xl`; header block `mb-space-lg`; grid `gap-gutter` (phones `gap-space-sm`).
+- Section rhythm: home sections use `sectionY` / `sectionHead` from `lib/home-type.ts` (other pages: `py-space-xl`; header block `mb-space-lg`); grid `gap-gutter` (phones `gap-space-sm`).
 - Scale: `space-xs` 4 · `space-sm` 8 · `space-md` 16 · `space-lg` 28 · `space-xl` 48 · `gutter` 24 · `margin` 56.
 - The fixed header is `pt-28` tall (marquee + 80px bar). Full-bleed heroes use `-mt-28`, sticky bars use `top-20`, and anchors get `scroll-margin-top: 7rem` globally.
 - **Product grids are 2 columns on phones** (collection, New Arrivals, Best Sellers, categories). Compact cards on phones mean:
@@ -100,6 +100,7 @@ All tokens live in `src/app/globals.css` (`@theme`). **Never hardcode hex values
   - **Buttons:** outlined, filling from left to right on hover (`.btn-fill`; `--fill` / `--fill-text` change the colours, as on the hero).
   - **Hero:** eyebrow, headline (last words italic gold), one line, one button; full height on desktop; 8 s slides with a thin progress line and a 01 / 03 counter.
   - **WhatsApp button:** a small espresso circle with a gold icon that opens to "Chat" on hover. `rounded-full` is only 0.75rem here, so true circles use `rounded-[999px]`.
+  - **Section rhythm (owner, 2026-11-18):** every home section uses `sectionY` (`py-14 sm:py-20 lg:py-24`), `sectionHead` under its heading and `viewAll` for its "View all" link (`lib/home-type.ts`). Each label is numbered in page order with `components/home/SectionEyebrow.tsx` ("01 — Shop by Style" … "05 — Personal Service" (WhatsApp sizing help, `components/PersonalService.tsx`) … "07 — As Seen on Instagram"); renumber when sections are added, removed or moved.
   - **Footer:** the newsletter is one underlined line with an arrow; a large, faint R'OSE wordmark closes the page.
   - **Sale banner** (`components/sale/SaleBanner.tsx`): while a sale is live, an espresso glass band (`bg-primary/85`, gold hairlines) sits over the top of the hero, under the header: the sale name in italic gold serif, "Up to X% off · headline", a tabular countdown and "Shop the Sale →". Sale prices on cards carry a small square tag in espresso and gold (`SaleTag`, e.g. "11.11"); the product page adds "11.11 Sale ends 12 Nov, 11:59 pm".
   - **3D backdrop:** `components/SilkBackdrop.tsx` draws ivory silk with a satin sheen and floating gold dust behind the whole home page (plain WebGL, no library, colours from the theme tokens). Scrolling glides the camera along the silk, warming it towards champagne lower down, and carries the dust past. Home sections have no background of their own so it shows through; the hero slideshow and footer stay opaque. The component adds `.has-backdrop` to `<main>` while it is showing (not a `:has()` rule: Next.js keeps the hidden home page in the DOM on other pages). Phones get fewer grains, lower resolution and 30 fps; it starts after page load, stops when the tab is hidden, draws one still frame with "reduce motion", and falls back to the plain surface colour without WebGL. Keep it faint: text must read on it without a panel.

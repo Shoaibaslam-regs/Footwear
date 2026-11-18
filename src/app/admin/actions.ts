@@ -6,7 +6,7 @@ import { redirect } from "next/navigation";
 import { z } from "zod";
 import { requireAdmin, type UserDoc } from "@/lib/auth/dal";
 import { productId } from "@/lib/product-id";
-import { ALL_SIZES, MAX_DISCOUNT, MAX_GALLERY, productCategories, productStatuses } from "@/lib/products";
+import { ALL_SIZES, CARD_LABELS, MAX_DISCOUNT, MAX_GALLERY, productCategories, productStatuses } from "@/lib/products";
 import { getDb } from "@/lib/server/db";
 import { PRODUCTS_TAG, type ProductDoc } from "@/lib/server/products";
 import { SALES_TAG } from "@/lib/server/sales";
@@ -85,7 +85,8 @@ const productSchema = z.object({
     )
     .min(1, "Add at least one photo.")
     .max(MAX_GALLERY, `Up to ${MAX_GALLERY} photos per listing.`),
-  badge: z.string().trim().max(40),
+  // One of the fixed card labels (lib/products.ts CARD_LABELS), or none.
+  badge: z.union([z.literal(""), z.enum(CARD_LABELS)], "Pick a label from the list."),
   sizes: sizeList.refine((s) => s.length > 0, "Select at least one size."),
   stock: z.record(
     z.string(),

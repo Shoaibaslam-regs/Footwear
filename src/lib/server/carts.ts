@@ -1,7 +1,7 @@
 import "server-only";
 import { ObjectId } from "mongodb";
 import type { CartItem } from "../cart-data";
-import { categoryLabel, productHref, type Listing } from "../products";
+import { cardLabel, categoryLabel, productHref, type Listing } from "../products";
 import type { SaleEvent } from "../sale-events";
 import { listingPrice, salePricingNow } from "./sale-events";
 import type { WishItem } from "../store-types";
@@ -38,7 +38,7 @@ function toCartItem(p: Listing, size: number, quantity: number, pricing: Pricing
   return {
     id: lineIdOf(p.slug, size),
     href: productHref(p),
-    badge: p.badge || "Limited Edition",
+    badge: cardLabel(p),
     collection: categoryLabel(p.category),
     name: p.name,
     drawerName: p.name,

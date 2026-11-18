@@ -1,9 +1,10 @@
 import Image from "next/image";
-import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
+import { accent, sectionTitle, sectionY } from "@/lib/home-type";
+import SectionEyebrow from "@/components/home/SectionEyebrow";
 
 export default function Campaign() {
   return (
-    <section className="w-full py-space-xl overflow-hidden">
+    <section className={`w-full ${sectionY} overflow-hidden`}>
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-space-xl items-center">
           {/* Visual Story Column */}
@@ -53,7 +54,7 @@ export default function Campaign() {
 
           {/* Editorial Narrative Column */}
           <div data-reveal className="lg:col-span-5 flex flex-col gap-space-md lg:pl-space-md">
-            <span className={eyebrow}>Comfort &amp; Style</span>
+            <SectionEyebrow n="03">Comfort &amp; Style</SectionEyebrow>
             <h2 className={`${sectionTitle} lg:text-display-hero`}>
               Made to Move <em className={accent}>With You.</em>
             </h2>

@@ -4,6 +4,7 @@ import NewArrivals from "@/components/NewArrivals";
 import Campaign from "@/components/Campaign";
 import BestSellers from "@/components/BestSellers";
 import Craft from "@/components/Craft";
+import PersonalService from "@/components/PersonalService";
 import SocialGallery from "@/components/SocialGallery";
 import SilkBackdrop from "@/components/SilkBackdrop";
 
@@ -17,6 +18,7 @@ export default function Home() {
       <NewArrivals />
       <Campaign />
       <BestSellers />
+      <PersonalService />
       <Craft />
       <SocialGallery />
     </div>

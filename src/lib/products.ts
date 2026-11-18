@@ -114,8 +114,23 @@ function priceFields(p: Listing): PriceFields {
  * "Best Seller" for listings ticked as best sellers, else "New" for new
  * arrivals, else none. Never more than one, so cards stay calm.
  */
+/**
+ * The only labels a shoe can carry (owner, 2026-11-18): a short, fixed list
+ * picked in the admin, so every card reads the same and none makes a claim the
+ * shop can't back ("Trending", "#1 Best Seller" are gone).
+ */
+export const CARD_LABELS = ["New In", "Best Seller", "Restocked", "Last Pairs", "Limited Edition", "Bridal"] as const;
+export type CardLabelName = (typeof CARD_LABELS)[number];
+
+/** The list's spelling of a saved badge, or null when it isn't on the list (older free-text badges). */
+export function listedLabel(badge: string | undefined | null): CardLabelName | null {
+  const b = (badge ?? "").trim().toLowerCase();
+  return CARD_LABELS.find((l) => l.toLowerCase() === b) ?? null;
+}
+
+/** A shoe's one label: its picked badge if it is on the list, else Best Seller / New In from the ticked flags, else none. */
 export function cardLabel(p: Pick<Listing, "badge" | "bestSeller" | "newArrival">): string {
-  return p.badge?.trim() || (p.bestSeller ? "Best Seller" : p.newArrival ? "New" : "");
+  return listedLabel(p.badge) ?? (p.bestSeller ? "Best Seller" : p.newArrival ? "New In" : "");
 }
 
 /* ---------- Storefront view mappers ---------- */
@@ -167,7 +182,7 @@ export function toArrivalCard(p: Listing): ArrivalCard & PriceFields & { hoverIm
     name: p.name,
     href: productHref(p),
     shortName: p.name.replace(/^The\s+/i, ""),
-    badge: p.badge || "New In",
+    badge: cardLabel(p),
     badgeClass: "bg-primary text-on-primary",
     spec: p.spec,
     ...priceFields(p),

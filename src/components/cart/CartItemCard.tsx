@@ -35,9 +35,11 @@ export default function CartItemCard({
             fill
             sizes="(min-width: 640px) 160px, 96px"
           />
-          <span className="hidden sm:inline absolute top-2 left-2 px-2 py-0.5 bg-surface/90 backdrop-blur-md text-on-surface font-label-uppercase text-[10px] uppercase rounded-full">
-            {item.badge}
-          </span>
+          {item.badge && (
+            <span className="hidden sm:inline absolute top-2 left-2 px-2 py-0.5 bg-surface/90 backdrop-blur-md text-on-surface font-label-uppercase text-[10px] uppercase rounded-full">
+              {item.badge}
+            </span>
+          )}
         </div>
 
         {/* Details */}

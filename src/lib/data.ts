@@ -147,7 +147,7 @@ export const newArrivals: Product[] = [
   {
     name: "Seraphina Silk Knot Mule",
     shortName: "Seraphina Mule",
-    badge: "Atelier Knot",
+    badge: "",
     badgeClass: "bg-secondary text-on-secondary",
     spec: "65mm Kitten Heel",
     price: 128_800,
@@ -184,7 +184,7 @@ export const newArrivals: Product[] = [
   {
     name: "Celeste Satin Ballerina",
     shortName: "Celeste Ballerina",
-    badge: "Trending",
+    badge: "",
     badgeClass: "bg-secondary-fixed text-on-secondary-fixed",
     spec: "15mm Micro-Heel",
     price: 117_600,
@@ -222,7 +222,7 @@ export const bestSellers: BestSeller[] = [
   {
     name: "Valeria Sculpted Mule",
     shortName: "Valeria Mule",
-    badge: "#1 Best Seller",
+    badge: "Best Seller",
     price: 137_200,
     detail: "Chocolate Tuscan Suede • 80mm",
     image:
@@ -248,7 +248,7 @@ export const bestSellers: BestSeller[] = [
   {
     name: "Lucia Crossover Slide",
     shortName: "Lucia Slide",
-    badge: "Classic",
+    badge: "",
     price: 106_400,
     detail: "Cognac Vegetable Nappa • 10mm",
     image:

@@ -11,3 +11,13 @@ export const sectionTitle =
 export const accent = "italic text-secondary";
 /** Light price text for cards. */
 export const quietPrice = "font-body-md text-[13px] sm:text-[15px] font-normal tracking-wide text-primary tabular-nums";
+
+/**
+ * One rhythm for every home section (owner, 2026-11-18: "more premium"):
+ * the same generous space above and below each section, the same gap under
+ * its heading, and one "View all" link style. Change it here, not per section.
+ */
+export const sectionY = "py-14 sm:py-20 lg:py-24";
+export const sectionHead = "mb-8 sm:mb-12 lg:mb-14";
+export const viewAll =
+  "link-draw shrink-0 pb-1 font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-primary whitespace-nowrap";

@@ -1,16 +1,17 @@
 import Image from "next/image";
 import { categories } from "@/lib/data";
-import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
+import { accent, sectionHead, sectionTitle, sectionY } from "@/lib/home-type";
+import SectionEyebrow from "@/components/home/SectionEyebrow";
 
 export default function Categories() {
   return (
     <section
       id="collection"
-      className="w-full max-w-[1536px] mx-auto px-margin-mobile lg:px-margin py-space-xl"
+      className={`w-full max-w-[1536px] mx-auto px-margin-mobile lg:px-margin ${sectionY}`}
     >
-      <div className="flex flex-col md:flex-row md:items-end justify-between gap-space-md mb-space-lg">
+      <div className={`flex flex-col md:flex-row md:items-end justify-between gap-space-md ${sectionHead}`}>
         <div data-reveal>
-          <p className={eyebrow}>Shop by Style</p>
+          <SectionEyebrow n="01">Shop by Style</SectionEyebrow>
           <h2 className={`${sectionTitle} mt-2`}>
             Find the <em className={accent}>Perfect</em> Pair
           </h2>

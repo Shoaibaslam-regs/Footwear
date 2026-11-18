@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import { saveProduct, type ProductFormState } from "@/app/admin/actions";
 import GalleryUploader from "./GalleryUploader";
-import { ALL_SIZES, MAX_DISCOUNT, productCategories, salePrice, type Listing } from "@/lib/products";
+import { ALL_SIZES, CARD_LABELS, MAX_DISCOUNT, listedLabel, productCategories, salePrice, type Listing } from "@/lib/products";
 
 function Err({ list }: { list?: string[] }) {
   return list?.length ? <span className="error">{list.join(" ")}</span> : null;
@@ -81,8 +81,19 @@ export default function ProductForm({ product }: { product?: Listing }) {
             <Err list={e.material} />
           </label>
           <label className="field">
-            Badge <span className="muted font-normal">(optional)</span>
-            <input className="input" defaultValue={product?.badge} name="badge" placeholder="New In" />
+            Label on the card <span className="muted font-normal">(optional)</span>
+            {/* A fixed list, so every card reads the same; an older free-text badge shows as "None" until one is picked. */}
+            <select defaultValue={listedLabel(product?.badge) ?? ""} name="badge">
+              <option value="">None (Best Seller / New In from the boxes below)</option>
+              {CARD_LABELS.map((l) => (
+                <option key={l} value={l}>
+                  {l}
+                </option>
+              ))}
+            </select>
+            {product?.badge && !listedLabel(product.badge) && (
+              <span className="muted text-xs">Was &quot;{product.badge}&quot;, which is no longer a label. It is not shown; pick one above.</span>
+            )}
             <Err list={e.badge} />
           </label>
         </div>

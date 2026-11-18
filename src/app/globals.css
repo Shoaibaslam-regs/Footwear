@@ -686,3 +686,171 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
     transform: rotate(40deg) rotateX(55deg);
   }
 }
+
+/* Sale plaque (components/sale/SaleBanner.tsx), after the owner's ornate frame
+   design: a gold beveled frame with pointed ends around a black damask panel
+   (owner, 2026-11-18: black, not crimson). Layers share one pointed shape; --p is how far the points reach in. */
+.sale-plaque {
+  --p: 20px;
+  position: relative;
+}
+@media (min-width: 640px) {
+  .sale-plaque {
+    --p: 32px;
+  }
+}
+.sale-plaque .pf {
+  position: absolute;
+  inset: var(--i, 0);
+  --q: calc(var(--p) - var(--i, 0px) * 0.6);
+  clip-path: polygon(var(--q) 0, calc(100% - var(--q)) 0, 100% 50%, calc(100% - var(--q)) 100%, var(--q) 100%, 0 50%);
+}
+/* Gold frame, a dark bronze groove, a fine bright gold line, then the panel. */
+.sale-plaque .pf-frame {
+  background: linear-gradient(180deg, #f6e3a1 0%, #d8b062 26%, #8e6a2c 50%, #c99a49 72%, #f4dc94 100%);
+}
+.sale-plaque .pf-groove {
+  --i: 3px;
+  background: linear-gradient(180deg, #3b2709, #6e4f1c 50%, #3b2709);
+}
+.sale-plaque .pf-line {
+  --i: 4.5px;
+  background: linear-gradient(180deg, #f8e7ae, #b98d3f 50%, #f1d88e);
+}
+.sale-plaque .pf-panel {
+  --i: 6px;
+  overflow: hidden;
+  background-color: #0d0b09;
+  background-image:
+    radial-gradient(ellipse 70% 120% at 50% 40%, rgb(255 255 255 / 0.07), transparent 70%),
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='44' height='44' viewBox='0 0 44 44'%3E%3Cg fill='none' stroke='%23d9c3a6' stroke-opacity='.07' stroke-width='1'%3E%3Cpath d='M22 4c5 6 9 9 9 14s-4 8-9 8-9-3-9-8 4-8 9-14z'/%3E%3Cpath d='M22 26v10M17 40c2-3 3-4 5-4s3 1 5 4'/%3E%3Cpath d='M0 22c4-2 6-6 6-10M44 22c-4-2-6-6-6-10M0 22c4 2 6 6 6 10M44 22c-4 2-6 6-6 10'/%3E%3C/g%3E%3Ccircle cx='22' cy='17' r='2.2' fill='%23d9c3a6' fill-opacity='.06'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #1c1813, #070605);
+  background-size: auto, 44px 44px, auto;
+  box-shadow: inset 0 0 18px rgb(0 0 0 / 0.55);
+}
+/* Fleur ornaments on the two points and a small crest on top. */
+.sale-plaque .pf-tip {
+  position: absolute;
+  top: 50%;
+  width: calc(var(--p) * 1.15);
+  height: auto;
+  translate: 0 -50%;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.45));
+  pointer-events: none;
+}
+.sale-plaque .pf-tip-l {
+  left: calc(var(--p) * -0.55);
+}
+.sale-plaque .pf-tip-r {
+  right: calc(var(--p) * -0.55);
+  scale: -1 1;
+}
+.sale-plaque .pf-crest {
+  position: absolute;
+  left: 50%;
+  top: calc(var(--p) * -0.32);
+  width: calc(var(--p) * 2.6);
+  height: auto;
+  translate: -50% 0;
+  filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.45));
+  pointer-events: none;
+}
+
+/* Mini plaque (components/MiniPlaque.tsx): the sale plaque in miniature for
+   the 12.12 tag and the percent chip on shoe cards. Same layers as
+   .sale-plaque; --p is how far the points reach in. */
+.mini-plaque {
+  --p: 6px;
+  position: relative;
+  isolation: isolate;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  height: 18px;
+  margin-inline: 3px;
+  padding: 0 calc(var(--p) + 4px);
+  font-family: var(--font-label-uppercase, inherit);
+  font-size: 9px;
+  line-height: 1;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  white-space: nowrap;
+  font-variant-numeric: tabular-nums;
+}
+@media (min-width: 640px) {
+  .mini-plaque {
+    --p: 7px;
+    height: 20px;
+    font-size: 10px;
+  }
+}
+.mini-plaque .mp {
+  position: absolute;
+  inset: var(--i, 0);
+  z-index: -1;
+  --q: calc(var(--p) - var(--i, 0px) * 0.6);
+  clip-path: polygon(var(--q) 0, calc(100% - var(--q)) 0, 100% 50%, calc(100% - var(--q)) 100%, var(--q) 100%, 0 50%);
+}
+.mini-plaque .mp-frame {
+  background: linear-gradient(180deg, #f6e3a1 0%, #d8b062 30%, #8e6a2c 55%, #f4dc94 100%);
+}
+.mini-plaque .mp-groove {
+  --i: 1px;
+  background: #4a3410;
+}
+.mini-plaque .mp-line {
+  --i: 1.5px;
+  background: linear-gradient(180deg, #f8e7ae, #b98d3f 50%, #f1d88e);
+}
+.mini-plaque .mp-panel {
+  --i: 2px;
+  background-size: 9px 9px, auto;
+}
+.mini-plaque-dark {
+  color: var(--color-secondary-fixed);
+}
+.mini-plaque-dark .mp-panel {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 1c1 1.2 1.8 1.8 1.8 2.9S5.5 5.5 4.5 5.5 2.7 5 2.7 3.9 3.5 2.2 4.5 1z' fill='none' stroke='%23d9c3a6' stroke-opacity='.16' stroke-width='.5'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #24201a, #050403);
+}
+.mini-plaque-champagne {
+  color: var(--color-on-secondary-fixed);
+}
+.mini-plaque-champagne .mp-panel {
+  background-image:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='9' height='9' viewBox='0 0 9 9'%3E%3Cpath d='M4.5 1c1 1.2 1.8 1.8 1.8 2.9S5.5 5.5 4.5 5.5 2.7 5 2.7 3.9 3.5 2.2 4.5 1z' fill='none' stroke='%236c5c44' stroke-opacity='.18' stroke-width='.5'/%3E%3C/svg%3E"),
+    linear-gradient(180deg, #fbead2, var(--color-secondary-fixed) 55%, #ecd0aa);
+}
+.mini-plaque .mp-text {
+  position: relative;
+  padding-top: 1px;
+}
+.mini-plaque .mp-tip,
+.mini-plaque .mp-crest {
+  position: absolute;
+  z-index: 1;
+  fill: #c99a49;
+  stroke: #5a3f12;
+  stroke-width: 0.5px;
+  pointer-events: none;
+  filter: drop-shadow(0 0.5px 0.5px rgb(0 0 0 / 0.35));
+}
+.mini-plaque .mp-tip {
+  top: 50%;
+  width: calc(var(--p) * 1.2);
+  translate: 0 -50%;
+}
+.mini-plaque .mp-tip-l {
+  left: calc(var(--p) * -0.6);
+}
+.mini-plaque .mp-tip-r {
+  right: calc(var(--p) * -0.6);
+  scale: -1 1;
+}
+.mini-plaque .mp-crest {
+  left: 50%;
+  top: -3px;
+  width: calc(var(--p) * 2.2);
+  translate: -50% 0;
+}

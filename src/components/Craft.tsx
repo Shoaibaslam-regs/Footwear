@@ -1,12 +1,13 @@
 import { craftPillars } from "@/lib/data";
-import { accent, eyebrow, sectionTitle } from "@/lib/home-type";
+import { accent, sectionHead, sectionTitle, sectionY } from "@/lib/home-type";
+import SectionEyebrow from "@/components/home/SectionEyebrow";
 
 export default function Craft() {
   return (
-    <section className="w-full py-space-xl scroll-mt-28" id="craft">
+    <section className={`w-full ${sectionY} scroll-mt-28`} id="craft">
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin">
-        <div data-reveal className="max-w-2xl mx-auto text-center mb-space-lg sm:mb-space-xl">
-          <span className={eyebrow}>Made in Karachi</span>
+        <div data-reveal className={`max-w-2xl mx-auto text-center ${sectionHead}`}>
+          <SectionEyebrow center n="06">Made in Karachi</SectionEyebrow>
           <h2 className={`${sectionTitle} mt-2 mb-space-xs`}>
             What Goes Into an <em className={accent}>R&apos;ose Atelier</em> Shoe
           </h2>

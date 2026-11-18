@@ -1,6 +1,7 @@
 "use client";
 
-import SalePrice, { PercentOff, SaleTag } from "@/components/SalePrice";
+import SalePrice, { PercentOff } from "@/components/SalePrice";
+import MiniPlaque from "@/components/MiniPlaque";
 import { useCardPrice, type CardPrice } from "@/components/sale/SaleProvider";
 
 type Resolved = { price: number; compareAt?: number; discountPercent?: number; saleTag?: string };
@@ -12,6 +13,10 @@ type Resolved = { price: number; compareAt?: number; discountPercent?: number; s
  * - Larger screens (owner, 2026-11-18): the percent off under the price, the
  *   sale's tag at the right end.
  * Takes prices already re-priced for any live sale.
+ *
+ * The percent chip is plain (champagne box) for a listing's own discount, and
+ * becomes a mini sale plaque only while a live sale sets the price, i.e. when
+ * `saleTag` is given (owner, 2026-11-18): the gold frame means "sale price".
  */
 export function CardPriceRow({
   price,
@@ -20,19 +25,26 @@ export function CardPriceRow({
   saleTag,
   priceClassName = "font-body-md text-[13px] sm:text-[15px] text-primary tracking-wide tabular-nums",
 }: Resolved & { priceClassName?: string }) {
+  const off = discountPercent ? (saleTag ? <MiniPlaque tone="champagne">−{discountPercent}%</MiniPlaque> : <PercentOff percent={discountPercent} />) : null;
   return (
     <div className="flex items-start justify-between gap-2">
       <span className={`${priceClassName} min-w-0`}>
         <SalePrice compareAt={compareAt} discountPercent={discountPercent} price={price} quiet />
         {discountPercent ? (
-          <span className="hidden sm:block mt-1">
-            <PercentOff percent={discountPercent} />
-          </span>
+          <span className={`hidden sm:block ${saleTag ? "mt-2" : "mt-1"}`}>{off}</span>
         ) : null}
       </span>
-      <span className="shrink-0 flex flex-col items-end gap-1 mt-0.5">
-        <SaleTag tag={saleTag} />
-        <PercentOff className="sm:hidden" percent={discountPercent} />
+      {/* During a sale the chips are miniatures of the sale plaque (components/MiniPlaque.tsx). */}
+      <span className={`shrink-0 flex flex-col items-end ${saleTag ? "gap-2 mt-1" : "gap-1 mt-0.5"}`}>
+        {saleTag ? (
+          <MiniPlaque tone="dark">
+            {saleTag}
+          </MiniPlaque>
+        ) : null}
+        {discountPercent ? (
+          // Wrapped, so the plaque's own display can't override "hidden on larger screens".
+          <span className="sm:hidden">{off}</span>
+        ) : null}
       </span>
     </div>
   );
