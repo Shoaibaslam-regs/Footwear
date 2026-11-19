@@ -330,9 +330,7 @@ export const footerColumns: { title: string; links: FooterLink[] }[] = [
     title: "About R'ose Atelier",
     links: [
       { label: "Our Story", href: "/#craft" },
-      { label: "Eco-Friendly Making", href: "/#craft" },
       { label: "Our Karachi Workshop", href: "/#craft" },
-      { label: "In the News" },
     ],
   },
   {
@@ -347,7 +345,7 @@ export const footerColumns: { title: string; links: FooterLink[] }[] = [
   {
     title: "Customer Help",
     links: [
-      { label: "Personal Styling", href: "/#appointment" },
+      { label: "Sizing Help", href: "/#personal-service" },
       { label: "Delivery & Returns", href: "/policies/shipping-returns" },
       { label: "Size & Fit Guide", sizeGuide: true },
       { label: "Track Order", href: "/account" },
@@ -359,8 +357,6 @@ export const footerColumns: { title: string; links: FooterLink[] }[] = [
     links: [
       { label: "Terms & Conditions", href: "/policies/terms" },
       { label: "Privacy Policy", href: "/policies/privacy" },
-      { label: "Cookie Settings" },
-      { label: "Accessibility" },
     ],
   },
 ];

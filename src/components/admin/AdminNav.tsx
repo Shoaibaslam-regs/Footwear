@@ -42,6 +42,12 @@ const paths: Record<string, React.ReactNode> = {
       <path d="M13.2 4.5a2.6 2.6 0 0 1 0 5M14.6 11.9c1.3.5 2.2 1.8 2.4 3.6" />
     </>
   ),
+  greetings: (
+    <>
+      <path d="M13.5 3.6a6.6 6.6 0 1 0 2.9 11.9A5.4 5.4 0 1 1 13.5 3.6Z" />
+      <path d="m15.6 6.2.5 1.2 1.3.1-1 .9.3 1.3-1.1-.7-1.1.7.3-1.3-1-.9 1.3-.1.5-1.2Z" />
+    </>
+  ),
   emails: (
     <>
       <rect height="11" rx="1.2" width="14" x="3" y="4.5" />
@@ -70,6 +76,7 @@ const links = [
   { href: "/admin/products", label: "Listings", icon: "listings" },
   { href: "/admin/coupons", label: "Coupons", icon: "coupons" },
   { href: "/admin/sales", label: "Sales", icon: "sales" },
+  { href: "/admin/greetings", label: "Greetings", icon: "greetings" },
   { href: "/admin/reviews", label: "Reviews", icon: "reviews" },
   { href: "/admin/users", label: "Users", icon: "users" },
   { href: "/admin/emails", label: "Emails", icon: "emails" },

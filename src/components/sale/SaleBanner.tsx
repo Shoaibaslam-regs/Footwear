@@ -4,6 +4,11 @@ import Link from "next/link";
 import { useEffect, useState } from "react";
 import { countdown, saleState, saleTime, TEASER_MS, type SaleEvent } from "@/lib/sale-events";
 import { useSaleClock } from "./SaleProvider";
+import { liveGreeting, plaqueMotif } from "@/lib/greetings";
+import type { SaleMotif } from "@/lib/sale-events";
+
+/** sessionStorage key: the plaque's drop has played in this visit. */
+const DROPPED_KEY = "rose:sale-dropped";
 
 /** "Up to X%" per sale id, worked out on the server from the listings each sale covers. */
 export type SaleUpTo = Record<string, number>;
@@ -35,21 +40,48 @@ function useSecondTick(on: boolean) {
  * the header. Hidden until the page knows the time (the page is pre-built).
  */
 export default function SaleBanner({ upTo }: { upTo: SaleUpTo }) {
-  const { events, now: clock } = useSaleClock();
+  const { events, greetings, now: clock } = useSaleClock();
   const pick = clock === null ? null : featuredSale(events, upTo, clock);
+  // A greeting (lib/greetings.ts): the whole plaque on its own, or a gold scroll above a sale.
+  const greeting = clock === null ? null : liveGreeting(greetings, clock);
+  const shown = !!pick || !!greeting;
   const ticking = !!pick && (pick.event.countdown || !pick.live);
   const now = Math.max(useSecondTick(ticking), clock ?? 0);
-  if (!pick) return null;
-  const { event, live } = pick;
-  const pct = upTo[event.id] ?? 0;
-  const left = (live ? Date.parse(event.endsAt) : Date.parse(event.startsAt)) - now;
+  // The drop plays once per visit (this browser tab's session), then the plaque just hangs.
+  const [drop] = useState(() => {
+    try {
+      return typeof window !== "undefined" && !window.sessionStorage.getItem(DROPPED_KEY);
+    } catch {
+      return false;
+    }
+  });
+  useEffect(() => {
+    if (!shown || !drop) return;
+    try {
+      window.sessionStorage.setItem(DROPPED_KEY, "1");
+    } catch {}
+  }, [shown, drop]);
+  if (!pick && !greeting) return null;
+  const event = pick?.event;
+  const live = !!pick?.live;
+  const pct = event ? (upTo[event.id] ?? 0) : 0;
+  const left = event ? (live ? Date.parse(event.endsAt) : Date.parse(event.startsAt)) - now : 0;
+  const label = event
+    ? `${greeting ? `${greeting.message}. ` : ""}${live ? `${event.name}, up to ${pct}% off` : `${event.name} starts soon`}`
+    : greeting!.message;
 
   return (
     <div
-      aria-label={live ? `${event.name}, up to ${pct}% off` : `${event.name} starts soon`}
-      className="absolute inset-x-0 top-[7.75rem] z-20 px-3 sm:px-margin drop-shadow-[0_8px_16px_rgba(0,0,0,0.45)]"
+      aria-label={label}
+      className={`sale-hang absolute inset-x-0 top-[calc(7rem+20px)] z-20 px-3 sm:px-margin drop-shadow-[0_8px_16px_rgba(0,0,0,0.45)]${drop ? " sale-drop" : ""}`}
       role="region"
     >
+      {/* Hung from two twisted golden ropes that come down from under the header
+          (owner, 2026-11-18). On a first visit it drops, bounces and swings twice, then rests. */}
+      <div aria-hidden="true" className="sale-ropes max-w-[1180px] mx-auto">
+        <span className="sale-rope sale-rope-l" />
+        <span className="sale-rope sale-rope-r" />
+      </div>
       {/* An ornate plaque, after the owner's design: a gold frame with pointed, fleur-tipped
           ends and a crest, around a black damask panel (styles: globals.css .sale-plaque). */}
       <div className="sale-plaque max-w-[1180px] mx-auto text-surface-container-lowest">
@@ -57,21 +89,42 @@ export default function SaleBanner({ upTo }: { upTo: SaleUpTo }) {
         <span aria-hidden="true" className="pf pf-groove" />
         <span aria-hidden="true" className="pf pf-line" />
         <span aria-hidden="true" className="pf pf-panel">
-          {/* Rose petals falling inside the panel only, behind the text; they go with the plaque. */}
-          <SalePetals />
+          {/* The occasion's motif falling inside the panel only, behind the text; it goes with the plaque. */}
+          <SalePetals motif={plaqueMotif(greeting?.style, event ? (event.motif ?? "general") : undefined)} />
         </span>
         <Fleur className="pf-tip pf-tip-l" />
         <Fleur className="pf-tip pf-tip-r" />
-        <Crest />
-      <div className="relative px-[calc(var(--p)+14px)] pt-6 pb-3.5 sm:py-4 flex flex-wrap items-center justify-center sm:justify-between gap-x-space-md gap-y-1.5 text-center sm:text-left">
-        <p className="flex flex-wrap items-baseline justify-center gap-x-3 gap-y-0.5">
-          <span className="font-headline-sm italic text-[18px] sm:text-[22px] leading-none text-secondary-fixed">{event.name}</span>
-          <span className="font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.24em]">
+        {/* During a sale, a greeting rides on a small gold scroll where the crest sits. */}
+        {event && greeting ? <GreetingScroll text={greeting.message} /> : <Crest />}
+      {!event && greeting ? (
+        // One line on every screen (owner, 2026-11-19): the greeting, its line (from sm: up, trimmed
+        // with "…" when there isn't room; too cramped on phones), then the link.
+        <div className="relative px-[calc(var(--p)+14px)] py-4 sm:py-4 flex items-center justify-center gap-x-2.5 sm:gap-x-5 min-w-0 whitespace-nowrap">
+          <span className="shrink-0 font-headline-sm italic text-[17px] sm:text-[24px] leading-none text-secondary-fixed">{greeting.message}</span>
+          {greeting.line && (
+            <span className="hidden sm:block min-w-0 truncate font-body-sm text-[13px] leading-none text-surface-container-lowest/80">{greeting.line}</span>
+          )}
+          {greeting.linkHref && greeting.linkLabel && (
+            <Link
+              className="shrink-0 link-draw [--draw-color:var(--color-secondary-fixed)] font-label-uppercase text-[9px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.24em] text-secondary-fixed whitespace-nowrap"
+              href={greeting.linkHref}
+            >
+              {greeting.linkLabel} →
+            </Link>
+          )}
+        </div>
+      ) : event ? (
+      // One line on every screen (owner, 2026-11-19): name and percent on the left, the link on the
+      // right; a long name ends with "…" rather than wrapping. Phones keep the countdown in the corner.
+      <div className="relative px-[calc(var(--p)+12px)] pt-6 pb-3.5 sm:py-4 flex items-center justify-between gap-x-3 sm:gap-x-space-md min-w-0 whitespace-nowrap">
+        <p className="flex items-baseline gap-x-2 sm:gap-x-3 min-w-0">
+          <span className="min-w-0 truncate font-headline-sm italic text-[15px] sm:text-[22px] leading-none text-secondary-fixed">{event.name}</span>
+          <span className="shrink-0 font-label-uppercase text-[9px] sm:text-[11px] uppercase tracking-[0.14em] sm:tracking-[0.24em]">
             {live ? `Up to ${pct}% off` : "Coming soon"}
             {event.headline ? <span className="hidden md:inline"> · {event.headline}</span> : null}
           </span>
         </p>
-        <div className="flex items-center gap-space-md">
+        <div className="shrink-0 flex items-center gap-space-md">
           {(event.countdown || !live) && left > 0 ? (
             // Phones: a micro countdown pinned to the ribbon's top-right corner.
             <span className="font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-surface-container-lowest/80 tabular-nums max-sm:absolute max-sm:top-[11px] max-sm:right-[calc(var(--p)+10px)] max-sm:text-[7.5px] max-sm:tracking-[0.16em] max-sm:leading-none">
@@ -84,16 +137,26 @@ export default function SaleBanner({ upTo }: { upTo: SaleUpTo }) {
           )}
           {live && (
             <Link
-              className="link-draw [--draw-color:var(--color-secondary-fixed)] font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-secondary-fixed whitespace-nowrap"
+              className="link-draw [--draw-color:var(--color-secondary-fixed)] font-label-uppercase text-[9px] sm:text-[11px] uppercase tracking-[0.14em] sm:tracking-[0.24em] text-secondary-fixed whitespace-nowrap"
               href="/collections?sale=1"
             >
-              Shop the Sale →
+              {event.ctaLabel?.trim() || "Shop the Sale"} →
             </Link>
           )}
         </div>
       </div>
+      ) : null}
       </div>
     </div>
+  );
+}
+
+/** The greeting's gold scroll at the top centre of the sale plaque (globals.css `.pf-scroll`). */
+function GreetingScroll({ text }: { text: string }) {
+  return (
+    <span aria-hidden="true" className="pf-scroll">
+      <span>{text}</span>
+    </span>
   );
 }
 
@@ -160,7 +223,8 @@ function Crest() {
   );
 }
 
-function SalePetals() {
+function SalePetals({ motif }: { motif: SaleMotif }) {
+  if (motif === "none") return null;
   return (
     <div aria-hidden="true" className="sale-petals">
       {PETALS.map((p, i) => (
@@ -170,36 +234,7 @@ function SalePetals() {
           style={{ "--x": p.x, "--s": `${p.s}px`, "--t": `${p.t}s`, "--d": `${p.d}s`, "--w": `${p.w}px` } as React.CSSProperties}
         >
           <span>
-            {/* A tiny rose seen from above: five outer petals around a swirled centre, in the home silk's champagne and gold. */}
-            <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
-              <defs>
-                <radialGradient cx="50%" cy="50%" id={`rose-${i}`} r="60%">
-                  <stop offset="0" style={{ stopColor: "var(--color-secondary-fixed-dim)" }} />
-                  <stop offset="0.65" style={{ stopColor: "var(--color-secondary-fixed)" }} />
-                  <stop offset="1" stopColor="#b8a489" />
-                </radialGradient>
-              </defs>
-              <g fill={`url(#rose-${i})`} stroke="#9c855f" strokeOpacity="0.55" strokeWidth="0.45">
-                {[0, 72, 144, 216, 288].map((a) => (
-                  <path key={a} d="M12 12 C7.4 10.6 6.3 4.2 12 2.6 C17.7 4.2 16.6 10.6 12 12 Z" transform={`rotate(${a} 12 12)`} />
-                ))}
-                <circle cx="12" cy="12" r="5.2" />
-                {/* An inner ring of smaller, overlapping petals, turned between the outer ones. */}
-                {[18, 108, 198, 288].map((a) => (
-                  <path key={a} d="M12 12 C9.1 10.9 8.9 6.7 12 5.5 C15.1 6.7 14.9 10.9 12 12 Z" transform={`rotate(${a} 12 12)`} />
-                ))}
-                <circle cx="12" cy="12" r="2.9" />
-              </g>
-              {/* The swirl at the heart of the rose. */}
-              <path
-                d="M12.3 12.2 a0.9 0.9 0 1 1 -0.6 -1.4 a2 2 0 1 1 -1.3 3.1 a3.1 3.1 0 1 1 4.4 -3.9"
-                fill="none"
-                strokeLinecap="round"
-                strokeWidth="0.75"
-                style={{ stroke: "var(--color-secondary)" }}
-                strokeOpacity="0.6"
-              />
-            </svg>
+            {motif === "general" ? <TinyRose i={i} /> : <OccasionMotif i={i} motif={motif} />}
           </span>
         </span>
       ))}
@@ -212,11 +247,15 @@ function SalePetals() {
  * usual announcements). Same markup as before otherwise.
  */
 export function Announcements({ announcements, upTo }: { announcements: string[]; upTo: SaleUpTo }) {
-  const { events, now } = useSaleClock();
+  const { events, greetings, now } = useSaleClock();
   const pick = now === null ? null : featuredSale(events, upTo, now);
-  const messages = pick?.live
-    ? [`${pick.event.name} · Up to ${upTo[pick.event.id]}% off · Until ${saleTime(pick.event.endsAt)}`, ...announcements]
-    : announcements;
+  const greeting = now === null ? null : liveGreeting(greetings, now);
+  // A live greeting leads, then a live sale, then the usual announcements.
+  const messages = [
+    ...(greeting ? [`${greeting.message} from R'ose Atelier`] : []),
+    ...(pick?.live ? [`${pick.event.name} · Up to ${upTo[pick.event.id]}% off · Until ${saleTime(pick.event.endsAt)}`] : []),
+    ...announcements,
+  ];
   return (
     <div className="animate-marquee items-center gap-space-xl font-label-uppercase text-label-uppercase uppercase text-primary-fixed">
       <Group messages={messages} />
@@ -235,5 +274,116 @@ function Group({ messages, hidden }: { messages: string[]; hidden?: boolean }) {
         </span>
       ))}
     </span>
+  );
+}
+
+/** A tiny rose seen from above, in the home silk's champagne and gold (General, and every sale). */
+function TinyRose({ i }: { i: number }) {
+  return (
+    <>
+      {/* A tiny rose seen from above: five outer petals around a swirled centre, in the home silk's champagne and gold. */}
+      <svg viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+        <defs>
+          <radialGradient cx="50%" cy="50%" id={`rose-${i}`} r="60%">
+            <stop offset="0" style={{ stopColor: "var(--color-secondary-fixed-dim)" }} />
+            <stop offset="0.65" style={{ stopColor: "var(--color-secondary-fixed)" }} />
+            <stop offset="1" stopColor="#b8a489" />
+          </radialGradient>
+        </defs>
+        <g fill={`url(#rose-${i})`} stroke="#9c855f" strokeOpacity="0.55" strokeWidth="0.45">
+          {[0, 72, 144, 216, 288].map((a) => (
+            <path key={a} d="M12 12 C7.4 10.6 6.3 4.2 12 2.6 C17.7 4.2 16.6 10.6 12 12 Z" transform={`rotate(${a} 12 12)`} />
+          ))}
+          <circle cx="12" cy="12" r="5.2" />
+          {/* An inner ring of smaller, overlapping petals, turned between the outer ones. */}
+          {[18, 108, 198, 288].map((a) => (
+            <path key={a} d="M12 12 C9.1 10.9 8.9 6.7 12 5.5 C15.1 6.7 14.9 10.9 12 12 Z" transform={`rotate(${a} 12 12)`} />
+          ))}
+          <circle cx="12" cy="12" r="2.9" />
+        </g>
+        {/* The swirl at the heart of the rose. */}
+        <path
+          d="M12.3 12.2 a0.9 0.9 0 1 1 -0.6 -1.4 a2 2 0 1 1 -1.3 3.1 a3.1 3.1 0 1 1 4.4 -3.9"
+          fill="none"
+          strokeLinecap="round"
+          strokeWidth="0.75"
+          style={{ stroke: "var(--color-secondary)" }}
+          strokeOpacity="0.6"
+        />
+      </svg>
+    </>
+  );
+}
+
+/**
+ * The falling motif for an occasion (lib/greetings.ts): Eid, crescents and
+ * stars; Ramadan, lanterns and stars; Independence Day, stars in gold and
+ * green. Solid fills, no gradient ids, since several share the panel.
+ */
+function OccasionMotif({ motif, i }: { motif: Exclude<SaleMotif, "general" | "none">; i: number }) {
+  const gold = { fill: "#e2c27d", stroke: "#8c6a2f", strokeWidth: 0.6 };
+  const star = <path d="M12 2.5l2.4 5.6 6.1.5-4.6 4 1.4 6-5.3-3.2-5.3 3.2 1.4-6-4.6-4 6.1-.5Z" {...gold} />;
+  let shape: React.ReactNode = star;
+  if (motif === "eid" && i % 2 === 0) {
+    shape = <path d="M15.5 3.2a9 9 0 1 0 5.6 15.4A7.4 7.4 0 1 1 15.5 3.2Z" {...gold} />;
+  } else if (motif === "ramadan" && i % 2 === 0) {
+    shape = (
+      <g {...gold}>
+        <path d="M12 1.6a1.3 1.3 0 0 1 1.3 1.3v1.2h-2.6V2.9A1.3 1.3 0 0 1 12 1.6Z" />
+        <path d="M8.3 4.6h7.4l1.1 2.1H7.2Z" />
+        <path d="M7.6 7.2h8.8l-.8 10.6a1.8 1.8 0 0 1-1.8 1.7h-3.6a1.8 1.8 0 0 1-1.8-1.7Z" />
+        <path d="M9.2 20.2h5.6v1.6H9.2Z" />
+        <path d="M12 9.5c1.3 1.5 1.3 4.6 0 6.6-1.3-2-1.3-5.1 0-6.6Z" fill="#fff6dc" stroke="none" />
+      </g>
+    );
+  } else if (motif === "winter") {
+    // A six-armed snowflake, in frosty white.
+    shape = (
+      <g fill="none" stroke="#eef4fb" strokeLinecap="round" strokeWidth={1.3}>
+        {[0, 60, 120].map((a) => (
+          <g key={a} transform={`rotate(${a} 12 12)`}>
+            <path d="M12 2.5v19" />
+            <path d="M9.6 4.6 12 7l2.4-2.4M9.6 19.4 12 17l2.4 2.4" />
+          </g>
+        ))}
+      </g>
+    );
+  } else if (motif === "summer") {
+    // A small sun: a gold disc and rays.
+    shape = (
+      <g>
+        <g stroke="#e8b84a" strokeLinecap="round" strokeWidth={1.4}>
+          {[0, 45, 90, 135, 180, 225, 270, 315].map((a) => (
+            <path key={a} d="M12 2.6v2.6" transform={`rotate(${a} 12 12)`} />
+          ))}
+        </g>
+        <circle cx="12" cy="12" fill="#f3cf6b" r="4.6" stroke="#b9862f" strokeWidth={0.6} />
+      </g>
+    );
+  } else if (motif === "autumn") {
+    // A falling leaf, amber and rust in turn.
+    shape = (
+      <g>
+        <path d="M12 2.5c4.6 3.2 7 7.2 6.2 11.4-.7 3.6-3.4 6-6.2 7.6-2.8-1.6-5.5-4-6.2-7.6C5 9.7 7.4 5.7 12 2.5Z" fill={i % 2 ? "#b8552a" : "#d99a3b"} stroke="#7a3a17" strokeWidth={0.6} />
+        <path d="M12 6v16M12 11l3-2.4M12 15l-3-2.4" fill="none" stroke="#7a3a17" strokeOpacity={0.7} strokeWidth={0.7} />
+      </g>
+    );
+  } else if (motif === "spring") {
+    // A five-petal blossom, soft pink with a gold heart.
+    shape = (
+      <g>
+        {[0, 72, 144, 216, 288].map((a) => (
+          <ellipse key={a} cx="12" cy="7" fill="#f6c9d2" rx="3.2" ry="4.4" stroke="#d98ea0" strokeWidth={0.5} transform={`rotate(${a} 12 12)`} />
+        ))}
+        <circle cx="12" cy="12" fill="#e8c46a" r="1.9" />
+      </g>
+    );
+  } else if (motif === "independence" && i % 2 === 1) {
+    shape = <path d="M12 2.5l2.4 5.6 6.1.5-4.6 4 1.4 6-5.3-3.2-5.3 3.2 1.4-6-4.6-4 6.1-.5Z" fill="#2f7d4c" stroke="#e2c27d" strokeWidth={0.8} />;
+  }
+  return (
+    <svg data-motif={motif} viewBox="0 0 24 24" xmlns="http://www.w3.org/2000/svg">
+      {shape}
+    </svg>
   );
 }

@@ -2,6 +2,7 @@
 
 import { createContext, useContext, useMemo, useSyncExternalStore } from "react";
 import { livePrice, nextSaleChange, type LivePrice, type SaleEvent } from "@/lib/sale-events";
+import { nextGreetingChange, type Greeting } from "@/lib/greetings";
 
 /**
  * Sale events for the storefront (lib/sale-events.ts). The shop layout passes
@@ -14,13 +15,16 @@ import { livePrice, nextSaleChange, type LivePrice, type SaleEvent } from "@/lib
 
 type Clock = { subscribe: (cb: () => void) => () => void; get: () => number | null };
 
-function makeClock(events: SaleEvent[]): Clock {
+function makeClock(events: SaleEvent[], greetings: Greeting[]): Clock {
   let now: number | null = null;
   let timer = 0;
   const listeners = new Set<() => void>();
   const plan = () => {
     clearTimeout(timer);
-    const next = nextSaleChange(events, now ?? Date.now());
+    const at = now ?? Date.now();
+    // The next moment a sale or a greeting starts or ends.
+    const times = [nextSaleChange(events, at), nextGreetingChange(greetings, at)].filter((t): t is number => t !== null);
+    const next = times.length ? Math.min(...times) : null;
     // setTimeout can't wait longer than ~24.8 days; it simply re-plans then.
     if (next !== null) timer = window.setTimeout(tick, Math.min(next - Date.now() + 50, 2_000_000_000));
   };
@@ -50,21 +54,21 @@ function makeClock(events: SaleEvent[]): Clock {
   };
 }
 
-const Ctx = createContext<{ events: SaleEvent[]; clock: Clock } | null>(null);
+const Ctx = createContext<{ events: SaleEvent[]; greetings: Greeting[]; clock: Clock } | null>(null);
 
-export function SaleProvider({ events, children }: { events: SaleEvent[]; children: React.ReactNode }) {
-  const value = useMemo(() => ({ events, clock: makeClock(events) }), [events]);
+export function SaleProvider({ events, greetings = [], children }: { events: SaleEvent[]; greetings?: Greeting[]; children: React.ReactNode }) {
+  const value = useMemo(() => ({ events, greetings, clock: makeClock(events, greetings) }), [events, greetings]);
   return <Ctx.Provider value={value}>{children}</Ctx.Provider>;
 }
 
 const noop = () => () => {};
 const none = () => null;
 
-/** The sale schedule and the current time (null until the page is interactive). */
-export function useSaleClock(): { events: SaleEvent[]; now: number | null } {
+/** The sale schedule, the greetings (lib/greetings.ts) and the current time (null until the page is interactive). */
+export function useSaleClock(): { events: SaleEvent[]; greetings: Greeting[]; now: number | null } {
   const ctx = useContext(Ctx);
   const now = useSyncExternalStore(ctx?.clock.subscribe ?? noop, ctx?.clock.get ?? none, none);
-  return { events: ctx?.events ?? [], now };
+  return { events: ctx?.events ?? [], greetings: ctx?.greetings ?? [], now };
 }
 
 /** Price fields as cards carry them: `price` is what is paid, `compareAt` the normal price. */

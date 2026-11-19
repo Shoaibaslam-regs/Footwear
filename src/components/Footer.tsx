@@ -1,76 +1,83 @@
 import Link from "next/link";
-import { footerColumns } from "@/lib/data";
+import { footerColumns, whatsappUrl } from "@/lib/data";
 import SizeGuideLink from "./SizeGuideLink";
 import FooterCurrency from "./FooterCurrency";
 
-const payments = ["CASH ON DELIVERY"];
+/** Only true promises, each one something the shop already does (see the policy pages). */
+const promises = [
+  { icon: "payments", title: "Cash on Delivery", text: "Pay when your parcel arrives, anywhere in Pakistan." },
+  { icon: "autorenew", title: "14-Day Exchange", text: "Exchange or return a pair within 14 days of delivery." },
+  { icon: "chat", title: "Sizing Help", text: "Not sure about your size? Ask us on WhatsApp." },
+];
 
+/**
+ * A dark espresso footer (owner, 2026-11-19: premium but calm): the brand and a
+ * WhatsApp button, three real promises, the link columns and a slim bottom line.
+ * Champagne text, gold only on fine lines, small headings and icons; the large
+ * faint R'OSE wordmark closes the page.
+ * The newsletter form stays out until it is connected (CLAUDE.md, Open work).
+ */
 export default function Footer() {
+  const line = "border-[#c9a35b]/15";
   return (
-    <footer className="shop-chrome w-full bg-surface-container-low text-on-surface mt-space-xl border-t border-outline-variant/30">
-      <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin pt-space-xl pb-space-lg">
-        <div className="pb-space-xl mb-space-xl border-b border-outline-variant/20 flex flex-col lg:flex-row lg:items-end justify-between gap-space-lg">
-          <div className="max-w-xl">
-            <p className="font-label-uppercase text-[10px] sm:text-[11px] font-medium text-secondary uppercase tracking-[0.32em] mb-space-xs">
-              Newsletter
-            </p>
-            <h2 className="font-headline-md text-[26px] sm:text-[32px] leading-tight text-primary font-normal tracking-[-0.02em]">
-              Get News &amp; Offers <em className="italic text-secondary">by Email</em>
-            </h2>
-            <p className="font-body-sm text-body-sm text-on-surface-variant mt-space-xs">
-              Be the first to see new collections, special invitations and early
-              offers.
+    <footer className="shop-chrome w-full bg-primary-container text-[#cfc2b4] mt-space-xl">
+      <div aria-hidden="true" className="h-px bg-gradient-to-r from-transparent via-[#c9a35b]/55 to-transparent" />
+      <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin pt-12 sm:pt-16 pb-6">
+        {/* Brand and the one action that matters: talk to us. */}
+        <div className={`flex flex-col sm:flex-row sm:items-end justify-between gap-6 pb-10 sm:pb-12 border-b ${line}`}>
+          <div>
+            <p className="font-headline-lg font-normal text-[30px] sm:text-[40px] leading-none tracking-[0.18em] text-[#f3ece4]">R&apos;OSE ATELIER</p>
+            <p className="mt-3 font-body-sm text-[13px] sm:text-[14px] leading-relaxed text-[#b8ab9d] max-w-md">
+              Women&apos;s footwear from Karachi, made to look elegant and feel comfortable.
             </p>
           </div>
-          {/* One underlined line with an arrow, instead of a boxed form. */}
-          <form className="w-full lg:max-w-md">
-            <label htmlFor="newsletter-email" className="sr-only">
-              Email Address
-            </label>
-            <div className="group flex items-center border-b border-primary/40 focus-within:border-primary transition-colors">
-              <input
-                id="newsletter-email"
-                className="flex-1 min-w-0 h-12 bg-transparent px-0 text-on-surface placeholder:text-outline font-body-md text-body-md font-light focus:outline-none"
-                placeholder="Email address"
-                required
-                type="email"
-              />
-              <button
-                aria-label="Subscribe"
-                className="h-12 pl-space-sm flex items-center gap-2 font-label-uppercase text-[10px] uppercase tracking-[0.26em] text-primary hover:text-secondary transition-colors"
-                type="submit"
-              >
-                <span className="hidden sm:inline">Subscribe</span>
-                <span aria-hidden="true" className="material-symbols-outlined text-[18px] transition-transform duration-300 group-focus-within:translate-x-1">
-                  arrow_forward
-                </span>
-              </button>
-            </div>
-          </form>
+          <a
+            className="self-start sm:self-auto inline-flex items-center gap-2.5 h-11 px-5 border border-[#c9a35b]/50 text-[#f6dfc1] hover:bg-[#c9a35b] hover:text-primary hover:border-[#c9a35b] transition-colors font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.22em] whitespace-nowrap"
+            href={whatsappUrl}
+            rel="noopener noreferrer"
+            target="_blank"
+          >
+            <span aria-hidden="true" className="material-symbols-outlined text-[17px]">
+              chat
+            </span>
+            WhatsApp 0314 8428115
+          </a>
         </div>
 
-        <div className="grid grid-cols-2 md:grid-cols-4 gap-gutter lg:gap-space-xl pb-space-xl">
+        {/* Real promises */}
+        <ul className={`grid grid-cols-1 sm:grid-cols-3 border-b ${line}`}>
+          {promises.map((p, i) => (
+            <li
+              key={p.title}
+              className={`flex items-start gap-4 py-6 sm:py-8 sm:px-6 lg:px-8 first:sm:pl-0 ${i > 0 ? `border-t sm:border-t-0 sm:border-l ${line}` : ""}`}
+            >
+              <span aria-hidden="true" className="material-symbols-outlined text-[22px] text-[#c9a35b] mt-0.5">
+                {p.icon}
+              </span>
+              <span className="flex flex-col gap-1">
+                <span className="font-label-uppercase text-[11px] uppercase tracking-[0.2em] text-[#f3ece4]">{p.title}</span>
+                <span className="font-body-sm text-[13px] leading-relaxed text-[#b8ab9d]">{p.text}</span>
+              </span>
+            </li>
+          ))}
+        </ul>
+
+        {/* Links */}
+        <div className="grid grid-cols-2 md:grid-cols-4 gap-x-gutter gap-y-9 py-10 sm:py-12">
           {footerColumns.map((col) => (
-            <div key={col.title} className="flex flex-col gap-space-sm">
-              <h3 className="font-label-uppercase text-label-uppercase text-primary uppercase tracking-[0.16em] font-semibold mb-space-xs">
-                {col.title}
-              </h3>
-              <ul className="flex flex-col gap-space-xs font-body-sm text-body-sm text-on-surface-variant">
+            <div key={col.title} className="flex flex-col gap-4">
+              <h3 className="font-label-uppercase text-[10px] sm:text-[11px] text-[#c9a35b] uppercase tracking-[0.22em] font-semibold">{col.title}</h3>
+              <ul className="flex flex-col gap-2.5 font-body-sm text-[13px] sm:text-[14px]">
                 {col.links.map((link) => (
                   <li key={link.label}>
                     {link.sizeGuide ? (
-                      <SizeGuideLink className="hover:text-on-surface transition-colors text-left">
-                        {link.label}
-                      </SizeGuideLink>
+                      <SizeGuideLink className="hover:text-[#f6dfc1] transition-colors text-left">{link.label}</SizeGuideLink>
                     ) : link.href ? (
-                      <Link
-                        className="hover:text-on-surface transition-colors"
-                        href={link.href}
-                      >
+                      <Link className="hover:text-[#f6dfc1] transition-colors" href={link.href}>
                         {link.label}
                       </Link>
                     ) : (
-                      <span className="text-outline">{link.label}</span>
+                      <span className="opacity-50">{link.label}</span>
                     )}
                   </li>
                 ))}
@@ -79,35 +86,16 @@ export default function Footer() {
           ))}
         </div>
 
-        <div className="pt-space-lg border-t border-outline-variant/30 flex flex-col md:flex-row items-center justify-between gap-space-md font-label-uppercase text-label-uppercase text-outline">
-          <div className="flex items-center gap-space-sm flex-wrap justify-center md:justify-start">
-            <span className="tracking-wider">
-              © R&apos;OSE ATELIER. ALL RIGHTS RESERVED.
-            </span>
-            <span className="hidden md:inline">•</span>
-            <span className="tracking-wider uppercase">
-              Karachi
-            </span>
-          </div>
-          <div className="w-full md:w-auto flex flex-col sm:flex-row flex-wrap items-center justify-center md:justify-end gap-space-sm">
-            <FooterCurrency />
-            <div className="flex flex-wrap items-center justify-center gap-space-xs text-[10px] tracking-wider text-on-surface-variant uppercase font-semibold">
-              {payments.map((p) => (
-                <span
-                  key={p}
-                  className="px-2 py-1 bg-surface-container-highest rounded-none"
-                >
-                  {p}
-                </span>
-              ))}
-            </div>
-          </div>
+        {/* Bottom line */}
+        <div className={`pt-6 border-t ${line} flex flex-col-reverse sm:flex-row items-center justify-between gap-4 font-label-uppercase text-[10px] sm:text-[11px] text-[#9c8f82]`}>
+          <span className="tracking-[0.14em] text-center">© R&apos;OSE ATELIER · KARACHI, PAKISTAN</span>
+          <FooterCurrency />
         </div>
       </div>
 
-      {/* The brand, large and light, closing the page. */}
+      {/* The brand, large and faint, closing the page. */}
       <div aria-hidden="true" className="overflow-hidden select-none">
-        <p className="font-headline-lg font-normal text-primary/[0.07] text-center leading-[0.8] tracking-[0.1em] text-[clamp(72px,21vw,300px)] translate-y-[6%]">
+        <p className="font-headline-lg font-normal text-[#c9a35b]/[0.09] text-center leading-[0.8] tracking-[0.1em] text-[clamp(72px,21vw,300px)] translate-y-[6%]">
           R&apos;OSE
         </p>
       </div>

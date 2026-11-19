@@ -4,7 +4,7 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import { saveSale, type SaleFormState } from "@/app/admin/sales/actions";
 import { MAX_DISCOUNT, productCategories, type ProductCategory } from "@/lib/products";
-import { saleScopeLabel, saleScopes, upToPercent, type SaleEvent, type SaleScope } from "@/lib/sale-events";
+import { SALE_MOTIFS, saleMotifLabel, saleScopeLabel, saleScopes, upToPercent, type SaleEvent, type SaleScope } from "@/lib/sale-events";
 
 export type SaleListing = { slug: string; name: string; category: ProductCategory; price: number; discountPercent: number };
 
@@ -77,6 +77,23 @@ export default function SaleForm({ sale, listings, others }: { sale?: SaleEvent;
             Line under the name (optional)
             <input className="input" maxLength={80} name="headline" onChange={(ev) => setHeadline(ev.target.value)} placeholder="On heels and bridal shoes" value={headline} />
             <Err list={e.headline} />
+          </label>
+          <label className="field sm:col-span-2">
+            Falling motif
+            <select defaultValue={sale?.motif ?? "general"} name="motif">
+              {SALE_MOTIFS.map((m) => (
+                <option key={m} value={m}>
+                  {saleMotifLabel[m]}
+                </option>
+              ))}
+            </select>
+            <span className="muted text-xs">What falls gently inside the banner. If a greeting is showing at the same time, its motif is used unless the greeting is set to None.</span>
+          </label>
+          <label className="field sm:col-span-2">
+            Button text on the banner (optional)
+            <input className="input" defaultValue={sale?.ctaLabel} maxLength={24} name="ctaLabel" placeholder="Shop the Sale" />
+            <span className="muted text-xs">Leave empty for &ldquo;Shop the Sale&rdquo;. Short works best on phones, e.g. &ldquo;Shop Now&rdquo;.</span>
+            <Err list={e.ctaLabel} />
           </label>
           <label className="field">
             Starts (Pakistan time)

@@ -8,15 +8,16 @@ import WhatsAppButton from "@/components/WhatsAppButton";
 import Motion from "@/components/Motion";
 import { SaleProvider } from "@/components/sale/SaleProvider";
 import { getSaleEvents } from "@/lib/server/sale-events";
+import { getGreetings } from "@/lib/server/greetings";
 
 /**
  * Storefront chrome: header, footer and the global toast. The sale schedule
  * (cached, no clock) goes to SaleProvider, which switches prices in the browser.
  */
 export default async function ShopLayout({ children }: { children: React.ReactNode }) {
-  const saleEvents = await getSaleEvents();
+  const [saleEvents, greetings] = await Promise.all([getSaleEvents(), getGreetings()]);
   return (
-    <SaleProvider events={saleEvents}>
+    <SaleProvider events={saleEvents} greetings={greetings}>
       <Header />
       <main className="shop-main w-full pt-28 bg-surface min-h-[calc(100vh-28rem)]">
         {children}

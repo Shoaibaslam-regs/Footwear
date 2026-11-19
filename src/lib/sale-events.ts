@@ -29,6 +29,8 @@ export type SaleEvent = {
   tag: string;
   /** One line under the name, e.g. "On heels and bridal shoes". */
   headline: string;
+  /** The plaque's link text, e.g. "Shop the Sale" (the default when empty). */
+  ctaLabel?: string;
   startsAt: string;
   endsAt: string;
   scope: SaleScope;
@@ -42,6 +44,8 @@ export type SaleEvent = {
   teaser: boolean;
   /** Coupons may be used on sale-priced pairs too. */
   allowCoupons: boolean;
+  /** What falls inside the home plaque (owner, 2026-11-19); a live greeting's motif wins. Default "general" (roses). */
+  motif?: SaleMotif;
   /** Set when the admin stopped it early. */
   stoppedAt: string | null;
 };
@@ -144,3 +148,18 @@ export function countdown(ms: number): string {
   const hms = [Math.floor((s % 86_400) / 3600), Math.floor((s % 3600) / 60), s % 60].map((n) => String(n).padStart(2, "0")).join(":");
   return d > 0 ? `${d}d ${hms}` : hms;
 }
+
+/** The falling motif a sale can pick: the seasons, plus the greeting occasions and the roses. */
+export const SALE_MOTIFS = ["general", "winter", "summer", "autumn", "spring", "eid", "ramadan", "independence", "none"] as const;
+export type SaleMotif = (typeof SALE_MOTIFS)[number];
+export const saleMotifLabel: Record<SaleMotif, string> = {
+  general: "Champagne roses",
+  winter: "Winter (snowflakes)",
+  summer: "Summer (little suns)",
+  autumn: "Autumn (falling leaves)",
+  spring: "Spring (blossoms)",
+  eid: "Eid (crescents and stars)",
+  ramadan: "Ramadan (lanterns and stars)",
+  independence: "Independence Day (gold and green stars)",
+  none: "None (nothing falls)",
+};

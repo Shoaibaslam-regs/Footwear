@@ -6,7 +6,7 @@ import { updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/dal";
 import { MAX_DISCOUNT, productCategories, type ProductCategory } from "@/lib/products";
-import { saleScopes } from "@/lib/sale-events";
+import { SALE_MOTIFS, saleScopes } from "@/lib/sale-events";
 import { getPublishedProducts } from "@/lib/server/products";
 import { SALE_EVENTS_TAG, saleEvents, type SaleEventDoc } from "@/lib/server/sale-events";
 
@@ -26,6 +26,7 @@ const schema = z
     name: z.string().trim().min(2, "Give the sale a name, e.g. 11.11 Sale.").max(40, "Keep the name under 40 characters."),
     tag: z.string().trim().min(1, "Add a short tag, e.g. 11.11.").max(12, "Keep the tag to 12 characters."),
     headline: z.string().trim().max(80, "Keep the line under 80 characters."),
+    ctaLabel: z.string().trim().max(24, "Keep the button text under 24 characters."),
     startsAt: when,
     endsAt: when,
     scope: z.enum(saleScopes, "Choose what is discounted."),
@@ -35,6 +36,7 @@ const schema = z
     countdown: z.boolean(),
     teaser: z.boolean(),
     allowCoupons: z.boolean(),
+    motif: z.enum(SALE_MOTIFS, "Choose what falls on the banner."),
   })
   .superRefine((d, ctx) => {
     if (pkt(d.endsAt) <= pkt(d.startsAt)) ctx.addIssue({ code: "custom", path: ["endsAt"], message: "The end must be after the start." });
@@ -56,6 +58,7 @@ export async function saveSale(_: SaleFormState, fd: FormData): Promise<SaleForm
     name: String(fd.get("name") ?? ""),
     tag: String(fd.get("tag") ?? ""),
     headline: String(fd.get("headline") ?? ""),
+    ctaLabel: String(fd.get("ctaLabel") ?? ""),
     startsAt: String(fd.get("startsAt") ?? ""),
     endsAt: String(fd.get("endsAt") ?? ""),
     scope,
@@ -65,6 +68,7 @@ export async function saveSale(_: SaleFormState, fd: FormData): Promise<SaleForm
     countdown: fd.get("countdown") === "on",
     teaser: fd.get("teaser") === "on",
     allowCoupons: fd.get("allowCoupons") === "on",
+    motif: String(fd.get("motif") || "general"),
   });
   if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors, message: "Please fix the highlighted fields." };
   const d = parsed.data;
@@ -73,6 +77,7 @@ export async function saveSale(_: SaleFormState, fd: FormData): Promise<SaleForm
     name: d.name,
     tag: d.tag.toUpperCase(),
     headline: d.headline,
+    ctaLabel: d.ctaLabel,
     startsAt: pkt(d.startsAt),
     endsAt: pkt(d.endsAt),
     scope: d.scope,
@@ -82,6 +87,7 @@ export async function saveSale(_: SaleFormState, fd: FormData): Promise<SaleForm
     countdown: d.countdown,
     teaser: d.teaser,
     allowCoupons: d.allowCoupons,
+    motif: d.motif,
     updatedAt: now,
   };
   const col = await saleEvents();

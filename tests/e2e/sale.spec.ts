@@ -39,6 +39,7 @@ test("a sale: created in the admin, shown on the site, charged at checkout, stop
   await admin.getByLabel("Hand-picked shoes").check();
   await admin.getByLabel(`Percent off ${shoe.name}`).fill("30");
   await expect(admin.getByText("Up to 30% off")).toBeVisible(); // the preview works it out
+  await admin.getByLabel("Falling motif").selectOption("winter");
   await admin.getByRole("button", { name: "Create sale" }).click();
   await expect(admin.getByText("Saved 11.11 Sale.")).toBeVisible();
   await expect(admin.locator("tbody tr", { hasText: "11.11 Sale" }).getByText("Live")).toBeVisible();
@@ -50,6 +51,7 @@ test("a sale: created in the admin, shown on the site, charged at checkout, stop
   await page.goto("/");
   await expect(page.getByRole("region", { name: "11.11 Sale, up to 30% off" })).toBeVisible();
   await expect(page.getByRole("link", { name: /Shop the Sale/ })).toBeVisible();
+  await expect(page.locator('.sale-petals [data-motif="winter"]').first()).toBeAttached(); // snowflakes fall in the banner
   await page.goto(`/products/${shoe.slug}`);
   await expect(page.getByText(/11\.11 Sale ends/)).toBeVisible();
   await expect(page.locator("main").getByText(rs(salePrice)).first()).toBeVisible();

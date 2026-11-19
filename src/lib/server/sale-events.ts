@@ -2,7 +2,7 @@ import "server-only";
 import { ObjectId } from "mongodb";
 import { cacheLife, cacheTag, io } from "next/cache";
 import type { ProductCategory } from "../products";
-import { livePrice, upToPercent, type LivePrice, type SaleEvent, type SaleScope } from "../sale-events";
+import { livePrice, upToPercent, type LivePrice, type SaleEvent, type SaleMotif, type SaleScope } from "../sale-events";
 import { getPublishedProducts } from "./products";
 import { getDb } from "./db";
 
@@ -14,6 +14,7 @@ export type SaleEventDoc = {
   name: string;
   tag: string;
   headline: string;
+  ctaLabel?: string;
   startsAt: Date;
   endsAt: Date;
   scope: SaleScope;
@@ -23,6 +24,7 @@ export type SaleEventDoc = {
   countdown: boolean;
   teaser: boolean;
   allowCoupons: boolean;
+  motif?: SaleMotif;
   stoppedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -35,6 +37,7 @@ export const toSaleEvent = (d: SaleEventDoc): SaleEvent => ({
   name: d.name,
   tag: d.tag,
   headline: d.headline,
+  ctaLabel: d.ctaLabel ?? "",
   startsAt: d.startsAt.toISOString(),
   endsAt: d.endsAt.toISOString(),
   scope: d.scope,
@@ -44,6 +47,7 @@ export const toSaleEvent = (d: SaleEventDoc): SaleEvent => ({
   countdown: d.countdown,
   teaser: d.teaser,
   allowCoupons: d.allowCoupons,
+  motif: d.motif ?? "general",
   stoppedAt: d.stoppedAt ? d.stoppedAt.toISOString() : null,
 });
 
