@@ -8,15 +8,21 @@
  */
 export default function MiniPlaque({
   tone,
+  bg,
+  frame,
   children,
   className = "",
 }: {
   tone: "dark" | "champagne";
+  /** The dark tag only: the sale's plaque background (lib/plaque.ts), in simplified colours. */
+  bg?: string;
+  /** The dark tag only: the sale's frame finish (lib/plaque.ts). */
+  frame?: string;
   children: React.ReactNode;
   className?: string;
 }) {
   return (
-    <span className={`mini-plaque mini-plaque-${tone} ${className}`}>
+    <span className={`mini-plaque mini-plaque-${tone} ${className}`} data-bg={tone === "dark" && bg && bg !== "black" ? bg : undefined} data-frame={tone === "dark" && frame && frame !== "gold" ? frame : undefined}>
       <span aria-hidden="true" className="mp mp-frame" />
       <span aria-hidden="true" className="mp mp-groove" />
       <span aria-hidden="true" className="mp mp-line" />

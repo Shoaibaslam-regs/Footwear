@@ -114,13 +114,6 @@ export default function OrderSummary({
             >
               Chat on WhatsApp
             </a>
-            <span className="text-outline-variant">•</span>
-            <Link
-              className="font-label-uppercase text-label-uppercase text-primary underline underline-offset-4 decoration-secondary hover:text-secondary transition-colors"
-              href="/#appointment"
-            >
-              Book a Video Fitting
-            </Link>
           </div>
         </div>
       </div>

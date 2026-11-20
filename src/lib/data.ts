@@ -5,7 +5,7 @@ export const navLinks = [
   { label: "Shop", href: "/collections", activePrefixes: ["/collections", "/products"] },
   { label: "Collections", href: "/#collection" },
   { label: "New Arrivals", href: "/#new-arrivals" },
-  { label: "Bridal", href: "/#appointment" },
+  { label: "Bridal", href: "/collections?category=bridal" },
   { label: "Our Story", href: "/#craft" },
 ];
 
@@ -21,7 +21,7 @@ export const heroImage =
 export const heroSlides = () => [
   {
     image: heroImage,
-    alt: "Sculpted Italian stiletto heels in deep espresso patent leather with a champagne gold heel on a marble ledge",
+    alt: "Sculpted stiletto heels in deep espresso patent leather with a champagne gold heel on a marble ledge",
     position: "center",
   },
   ...[0, 4, 1].map((i) => ({ image: categories[i].image, alt: categories[i].alt, position: "center" })),
@@ -155,7 +155,7 @@ export const newArrivals: Product[] = [
     image:
       IMG +
       "AB6AXuBmiDzl67Ae8jWoCc7Rnzv2zFyCUav0vtpAqwY1Eu2TQJVWz1ty-MN9Jx3J2UvoGuAzyqnQp4QTq_zbYDaJ3G5jf81GADymnPvfWTY5NdNT1LNah1KogbW7UVEFLEJ2EkiwtjSI_YmqsRWQ2loaTkFQXI4yBs9yI5Na_gmD7UDUJEKispZZwrlEjQNOEy13kBiBhm-GV18JSqK2mMcwtaW93hQFL5B9oK8sPpQGGWQ",
-    alt: "Seraphina Silk Knot Mule in champagne gold woven Italian silk satin",
+    alt: "Seraphina Silk Knot Mule in champagne gold woven silk satin",
     swatches: [
       { color: "#E5D2BA", title: "Champagne Gold" },
       { color: "#030101", title: "Onyx Black" },
@@ -241,7 +241,7 @@ export const bestSellers: BestSeller[] = [
     image:
       IMG +
       "AB6AXuDS7VFTtveMwWYy0Dp5Lu9hVZ6Zk1_vEk2nyi1pHIfggbElckc1qmseMxs3GXzBoQpZ-57wSRavsPeDf4O_M0qCvGKAv1kKH3KpTE_Bm2tHlWgqEaXJL-WDWkaep6z5IGIbdmeqJr0CB0K0oOHF_uy6QgTUBVGaoDeFOU09sCEG6f3IVG-il7E2wvfKjxiqOdnBlaiX03UvVQ_UGIMiFh2CJ65QNLWowdzrGdw-42U",
-    alt: "Genevieve Ankle-Strap Pump in black Italian boxcalf with thin gold ankle wrap",
+    alt: "Genevieve Ankle-Strap Pump in black boxcalf with thin gold ankle wrap",
     defaultSize: 38,
     soldOut: [],
   },
@@ -269,9 +269,9 @@ export const craftPillars = [
   },
   {
     icon: "pan_tool_alt",
-    eyebrow: "Fine Italian Leather",
+    eyebrow: "Fine Materials",
     title: "Hand-Picked Leather & Silk",
-    text: "Top-quality full-grain leather from checked Italian tanneries, finished with natural plant oils. It feels soft from day one and looks better with age.",
+    text: "Top-quality full-grain leather, finished with natural plant oils. It feels soft from day one and looks better with age.",
   },
   {
     icon: "accessibility_new",

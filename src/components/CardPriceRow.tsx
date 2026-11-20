@@ -1,6 +1,6 @@
 "use client";
 
-import SalePrice, { PercentOff } from "@/components/SalePrice";
+import SalePrice, { PercentOff, SaleTag } from "@/components/SalePrice";
 import MiniPlaque from "@/components/MiniPlaque";
 import { useCardPrice, type CardPrice } from "@/components/sale/SaleProvider";
 
@@ -37,9 +37,7 @@ export function CardPriceRow({
       {/* During a sale the chips are miniatures of the sale plaque (components/MiniPlaque.tsx). */}
       <span className={`shrink-0 flex flex-col items-end ${saleTag ? "gap-2 mt-1" : "gap-1 mt-0.5"}`}>
         {saleTag ? (
-          <MiniPlaque tone="dark">
-            {saleTag}
-          </MiniPlaque>
+          <SaleTag tag={saleTag} />
         ) : null}
         {discountPercent ? (
           // Wrapped, so the plaque's own display can't override "hidden on larger screens".

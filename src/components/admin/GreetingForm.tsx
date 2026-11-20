@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState } from "react";
 import { saveGreeting, type GreetingFormState } from "@/app/admin/greetings/actions";
 import { GREETING_STYLES, greetingStyleLabel, type Greeting } from "@/lib/greetings";
+import { PLAQUE_BACKGROUNDS, PLAQUE_FRAMES, plaqueBgLabel, plaqueFrameLabel } from "@/lib/plaque";
 
 function Err({ list }: { list?: string[] }) {
   return list?.length ? <span className="error">{list.join(" ")}</span> : null;
@@ -45,6 +46,40 @@ export default function GreetingForm({ greeting }: { greeting?: Greeting }) {
         </select>
         <span className="muted text-xs">Sets what falls gently inside the plaque. During a sale it wins over the sale&apos;s motif; choose None to show the sale&apos;s instead.</span>
         <Err list={e.style} />
+      </label>
+      <label className="field">
+        Background
+        <select defaultValue={greeting?.background ?? "black"} name="background">
+          {PLAQUE_BACKGROUNDS.map((b) => (
+            <option key={b} value={b}>
+              {plaqueBgLabel[b]}
+            </option>
+          ))}
+        </select>
+        <span className="muted text-xs">Used when the greeting shows on its own. During a sale, the sale&apos;s background fills the plaque.</span>
+      </label>
+      <label className="field">
+        Frame
+        <select defaultValue={greeting?.frame ?? "gold"} name="frame">
+          {PLAQUE_FRAMES.map((f) => (
+            <option key={f} value={f}>
+              {plaqueFrameLabel[f]}
+            </option>
+          ))}
+        </select>
+        <span className="muted text-xs">Used when the greeting shows on its own. During a sale, the sale&apos;s frame is used for the plaque and the scroll&apos;s edge.</span>
+      </label>
+      <label className="field">
+        Scroll background during a sale
+        <select defaultValue={greeting?.scrollBg ?? "gold"} name="scrollBg">
+          <option value="gold">Gold (classic)</option>
+          {PLAQUE_BACKGROUNDS.map((b) => (
+            <option key={b} value={b}>
+              {plaqueBgLabel[b]}
+            </option>
+          ))}
+        </select>
+        <span className="muted text-xs">During a sale the greeting sits on a small scroll above the sale plaque. Match it to the sale, e.g. Solid Ice with an Ice sale.</span>
       </label>
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <label className="field">

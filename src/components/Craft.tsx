@@ -12,13 +12,12 @@ export default function Craft() {
             What Goes Into an <em className={accent}>R&apos;ose Atelier</em> Shoe
           </h2>
           <p className="hidden sm:block font-body-md text-body-md text-on-surface-variant font-light">
-            Made in our family workshops in Karachi, run by the third
-            generation. We mix traditional shoemaking with modern technology
-            for better balance.
+            Designed and made in Karachi. We mix traditional shoemaking with
+            modern technology for better balance.
           </p>
         </div>
 
-        <div data-reveal-stagger className="grid grid-cols-2 md:grid-cols-3 gap-space-sm sm:gap-gutter mb-space-xl">
+        <div data-reveal-stagger className="grid grid-cols-2 md:grid-cols-3 gap-space-sm sm:gap-gutter">
           {craftPillars.map((p) => (
             <div
               key={p.title}
@@ -40,55 +39,6 @@ export default function Craft() {
               </p>
             </div>
           ))}
-        </div>
-
-        {/* Workshop Banner */}
-        <div
-          id="appointment"
-          className="relative rounded-2xl overflow-hidden bg-primary-container p-space-lg lg:p-space-xl shadow-xl flex flex-col lg:flex-row items-center justify-between gap-space-lg"
-        >
-          <div className="max-w-xl text-surface">
-            <span className="font-label-uppercase text-label-uppercase text-secondary-fixed uppercase tracking-widest block mb-2">
-              Our Workshop
-            </span>
-            <h3 className="font-headline-lg text-headline-lg font-normal mb-space-xs text-surface-container-lowest">
-              Visit Our Karachi Workshop
-            </h3>
-            <p className="font-body-md text-body-md text-primary-fixed font-light mb-space-md">
-              Book a private appointment with our master shoemaker, Renzo.
-              Choose your leather and colour, and get a pair made to your exact
-              foot size.
-            </p>
-            <a
-              className="inline-flex items-center gap-2 font-label-uppercase text-label-uppercase text-secondary-fixed hover:text-surface-container-lowest uppercase tracking-widest transition-colors"
-              href="#appointment"
-            >
-              <span className="link-draw [--draw-color:var(--color-secondary-fixed)] [background-size:100%_1px] hover:[background-size:0%_1px]">
-                Book an Appointment
-              </span>
-              <span className="material-symbols-outlined text-sm">
-                arrow_outward
-              </span>
-            </a>
-          </div>
-          <div className="w-full lg:w-96 rounded-xl bg-surface p-space-md text-on-surface shadow-2xl flex items-center gap-space-md">
-            <div className="w-16 h-16 rounded-lg bg-surface-container flex items-center justify-center flex-shrink-0">
-              <span className="material-symbols-outlined text-secondary text-2xl">
-                location_on
-              </span>
-            </div>
-            <div>
-              <h4 className="font-label-md text-label-md font-semibold text-primary">
-                R&apos;ose Atelier Workshop
-              </h4>
-              <p className="font-body-sm text-body-sm text-on-surface-variant">
-                Karachi, Pakistan
-              </p>
-              <p className="font-label-sm text-label-sm text-secondary font-medium mt-1">
-                Open Mon–Sat • By Appointment
-              </p>
-            </div>
-          </div>
         </div>
       </div>
     </section>

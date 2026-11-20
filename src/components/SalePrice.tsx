@@ -2,13 +2,16 @@
 
 import Price from "./Price";
 import MiniPlaque from "./MiniPlaque";
-import { useCardPrice } from "./sale/SaleProvider";
+import { useCardPrice, useSaleClock } from "./sale/SaleProvider";
 
 /** The small tag next to a sale price, e.g. "11.11": always the mini sale plaque (components/MiniPlaque.tsx). */
 export function SaleTag({ tag, className = "" }: { tag?: string; className?: string }) {
+  // The tag's own sale (by its tag text), for its background (lib/plaque.ts).
+  const { events } = useSaleClock();
   if (!tag) return null;
+  const sale = events.find((e) => e.tag === tag);
   return (
-    <MiniPlaque className={`self-center ${className}`} tone="dark">
+    <MiniPlaque bg={sale?.background} className={`self-center ${className}`} frame={sale?.frame} tone="dark">
       {tag}
     </MiniPlaque>
   );

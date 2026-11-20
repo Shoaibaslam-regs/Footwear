@@ -11,9 +11,8 @@ import Stars from "./Stars";
 import StockAlert from "./StockAlert";
 import Accordion from "./Accordion";
 import SizeGuideModal from "./SizeGuideModal";
-import SalePrice, { OffChip } from "@/components/SalePrice";
+import SalePrice, { OffChip, SaleTag } from "@/components/SalePrice";
 import Price from "@/components/Price";
-import MiniPlaque from "@/components/MiniPlaque";
 import { useCardPrice } from "@/components/sale/SaleProvider";
 import { saleTime } from "@/lib/sale-events";
 import { addToBag, openBag, toggleWishlist as toggleSaved, useInBag, useIsWishlisted } from "@/lib/store";
@@ -120,7 +119,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
         <BuyBar inBag={inBag} label={added ? "Added to Bag" : inBag ? "In Bag · View" : "Add to Bag"} onAdd={() => (inBag ? openBag() : addSelectionToBag())}>
           <span className="inline-flex items-center gap-2">
             <SalePrice compareAt={live.compareAt} price={live.price} quiet />
-            {live.sale && <MiniPlaque tone="dark">{live.sale.tag}</MiniPlaque>}
+            {live.sale && <SaleTag tag={live.sale.tag} />}
           </span>
         </BuyBar>
       )}
@@ -174,7 +173,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
                 <OffChip percent={live.discountPercent || undefined} sale={!!live.sale} />
               </span>
             </div>
-            {live.sale && <MiniPlaque className="shrink-0" tone="dark">{live.sale.tag}</MiniPlaque>}
+            {live.sale && <SaleTag className="shrink-0" tag={live.sale.tag} />}
           </div>
           {live.sale && (
             <p className="flex items-center gap-1.5 font-label-uppercase text-[10px] sm:text-[11px] leading-snug uppercase tracking-[0.1em] sm:tracking-[0.18em] text-secondary">

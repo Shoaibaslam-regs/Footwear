@@ -66,6 +66,9 @@ export default function SaleBanner({ upTo }: { upTo: SaleUpTo }) {
   const live = !!pick?.live;
   const pct = event ? (upTo[event.id] ?? 0) : 0;
   const left = event ? (live ? Date.parse(event.endsAt) : Date.parse(event.startsAt)) - now : 0;
+  // The sale's background when a sale fills the plaque, else the greeting's (lib/plaque.ts).
+  const background = (event ? event.background : greeting?.background) ?? "black";
+  const frame = (event ? event.frame : greeting?.frame) ?? "gold";
   const label = event
     ? `${greeting ? `${greeting.message}. ` : ""}${live ? `${event.name}, up to ${pct}% off` : `${event.name} starts soon`}`
     : greeting!.message;
@@ -74,6 +77,7 @@ export default function SaleBanner({ upTo }: { upTo: SaleUpTo }) {
     <div
       aria-label={label}
       className={`sale-hang absolute inset-x-0 top-[calc(7rem+20px)] z-20 px-3 sm:px-margin drop-shadow-[0_8px_16px_rgba(0,0,0,0.45)]${drop ? " sale-drop" : ""}`}
+      data-frame={frame === "gold" ? undefined : frame}
       role="region"
     >
       {/* Hung from two twisted golden ropes that come down from under the header
@@ -84,7 +88,7 @@ export default function SaleBanner({ upTo }: { upTo: SaleUpTo }) {
       </div>
       {/* An ornate plaque, after the owner's design: a gold frame with pointed, fleur-tipped
           ends and a crest, around a black damask panel (styles: globals.css .sale-plaque). */}
-      <div className="sale-plaque max-w-[1180px] mx-auto text-surface-container-lowest">
+      <div className="sale-plaque max-w-[1180px] mx-auto text-[var(--pl-text)]" data-bg={background}>
         <span aria-hidden="true" className="pf pf-frame" />
         <span aria-hidden="true" className="pf pf-groove" />
         <span aria-hidden="true" className="pf pf-line" />
@@ -95,18 +99,18 @@ export default function SaleBanner({ upTo }: { upTo: SaleUpTo }) {
         <Fleur className="pf-tip pf-tip-l" />
         <Fleur className="pf-tip pf-tip-r" />
         {/* During a sale, a greeting rides on a small gold scroll where the crest sits. */}
-        {event && greeting ? <GreetingScroll text={greeting.message} /> : <Crest />}
+        {event && greeting ? <GreetingScroll bg={greeting.scrollBg ?? "gold"} text={greeting.message} /> : <Crest />}
       {!event && greeting ? (
         // One line on every screen (owner, 2026-11-19): the greeting, its line (from sm: up, trimmed
         // with "…" when there isn't room; too cramped on phones), then the link.
         <div className="relative px-[calc(var(--p)+14px)] py-4 sm:py-4 flex items-center justify-center gap-x-2.5 sm:gap-x-5 min-w-0 whitespace-nowrap">
-          <span className="shrink-0 font-headline-sm italic text-[17px] sm:text-[24px] leading-none text-secondary-fixed">{greeting.message}</span>
+          <span className="shrink-0 font-headline-sm italic text-[17px] sm:text-[24px] leading-none text-[var(--pl-accent)]">{greeting.message}</span>
           {greeting.line && (
-            <span className="hidden sm:block min-w-0 truncate font-body-sm text-[13px] leading-none text-surface-container-lowest/80">{greeting.line}</span>
+            <span className="hidden lg:block min-w-0 truncate font-body-sm text-[13px] leading-none text-[var(--pl-muted)]">{greeting.line}</span>
           )}
           {greeting.linkHref && greeting.linkLabel && (
             <Link
-              className="shrink-0 link-draw [--draw-color:var(--color-secondary-fixed)] font-label-uppercase text-[9px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.24em] text-secondary-fixed whitespace-nowrap"
+              className="shrink-0 link-draw [--draw-color:var(--pl-accent)] font-label-uppercase text-[9px] sm:text-[11px] uppercase tracking-[0.16em] sm:tracking-[0.24em] text-[var(--pl-accent)] whitespace-nowrap"
               href={greeting.linkHref}
             >
               {greeting.linkLabel} →
@@ -116,28 +120,28 @@ export default function SaleBanner({ upTo }: { upTo: SaleUpTo }) {
       ) : event ? (
       // One line on every screen (owner, 2026-11-19): name and percent on the left, the link on the
       // right; a long name ends with "…" rather than wrapping. Phones keep the countdown in the corner.
-      <div className="relative px-[calc(var(--p)+12px)] pt-6 pb-3.5 sm:py-4 flex items-center justify-between gap-x-3 sm:gap-x-space-md min-w-0 whitespace-nowrap">
+      <div className="relative px-[calc(var(--p)+12px)] pt-6 pb-3.5 lg:py-4 flex items-center justify-between gap-x-3 sm:gap-x-space-md min-w-0 whitespace-nowrap">
         <p className="flex items-baseline gap-x-2 sm:gap-x-3 min-w-0">
-          <span className="min-w-0 truncate font-headline-sm italic text-[15px] sm:text-[22px] leading-none text-secondary-fixed">{event.name}</span>
+          <span className="min-w-0 max-sm:truncate sm:shrink-0 font-headline-sm italic text-[15px] sm:text-[18px] md:text-[22px] leading-none text-[var(--pl-accent)]">{event.name}</span>
           <span className="shrink-0 font-label-uppercase text-[9px] sm:text-[11px] uppercase tracking-[0.14em] sm:tracking-[0.24em]">
             {live ? `Up to ${pct}% off` : "Coming soon"}
-            {event.headline ? <span className="hidden md:inline"> · {event.headline}</span> : null}
+            {event.headline ? <span className="hidden xl:inline"> · {event.headline}</span> : null}
           </span>
         </p>
         <div className="shrink-0 flex items-center gap-space-md">
           {(event.countdown || !live) && left > 0 ? (
-            // Phones: a micro countdown pinned to the ribbon's top-right corner.
-            <span className="font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-surface-container-lowest/80 tabular-nums max-sm:absolute max-sm:top-[11px] max-sm:right-[calc(var(--p)+10px)] max-sm:text-[7.5px] max-sm:tracking-[0.16em] max-sm:leading-none">
-              {live ? "Ends in" : "Starts in"} <span className="text-secondary-fixed">{countdown(left)}</span>
+            // Below 1024 px: a micro countdown pinned to the plaque's top-right corner, so the name always fits.
+            <span className="font-label-uppercase uppercase text-[var(--pl-muted)] lg:text-[11px] lg:tracking-[0.2em] tabular-nums max-lg:absolute max-lg:top-[11px] max-lg:right-[calc(var(--p)+10px)] max-lg:text-[7.5px] sm:max-lg:text-[8.5px] max-lg:tracking-[0.16em] max-lg:leading-none">
+              {live ? "Ends in" : "Starts in"} <span className="text-[var(--pl-accent)]">{countdown(left)}</span>
             </span>
           ) : (
-            <span className="font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.2em] text-surface-container-lowest/80 max-sm:absolute max-sm:top-[11px] max-sm:right-[calc(var(--p)+10px)] max-sm:text-[7.5px] max-sm:tracking-[0.16em] max-sm:leading-none">
+            <span className="font-label-uppercase uppercase text-[var(--pl-muted)] lg:text-[11px] lg:tracking-[0.2em] max-lg:absolute max-lg:top-[11px] max-lg:right-[calc(var(--p)+10px)] max-lg:text-[7.5px] sm:max-lg:text-[8.5px] max-lg:tracking-[0.16em] max-lg:leading-none">
               {live ? `Until ${saleTime(event.endsAt)}` : `From ${saleTime(event.startsAt)}`}
             </span>
           )}
           {live && (
             <Link
-              className="link-draw [--draw-color:var(--color-secondary-fixed)] font-label-uppercase text-[9px] sm:text-[11px] uppercase tracking-[0.14em] sm:tracking-[0.24em] text-secondary-fixed whitespace-nowrap"
+              className="link-draw [--draw-color:var(--pl-accent)] font-label-uppercase text-[9px] sm:text-[11px] uppercase tracking-[0.14em] sm:tracking-[0.24em] text-[var(--pl-accent)] whitespace-nowrap"
               href="/collections?sale=1"
             >
               {event.ctaLabel?.trim() || "Shop the Sale"} →
@@ -152,10 +156,12 @@ export default function SaleBanner({ upTo }: { upTo: SaleUpTo }) {
 }
 
 /** The greeting's gold scroll at the top centre of the sale plaque (globals.css `.pf-scroll`). */
-function GreetingScroll({ text }: { text: string }) {
+function GreetingScroll({ text, bg }: { text: string; bg: string }) {
   return (
-    <span aria-hidden="true" className="pf-scroll">
-      <span>{text}</span>
+    <span aria-hidden="true" className="pf-scroll" data-bg={bg === "gold" ? undefined : bg}>
+      {/* With a background, the fill sits inside a fine gold edge (globals.css `.pf-scroll[data-bg]`). */}
+      {bg !== "gold" && <span className="pf-scroll-fill" />}
+      <span className="pf-scroll-text">{text}</span>
     </span>
   );
 }
@@ -182,10 +188,11 @@ function GoldDefs({ id }: { id: string }) {
   return (
     <defs>
       <linearGradient id={id} x1="0" x2="0" y1="0" y2="1">
-        <stop offset="0" stopColor="#f8e7ae" />
-        <stop offset="0.45" stopColor="#c99a49" />
-        <stop offset="0.7" stopColor="#8e6a2c" />
-        <stop offset="1" stopColor="#f1d88e" />
+        {/* The frame finish's colours (globals.css [data-frame]); gold by default. */}
+        <stop offset="0" style={{ stopColor: "var(--fr-line, #f8e7ae)" }} />
+        <stop offset="0.45" style={{ stopColor: "var(--fr-base, #c99a49)" }} />
+        <stop offset="0.7" style={{ stopColor: "var(--fr-deep, #8e6a2c)" }} />
+        <stop offset="1" style={{ stopColor: "var(--fr-hi2, #f1d88e)" }} />
       </linearGradient>
     </defs>
   );
@@ -197,7 +204,7 @@ function Fleur({ className }: { className: string }) {
   return (
     <svg aria-hidden="true" className={className} viewBox="0 0 40 40" xmlns="http://www.w3.org/2000/svg">
       <GoldDefs id={id} />
-      <g fill={`url(#${id})`} stroke="#5a3f12" strokeWidth="0.7">
+      <g fill={`url(#${id})`} strokeWidth="0.7" style={{ stroke: "var(--fr-ink, #5a3f12)" }}>
         {/* Spear tip, two curling leaves and a bead, like a baroque frame corner. */}
         <path d="M2 20 L14 16.5 L14 23.5 Z" />
         <path d="M14 20 C18 10 26 8 31 11 C27 12 22 15 19 20 C22 25 27 28 31 29 C26 32 18 30 14 20 Z" />
@@ -213,7 +220,7 @@ function Crest() {
   return (
     <svg aria-hidden="true" className="pf-crest" viewBox="0 0 80 22" xmlns="http://www.w3.org/2000/svg">
       <GoldDefs id="crest" />
-      <g fill="url(#crest)" stroke="#5a3f12" strokeWidth="0.6">
+      <g fill="url(#crest)" strokeWidth="0.6" style={{ stroke: "var(--fr-ink, #5a3f12)" }}>
         <path d="M40 1 C43 6 46 8 40 15 C34 8 37 6 40 1 Z" />
         <path d="M38 13 C30 6 20 7 14 12 C20 11 27 13 33 18 L40 21 L47 18 C53 13 60 11 66 12 C60 7 50 6 42 13 L40 15 Z" />
         <circle cx="12" cy="13" r="2" />
@@ -339,7 +346,7 @@ function OccasionMotif({ motif, i }: { motif: Exclude<SaleMotif, "general" | "no
   } else if (motif === "winter") {
     // A six-armed snowflake, in frosty white.
     shape = (
-      <g fill="none" stroke="#eef4fb" strokeLinecap="round" strokeWidth={1.3}>
+      <g fill="none" stroke="var(--pl-snow, #eef4fb)" strokeLinecap="round" strokeWidth={1.3}>
         {[0, 60, 120].map((a) => (
           <g key={a} transform={`rotate(${a} 12 12)`}>
             <path d="M12 2.5v19" />

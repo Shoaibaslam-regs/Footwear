@@ -2,6 +2,7 @@ import "server-only";
 import { ObjectId } from "mongodb";
 import { cacheLife, cacheTag, io } from "next/cache";
 import type { Greeting, GreetingStyle } from "../greetings";
+import type { PlaqueBg, PlaqueFrame } from "../plaque";
 import { getDb } from "./db";
 
 /** Cache tag for greetings: every admin change calls updateTag(GREETINGS_TAG). */
@@ -12,6 +13,9 @@ export type GreetingDoc = {
   message: string;
   line: string;
   style: GreetingStyle;
+  background?: PlaqueBg;
+  scrollBg?: "gold" | PlaqueBg;
+  frame?: PlaqueFrame;
   linkLabel: string;
   linkHref: string;
   startsAt: Date;
@@ -28,6 +32,9 @@ export const toGreeting = (d: GreetingDoc): Greeting => ({
   message: d.message,
   line: d.line ?? "",
   style: d.style,
+  background: d.background ?? "black",
+  scrollBg: d.scrollBg ?? "gold",
+  frame: d.frame ?? "gold",
   linkLabel: d.linkLabel ?? "",
   linkHref: d.linkHref ?? "",
   startsAt: d.startsAt.toISOString(),

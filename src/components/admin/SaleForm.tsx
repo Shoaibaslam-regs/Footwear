@@ -4,6 +4,7 @@ import Link from "next/link";
 import { useActionState, useState } from "react";
 import { saveSale, type SaleFormState } from "@/app/admin/sales/actions";
 import { MAX_DISCOUNT, productCategories, type ProductCategory } from "@/lib/products";
+import { PLAQUE_BACKGROUNDS, PLAQUE_FRAMES, plaqueBgLabel, plaqueFrameLabel } from "@/lib/plaque";
 import { SALE_MOTIFS, saleMotifLabel, saleScopeLabel, saleScopes, upToPercent, type SaleEvent, type SaleScope } from "@/lib/sale-events";
 
 export type SaleListing = { slug: string; name: string; category: ProductCategory; price: number; discountPercent: number };
@@ -77,6 +78,28 @@ export default function SaleForm({ sale, listings, others }: { sale?: SaleEvent;
             Line under the name (optional)
             <input className="input" maxLength={80} name="headline" onChange={(ev) => setHeadline(ev.target.value)} placeholder="On heels and bridal shoes" value={headline} />
             <Err list={e.headline} />
+          </label>
+          <label className="field sm:col-span-2">
+            Background
+            <select defaultValue={sale?.background ?? "black"} name="background">
+              {PLAQUE_BACKGROUNDS.map((b) => (
+                <option key={b} value={b}>
+                  {plaqueBgLabel[b]}
+                </option>
+              ))}
+            </select>
+            <span className="muted text-xs">The banner&apos;s background. The 12.12 tag on shoe cards takes its colours too; the percent stays champagne.</span>
+          </label>
+          <label className="field sm:col-span-2">
+            Frame
+            <select defaultValue={sale?.frame ?? "gold"} name="frame">
+              {PLAQUE_FRAMES.map((f) => (
+                <option key={f} value={f}>
+                  {plaqueFrameLabel[f]}
+                </option>
+              ))}
+            </select>
+            <span className="muted text-xs">The banner&apos;s frame, ropes and ornaments, and the edge of the 12.12 tags on shoe cards.</span>
           </label>
           <label className="field sm:col-span-2">
             Falling motif

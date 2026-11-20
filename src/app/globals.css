@@ -728,15 +728,15 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
 }
 /* Gold frame, a dark bronze groove, a fine bright gold line, then the panel. */
 .sale-plaque .pf-frame {
-  background: linear-gradient(180deg, #f6e3a1 0%, #d8b062 26%, #8e6a2c 50%, #c99a49 72%, #f4dc94 100%);
+  background: linear-gradient(180deg, var(--fr-hi, #f6e3a1) 0%, var(--fr-mid, #d8b062) 26%, var(--fr-deep, #8e6a2c) 50%, var(--fr-base, #c99a49) 72%, var(--fr-hi2, #f4dc94) 100%);
 }
 .sale-plaque .pf-groove {
   --i: 3px;
-  background: linear-gradient(180deg, #3b2709, #6e4f1c 50%, #3b2709);
+  background: linear-gradient(180deg, var(--fr-groove, #3b2709), var(--fr-groove2, #6e4f1c) 50%, var(--fr-groove, #3b2709));
 }
 .sale-plaque .pf-line {
   --i: 4.5px;
-  background: linear-gradient(180deg, #f8e7ae, #b98d3f 50%, #f1d88e);
+  background: linear-gradient(180deg, var(--fr-line, #f8e7ae), var(--fr-line2, #b98d3f) 50%, var(--fr-hi2, #f1d88e));
 }
 .sale-plaque .pf-panel {
   --i: 6px;
@@ -815,15 +815,15 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
     clip-path: polygon(var(--q) 0, calc(100% - var(--q)) 0, 100% 50%, calc(100% - var(--q)) 100%, var(--q) 100%, 0 50%);
   }
   .mini-plaque .mp-frame {
-    background: linear-gradient(180deg, #f6e3a1 0%, #d8b062 30%, #8e6a2c 55%, #f4dc94 100%);
+    background: linear-gradient(180deg, var(--fr-hi, #f6e3a1) 0%, var(--fr-mid, #d8b062) 30%, var(--fr-deep, #8e6a2c) 55%, var(--fr-hi2, #f4dc94) 100%);
   }
   .mini-plaque .mp-groove {
     --i: 1px;
-    background: #4a3410;
+    background: var(--fr-groove, #4a3410);
   }
   .mini-plaque .mp-line {
     --i: 1.5px;
-    background: linear-gradient(180deg, #f8e7ae, #b98d3f 50%, #f1d88e);
+    background: linear-gradient(180deg, var(--fr-line, #f8e7ae), var(--fr-line2, #b98d3f) 50%, var(--fr-hi2, #f1d88e));
   }
   .mini-plaque .mp-panel {
     --i: 2px;
@@ -853,8 +853,8 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
   .mini-plaque .mp-crest {
     position: absolute;
     z-index: 1;
-    fill: #c99a49;
-    stroke: #5a3f12;
+    fill: var(--fr-base, #c99a49);
+    stroke: var(--fr-ink, #5a3f12);
     stroke-width: 0.5px;
     pointer-events: none;
     filter: drop-shadow(0 0.5px 0.5px rgb(0 0 0 / 0.35));
@@ -900,8 +900,8 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
   width: 3px;
   border-radius: 2px;
   background:
-    repeating-linear-gradient(-55deg, #f6e3a1 0 2px, #b98d3f 2px 4px, #7a5a22 4px 5px),
-    #c99a49;
+    repeating-linear-gradient(-55deg, var(--fr-hi, #f6e3a1) 0 2px, var(--fr-line2, #b98d3f) 2px 4px, var(--fr-deep, #7a5a22) 4px 5px),
+    var(--fr-base, #c99a49);
   box-shadow: 0 1px 2px rgb(0 0 0 / 0.35);
 }
 /* A small gold ring where each rope meets the frame. */
@@ -914,8 +914,8 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
   height: 9px;
   translate: -50% 0;
   border-radius: 50%;
-  border: 2px solid #c99a49;
-  box-shadow: inset 0 0 0 0.5px #5a3f12, 0 1px 1px rgb(0 0 0 / 0.35);
+  border: 2px solid var(--fr-base, #c99a49);
+  box-shadow: inset 0 0 0 0.5px var(--fr-ink, #5a3f12), 0 1px 1px rgb(0 0 0 / 0.35);
 }
 .sale-rope-l {
   left: 14%;
@@ -987,19 +987,20 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
   align-items: center;
   height: 18px;
   padding: 0 14px;
-  background: linear-gradient(180deg, #f6e3a1 0%, #d8b062 35%, #9c7531 60%, #f1d88e 100%);
+  background: linear-gradient(180deg, var(--fr-hi, #f6e3a1) 0%, var(--fr-mid, #d8b062) 35%, var(--fr-deep, #9c7531) 60%, var(--fr-hi2, #f1d88e) 100%);
   clip-path: polygon(0 0, 100% 0, calc(100% - 7px) 50%, 100% 100%, 0 100%, 7px 50%);
   filter: drop-shadow(0 1px 1px rgb(0 0 0 / 0.4));
   pointer-events: none;
 }
-.sale-plaque .pf-scroll > span {
+.sale-plaque .pf-scroll > .pf-scroll-text {
+  position: relative;
   font-family: var(--font-jakarta), system-ui, sans-serif;
   font-size: 8px;
   font-weight: 700;
   letter-spacing: 0.22em;
   text-transform: uppercase;
   white-space: nowrap;
-  color: #3b2709;
+  color: var(--fr-groove, #3b2709);
   padding-left: 0.22em;
 }
 @media (min-width: 640px) {
@@ -1008,7 +1009,202 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
     padding: 0 20px;
     clip-path: polygon(0 0, 100% 0, calc(100% - 9px) 50%, 100% 100%, 0 100%, 9px 50%);
   }
-  .sale-plaque .pf-scroll > span {
+  .sale-plaque .pf-scroll > .pf-scroll-text {
     font-size: 10px;
   }
+}
+
+/* Plaque backgrounds (lib/plaque.ts; owner, 2026-11-20). Each sets the panel and its
+   text colours: --pl-text (main), --pl-accent (name, link), --pl-muted (line, countdown).
+   The gold frame, ropes, fleurs and crest never change. */
+.sale-plaque {
+  --pl-text: #fbf9f6;
+  --pl-accent: #f6dfc1;
+  --pl-muted: rgb(251 249 246 / 0.8);
+}
+.sale-plaque[data-bg] .pf-panel {
+  background-size: auto;
+}
+/* Damask tile, as on black, in a colour per background (--dm). */
+.sale-plaque[data-bg="emerald"],
+.sale-plaque[data-bg="midnight"],
+.sale-plaque[data-bg="burgundy"],
+.sale-plaque[data-bg="crimson"] {
+  --pl-text: #f8f1e4;
+  --pl-accent: #ecd28f;
+  --pl-muted: rgb(248 241 228 / 0.82);
+}
+.sale-plaque[data-bg="emerald"] .pf-panel {
+  background: radial-gradient(ellipse 70% 120% at 50% 40%, rgb(60 160 110 / 0.28), transparent 70%), linear-gradient(180deg, #0f4a37, #06281d);
+}
+.sale-plaque[data-bg="midnight"] .pf-panel {
+  background: radial-gradient(ellipse 70% 120% at 50% 40%, rgb(90 120 190 / 0.25), transparent 70%), linear-gradient(180deg, #16244a, #070c1c);
+}
+.sale-plaque[data-bg="burgundy"] .pf-panel {
+  background: radial-gradient(ellipse 70% 120% at 50% 40%, rgb(170 50 80 / 0.3), transparent 70%), linear-gradient(180deg, #5c1424, #2b070f);
+}
+.sale-plaque[data-bg="crimson"] .pf-panel {
+  background: radial-gradient(ellipse 70% 120% at 50% 40%, rgb(220 40 70 / 0.35), transparent 70%), linear-gradient(180deg, #8d1022, #560712);
+}
+.sale-plaque[data-bg="ivory"] {
+  --pl-text: #2f2419;
+  --pl-accent: #6c5c44;
+  --pl-muted: rgb(47 36 25 / 0.75);
+}
+.sale-plaque[data-bg="ivory"] .pf-panel {
+  background: radial-gradient(ellipse 70% 120% at 50% 40%, rgb(255 255 255 / 0.7), transparent 70%), linear-gradient(180deg, #fbf6ec, #ebdfc8);
+  box-shadow: inset 0 0 14px rgb(108 92 68 / 0.25);
+}
+
+/* Themes */
+.sale-plaque[data-bg="ice"] {
+  --pl-text: #16304f;
+  --pl-accent: #1f4f80;
+  --pl-muted: rgb(22 48 79 / 0.78);
+  --pl-snow: #5f88b3;
+}
+.sale-plaque[data-bg="ice"] .pf-panel {
+  background:
+    linear-gradient(105deg, transparent 30%, rgb(255 255 255 / 0.6) 44%, transparent 58%),
+    repeating-linear-gradient(60deg, rgb(255 255 255 / 0.35) 0 1px, transparent 1px 14px),
+    repeating-linear-gradient(-60deg, rgb(255 255 255 / 0.25) 0 1px, transparent 1px 18px),
+    radial-gradient(circle at 20% 30%, rgb(255 255 255 / 0.8) 0 2px, transparent 3px),
+    radial-gradient(circle at 70% 70%, rgb(255 255 255 / 0.7) 0 1.5px, transparent 2.5px),
+    linear-gradient(180deg, #f4f9fe, #d3e4f3 60%, #bcd3ea);
+  box-shadow: inset 0 0 16px rgb(70 110 160 / 0.35);
+}
+.sale-plaque[data-bg="summer"] {
+  --pl-text: #3a1608;
+  --pl-accent: #4d1b06;
+  --pl-muted: rgb(58 22 8 / 0.8);
+}
+.sale-plaque[data-bg="summer"] .pf-panel {
+  background:
+    radial-gradient(circle at 50% 130%, rgb(255 236 160 / 0.95) 0 16%, rgb(255 210 110 / 0.5) 30%, transparent 55%),
+    linear-gradient(180deg, #f6ab55, #ec7f45 55%, #d95d3c);
+  box-shadow: inset 0 0 18px rgb(120 30 10 / 0.35);
+}
+.sale-plaque[data-bg="autumn"] {
+  --pl-text: #fdf1e2;
+  --pl-accent: #ffd99c;
+  --pl-muted: rgb(253 241 226 / 0.82);
+}
+.sale-plaque[data-bg="autumn"] .pf-panel {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='60' height='60' viewBox='0 0 60 60'%3E%3Cg fill='none' stroke='%23ffd99c' stroke-opacity='.12' stroke-width='.8'%3E%3Cpath d='M10 50 Q30 30 50 10M22 38l-8-2M30 30l-2-9M38 22l9 2'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse 70% 120% at 50% 40%, rgb(240 140 60 / 0.3), transparent 70%),
+    linear-gradient(180deg, #b9561f, #7d2f13);
+  background-size: 60px 60px, auto, auto;
+}
+.sale-plaque[data-bg="spring"] {
+  --pl-text: #5a2632;
+  --pl-accent: #7d3445;
+  --pl-muted: rgb(90 38 50 / 0.78);
+}
+.sale-plaque[data-bg="spring"] .pf-panel {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='40' height='40' viewBox='0 0 40 40'%3E%3Cg fill='%23fff' fill-opacity='.45'%3E%3Cellipse cx='10' cy='10' rx='2.2' ry='3.4' transform='rotate(30 10 10)'/%3E%3Cellipse cx='30' cy='28' rx='2' ry='3' transform='rotate(-40 30 28)'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse 70% 120% at 50% 40%, rgb(255 255 255 / 0.55), transparent 70%),
+    linear-gradient(180deg, #fde8ec, #f2c4cf);
+  background-size: 40px 40px, auto, auto;
+  box-shadow: inset 0 0 14px rgb(180 90 110 / 0.25);
+}
+.sale-plaque[data-bg="night"] {
+  --pl-text: #fbf6ea;
+  --pl-accent: #ebcd84;
+  --pl-muted: rgb(251 246 234 / 0.8);
+}
+.sale-plaque[data-bg="night"] .pf-panel {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='90' height='60' viewBox='0 0 90 60'%3E%3Cg fill='%23fff'%3E%3Ccircle cx='8' cy='12' r='.8' fill-opacity='.8'/%3E%3Ccircle cx='40' cy='6' r='.6' fill-opacity='.6'/%3E%3Ccircle cx='70' cy='22' r='1' fill-opacity='.7'/%3E%3Ccircle cx='25' cy='40' r='.6' fill-opacity='.5'/%3E%3Ccircle cx='58' cy='50' r='.8' fill-opacity='.65'/%3E%3Ccircle cx='84' cy='44' r='.5' fill-opacity='.5'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(circle at 82% 28%, rgb(255 238 190 / 0.28) 0 6%, transparent 22%),
+    linear-gradient(180deg, #172649, #060b1a);
+  background-size: 90px 60px, auto, auto;
+}
+.sale-plaque[data-bg="marble"] {
+  --pl-text: #2a2420;
+  --pl-accent: #6c5c44;
+  --pl-muted: rgb(42 36 32 / 0.75);
+}
+.sale-plaque[data-bg="marble"] .pf-panel {
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='220' height='80' viewBox='0 0 220 80'%3E%3Cg fill='none' stroke-linecap='round'%3E%3Cpath d='M-10 60 C40 30 70 70 120 40 S190 10 230 30' stroke='%23a99b8c' stroke-opacity='.35' stroke-width='.9'/%3E%3Cpath d='M20 -5 C40 30 30 50 70 85' stroke='%23c9a35b' stroke-opacity='.28' stroke-width='.7'/%3E%3Cpath d='M150 -5 C140 20 170 45 160 85' stroke='%23a99b8c' stroke-opacity='.25' stroke-width='.6'/%3E%3C/g%3E%3C/svg%3E"),
+    radial-gradient(ellipse 70% 120% at 50% 40%, rgb(255 255 255 / 0.8), transparent 70%),
+    linear-gradient(180deg, #f7f4ef, #e6e0d6);
+  background-size: 220px 80px, auto, auto;
+  box-shadow: inset 0 0 14px rgb(90 80 70 / 0.22);
+}
+
+/* The 12.12 mini plaque follows the sale's background in simplified form (colours
+   only, no texture); the percent chip always stays champagne. */
+@layer components {
+  .mini-plaque-dark[data-bg="emerald"] .mp-panel { background: linear-gradient(180deg, #15583f, #06281d); }
+  .mini-plaque-dark[data-bg="midnight"] .mp-panel { background: linear-gradient(180deg, #1c2c55, #070c1c); }
+  .mini-plaque-dark[data-bg="burgundy"] .mp-panel { background: linear-gradient(180deg, #6a1a2c, #2b070f); }
+  .mini-plaque-dark[data-bg="crimson"] .mp-panel { background: linear-gradient(180deg, #9c1427, #560712); }
+  .mini-plaque-dark[data-bg="autumn"] .mp-panel { background: linear-gradient(180deg, #c25e24, #7d2f13); }
+  .mini-plaque-dark[data-bg="night"] .mp-panel { background: linear-gradient(180deg, #1d2d55, #060b1a); }
+  .mini-plaque-dark[data-bg="ice"] { color: #16304f; }
+  .mini-plaque-dark[data-bg="ice"] .mp-panel { background: linear-gradient(180deg, #f4f9fe, #c3d8ec); }
+  .mini-plaque-dark[data-bg="summer"] { color: #3a1608; }
+  .mini-plaque-dark[data-bg="summer"] .mp-panel { background: linear-gradient(180deg, #f7b060, #de6540); }
+  .mini-plaque-dark[data-bg="spring"] { color: #5a2632; }
+  .mini-plaque-dark[data-bg="spring"] .mp-panel { background: linear-gradient(180deg, #fdeaee, #efbccb); }
+  .mini-plaque-dark[data-bg="marble"],
+  .mini-plaque-dark[data-bg="ivory"] { color: #2f2419; }
+  .mini-plaque-dark[data-bg="marble"] .mp-panel { background: linear-gradient(180deg, #faf7f2, #e3ddd2); }
+  .mini-plaque-dark[data-bg="ivory"] .mp-panel { background: linear-gradient(180deg, #fcf7ee, #e9dcc3); }
+  /* Light tags get a deeper gold edge so they stand out on white cards. */
+  .mini-plaque-dark:is([data-bg="ice"], [data-bg="summer"], [data-bg="spring"], [data-bg="marble"], [data-bg="ivory"]) .mp-frame {
+    background: linear-gradient(180deg, var(--fr-mid, #e7c779), var(--fr-deep, #a77b31) 55%, var(--fr-base, #d9b465));
+  }
+}
+
+/* The greeting's scroll with a background of its own (owner, 2026-11-20): a fine gold edge
+   around a fill in the background's colours, like the 12.12 mini plaque. */
+.sale-plaque .pf-scroll-fill {
+  position: absolute;
+  inset: 1.5px;
+  clip-path: polygon(0 0, 100% 0, calc(100% - 6px) 50%, 100% 100%, 0 100%, 6px 50%);
+  background: linear-gradient(180deg, #24201a, #050403);
+}
+@media (min-width: 640px) {
+  .sale-plaque .pf-scroll-fill {
+    clip-path: polygon(0 0, 100% 0, calc(100% - 8px) 50%, 100% 100%, 0 100%, 8px 50%);
+  }
+}
+.sale-plaque .pf-scroll[data-bg] > .pf-scroll-text { color: #f6dfc1; }
+.sale-plaque .pf-scroll[data-bg="emerald"] .pf-scroll-fill { background: linear-gradient(180deg, #15583f, #06281d); }
+.sale-plaque .pf-scroll:is([data-bg="midnight"], [data-bg="night"]) .pf-scroll-fill { background: linear-gradient(180deg, #1d2d55, #060b1a); }
+.sale-plaque .pf-scroll[data-bg="burgundy"] .pf-scroll-fill { background: linear-gradient(180deg, #6a1a2c, #2b070f); }
+.sale-plaque .pf-scroll[data-bg="crimson"] .pf-scroll-fill { background: linear-gradient(180deg, #9c1427, #560712); }
+.sale-plaque .pf-scroll[data-bg="autumn"] .pf-scroll-fill { background: linear-gradient(180deg, #c25e24, #7d2f13); }
+.sale-plaque .pf-scroll[data-bg="ice"] .pf-scroll-fill { background: linear-gradient(180deg, #f4f9fe, #c3d8ec); }
+.sale-plaque .pf-scroll[data-bg="summer"] .pf-scroll-fill { background: linear-gradient(180deg, #f7b060, #de6540); }
+.sale-plaque .pf-scroll[data-bg="spring"] .pf-scroll-fill { background: linear-gradient(180deg, #fdeaee, #efbccb); }
+.sale-plaque .pf-scroll[data-bg="marble"] .pf-scroll-fill { background: linear-gradient(180deg, #faf7f2, #e3ddd2); }
+.sale-plaque .pf-scroll[data-bg="ivory"] .pf-scroll-fill { background: linear-gradient(180deg, #fcf7ee, #e9dcc3); }
+.sale-plaque .pf-scroll[data-bg="ice"] > .pf-scroll-text { color: #16304f; }
+.sale-plaque .pf-scroll[data-bg="summer"] > .pf-scroll-text { color: #3a1608; }
+.sale-plaque .pf-scroll[data-bg="spring"] > .pf-scroll-text { color: #5a2632; }
+.sale-plaque .pf-scroll:is([data-bg="marble"], [data-bg="ivory"]) > .pf-scroll-text { color: #2f2419; }
+
+/* Frame finishes (lib/plaque.ts PLAQUE_FRAMES; owner, 2026-11-20): one set of colours for
+   the frame, ropes, fleurs, crest, scroll edge and the 12.12 mini plaque. Gold is the
+   default (the var() fallbacks above); [data-frame] on .sale-hang or a mini plaque swaps it. */
+[data-frame="frost"] {
+  --fr-hi: #f6fafd; --fr-mid: #c9d6e4; --fr-deep: #7f93aa; --fr-base: #a9bccf; --fr-hi2: #e6eef7;
+  --fr-groove: #2c3a4c; --fr-groove2: #5d6f84; --fr-line: #ffffff; --fr-line2: #9fb3c8; --fr-ink: #3e4f63;
+}
+[data-frame="rosegold"] {
+  --fr-hi: #f9e0d4; --fr-mid: #dba48f; --fr-deep: #9a5f4e; --fr-base: #c98a76; --fr-hi2: #f2cbb9;
+  --fr-groove: #4a2a22; --fr-groove2: #7a4a3e; --fr-line: #fbe8de; --fr-line2: #c58471; --fr-ink: #5c3328;
+}
+[data-frame="bronze"] {
+  --fr-hi: #ecc79f; --fr-mid: #bb7a42; --fr-deep: #6d3f1c; --fr-base: #a06331; --fr-hi2: #ddb07e;
+  --fr-groove: #2f1a0b; --fr-groove2: #5b3517; --fr-line: #f1d2ab; --fr-line2: #a2602e; --fr-ink: #3f240f;
+}
+[data-frame="platinum"] {
+  --fr-hi: #fdfdfc; --fr-mid: #dcdbd6; --fr-deep: #9a9890; --fr-base: #c1bfb8; --fr-hi2: #f0efeb;
+  --fr-groove: #3a3935; --fr-groove2: #6d6b65; --fr-line: #ffffff; --fr-line2: #b8b6ae; --fr-ink: #4a4843;
 }

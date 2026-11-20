@@ -7,6 +7,7 @@ import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/dal";
 import { MAX_DISCOUNT, productCategories, type ProductCategory } from "@/lib/products";
 import { SALE_MOTIFS, saleScopes } from "@/lib/sale-events";
+import { PLAQUE_BACKGROUNDS, PLAQUE_FRAMES } from "@/lib/plaque";
 import { getPublishedProducts } from "@/lib/server/products";
 import { SALE_EVENTS_TAG, saleEvents, type SaleEventDoc } from "@/lib/server/sale-events";
 
@@ -37,6 +38,8 @@ const schema = z
     teaser: z.boolean(),
     allowCoupons: z.boolean(),
     motif: z.enum(SALE_MOTIFS, "Choose what falls on the banner."),
+    background: z.enum(PLAQUE_BACKGROUNDS, "Choose a background."),
+    frame: z.enum(PLAQUE_FRAMES, "Choose a frame."),
   })
   .superRefine((d, ctx) => {
     if (pkt(d.endsAt) <= pkt(d.startsAt)) ctx.addIssue({ code: "custom", path: ["endsAt"], message: "The end must be after the start." });
@@ -69,6 +72,8 @@ export async function saveSale(_: SaleFormState, fd: FormData): Promise<SaleForm
     teaser: fd.get("teaser") === "on",
     allowCoupons: fd.get("allowCoupons") === "on",
     motif: String(fd.get("motif") || "general"),
+    background: String(fd.get("background") || "black"),
+    frame: String(fd.get("frame") || "gold"),
   });
   if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors, message: "Please fix the highlighted fields." };
   const d = parsed.data;
@@ -88,6 +93,8 @@ export async function saveSale(_: SaleFormState, fd: FormData): Promise<SaleForm
     teaser: d.teaser,
     allowCoupons: d.allowCoupons,
     motif: d.motif,
+    background: d.background,
+    frame: d.frame,
     updatedAt: now,
   };
   const col = await saleEvents();

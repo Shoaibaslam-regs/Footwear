@@ -6,6 +6,7 @@ import { updateTag } from "next/cache";
 import { z } from "zod";
 import { requireAdmin } from "@/lib/auth/dal";
 import { GREETING_STYLES, isShopLink } from "@/lib/greetings";
+import { PLAQUE_BACKGROUNDS, PLAQUE_FRAMES } from "@/lib/plaque";
 import { GREETINGS_TAG, greetings, type GreetingDoc } from "@/lib/server/greetings";
 
 export type GreetingFormState = { errors?: Record<string, string[] | undefined>; message?: string } | undefined;
@@ -19,6 +20,9 @@ const schema = z
     message: z.string().trim().min(2, "Write the greeting, e.g. Eid Mubarak.").max(40, "Keep the greeting under 40 characters."),
     line: z.string().trim().max(100, "Keep the line under 100 characters."),
     style: z.enum(GREETING_STYLES, "Choose the occasion."),
+    background: z.enum(PLAQUE_BACKGROUNDS, "Choose a background."),
+    scrollBg: z.enum(["gold", ...PLAQUE_BACKGROUNDS], "Choose the scroll's background."),
+    frame: z.enum(PLAQUE_FRAMES, "Choose a frame."),
     linkLabel: z.string().trim().max(30, "Keep the link text under 30 characters."),
     linkHref: z.string().trim().max(200),
     startsAt: when,
@@ -33,11 +37,11 @@ const schema = z
 export async function saveGreeting(_: GreetingFormState, fd: FormData): Promise<GreetingFormState> {
   await requireAdmin();
   const id = String(fd.get("id") ?? "");
-  const parsed = schema.safeParse(Object.fromEntries(["message", "line", "style", "linkLabel", "linkHref", "startsAt", "endsAt"].map((k) => [k, String(fd.get(k) ?? "")])));
+  const parsed = schema.safeParse({ ...Object.fromEntries(["message", "line", "style", "background", "linkLabel", "linkHref", "startsAt", "endsAt"].map((k) => [k, String(fd.get(k) ?? "")])), scrollBg: String(fd.get("scrollBg") || "gold"), frame: String(fd.get("frame") || "gold") });
   if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors, message: "Please fix the highlighted fields." };
   const d = parsed.data;
   const now = new Date();
-  const fields = { message: d.message, line: d.line, style: d.style, linkLabel: d.linkLabel, linkHref: d.linkHref, startsAt: pkt(d.startsAt), endsAt: pkt(d.endsAt), updatedAt: now };
+  const fields = { message: d.message, line: d.line, style: d.style, background: d.background, scrollBg: d.scrollBg, frame: d.frame, linkLabel: d.linkLabel, linkHref: d.linkHref, startsAt: pkt(d.startsAt), endsAt: pkt(d.endsAt), updatedAt: now };
   const col = await greetings();
   if (id) {
     if (!ObjectId.isValid(id)) return { message: "Unknown greeting." };

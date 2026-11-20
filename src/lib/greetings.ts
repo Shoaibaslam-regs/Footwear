@@ -1,3 +1,5 @@
+import type { PlaqueBg, PlaqueFrame } from "./plaque";
+
 /**
  * Greetings: festive wishes such as "Eid Mubarak" or "Ramadan Kareem" shown
  * on the home page's hanging plaque (owner, 2026-11-18). Managed at
@@ -23,6 +25,12 @@ export type Greeting = {
   message: string;
   line: string;
   style: GreetingStyle;
+  /** The plaque's background when the greeting shows alone (lib/plaque.ts); default black. */
+  background?: PlaqueBg;
+  /** The small scroll's fill when the greeting rides on a sale plaque: "gold" (default) or a plaque background. */
+  scrollBg?: "gold" | PlaqueBg;
+  /** The plaque's frame finish when the greeting shows alone; default gold. */
+  frame?: PlaqueFrame;
   /** Optional link, e.g. "Shop the Eid Edit" → "/collections?category=bridal". */
   linkLabel: string;
   linkHref: string;

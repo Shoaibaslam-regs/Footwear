@@ -5,6 +5,7 @@ import type { ProductCategory } from "../products";
 import { livePrice, upToPercent, type LivePrice, type SaleEvent, type SaleMotif, type SaleScope } from "../sale-events";
 import { getPublishedProducts } from "./products";
 import { getDb } from "./db";
+import type { PlaqueBg, PlaqueFrame } from "../plaque";
 
 /** Cache tag for sale events: every admin change calls updateTag(SALE_EVENTS_TAG). */
 export const SALE_EVENTS_TAG = "sale-events";
@@ -25,6 +26,8 @@ export type SaleEventDoc = {
   teaser: boolean;
   allowCoupons: boolean;
   motif?: SaleMotif;
+  background?: PlaqueBg;
+  frame?: PlaqueFrame;
   stoppedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -48,6 +51,8 @@ export const toSaleEvent = (d: SaleEventDoc): SaleEvent => ({
   teaser: d.teaser,
   allowCoupons: d.allowCoupons,
   motif: d.motif ?? "general",
+  background: d.background ?? "black",
+  frame: d.frame ?? "gold",
   stoppedAt: d.stoppedAt ? d.stoppedAt.toISOString() : null,
 });
 

@@ -1,4 +1,5 @@
 import { MAX_DISCOUNT, type ProductCategory } from "./products";
+import type { PlaqueBg, PlaqueFrame } from "./plaque";
 
 /**
  * Sale events ("11.11 Sale"): a discount over listings for a time window,
@@ -46,6 +47,10 @@ export type SaleEvent = {
   allowCoupons: boolean;
   /** What falls inside the home plaque (owner, 2026-11-19); a live greeting's motif wins. Default "general" (roses). */
   motif?: SaleMotif;
+  /** The plaque's background (lib/plaque.ts); default black. */
+  background?: PlaqueBg;
+  /** The plaque's frame finish (lib/plaque.ts); default gold. */
+  frame?: PlaqueFrame;
   /** Set when the admin stopped it early. */
   stoppedAt: string | null;
 };

@@ -126,7 +126,7 @@ export const products: Record<string, ProductDetail> = {
       { label: "Heel Height", value: "95mm (3.74 inches)" },
       { label: "Upper Material", value: "100% silk satin" },
       { label: "Insole", value: "Soft two-layer memory foam" },
-      { label: "Sole", value: "Hand-polished Italian leather" },
+      { label: "Sole", value: "Hand-polished leather" },
       { label: "Hardware", value: "Brass buckle with 24k gold coating" },
       { label: "Origin", value: "Handmade in Karachi, Pakistan" },
     ],

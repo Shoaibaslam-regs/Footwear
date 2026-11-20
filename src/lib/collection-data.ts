@@ -50,7 +50,7 @@ export const catalogProducts: CatalogProduct[] = [
     price: 134_400,
     swatches: ["bg-primary", "bg-secondary"],
     quickSizes: [36, 37, 38, 39],
-    alt: "Espresso brown Italian nappa leather mule with a sculpted 75mm wooden heel",
+    alt: "Espresso brown nappa leather mule with a sculpted 75mm wooden heel",
     image: IMG + "AB6AXuBRg-Zdl3OTCL5wWUcKWsQH87k5fDBptfLx5iVHDje_B7DevXjpPLhd2v6Hk8_VkuLeqE6lXfAA_rjKUpKc8BneLGqoBggkcpmlnSxfaSF50RZ6meJCqAb2IB6jeCRduqy4gSflENdAbZlDZrHW-jRHcgqBkYx6NddnospDubQhbscCZjgbLnmIg_FofhJgPyW5ZjrFE64vNQJjnjgNaSOmScLdqjXMxiCD23DqUgA",
   },
   {
@@ -134,12 +134,12 @@ export const assurances = [
   {
     icon: "support_agent",
     title: "Personal Styling Help",
-    text: "Talk to our shoe experts in Karachi on video call or chat. They help with sizing and choosing shoes for any event.",
+    text: "Message us on WhatsApp. We help with sizing and choosing shoes for any event.",
   },
   {
     icon: "workspace_premium",
     title: "Made in Karachi",
-    text: "Made in certified family workshops in Karachi, checked for eco-friendly practices.",
+    text: "Designed and made in Karachi, Pakistan.",
   },
 ];
 
