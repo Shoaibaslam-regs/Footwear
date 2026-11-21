@@ -9,6 +9,7 @@ import Motion from "@/components/Motion";
 import { SaleProvider } from "@/components/sale/SaleProvider";
 import { getSaleEvents } from "@/lib/server/sale-events";
 import { getGreetings } from "@/lib/server/greetings";
+import SiteSkin from "@/components/sale/SiteSkin";
 
 /**
  * Storefront chrome: header, footer and the global toast. The sale schedule
@@ -29,6 +30,7 @@ export default async function ShopLayout({ children }: { children: React.ReactNo
       <Suspense fallback={null}>
         <CartDrawerHost />
         <WhatsAppButton />
+        <SiteSkin />
       </Suspense>
     </SaleProvider>
   );

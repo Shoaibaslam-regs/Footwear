@@ -1208,3 +1208,307 @@ body:has(#not-found) .shop-main { padding-top: 0; min-height: 0; }
   --fr-hi: #fdfdfc; --fr-mid: #dcdbd6; --fr-deep: #9a9890; --fr-base: #c1bfb8; --fr-hi2: #f0efeb;
   --fr-groove: #3a3935; --fr-groove2: #6d6b65; --fr-line: #ffffff; --fr-line2: #b8b6ae; --fr-ink: #4a4843;
 }
+
+/* ── Frozen ice skin (owner, 2026-11-21: "realistic") ──────────────────────
+   On while a sale with "Dress the whole shop in this theme" and the Solid Ice
+   background is live (components/sale/SiteSkin.tsx sets html[data-skin]; not
+   on checkout). Each header icon is sealed in a small, slightly uneven block
+   of clear ice: a cool translucent body with depth, rime frost creeping in
+   from the edges, hairline cracks and trapped bubbles, a sharp specular
+   streak and a thin haze in front of the icon so it reads as inside the ice.
+   Icicles (public/skin/icicles.svg) hang from a rime ridge under the header
+   bar; Add to Bag gets frost along its edges. Icons and text stay readable.
+   No motion with reduced motion; hidden in forced colours. */
+html[data-skin="ice"] .skin-icon {
+  position: relative;
+  isolation: isolate;
+  color: #2a4d70;
+}
+html[data-skin="ice"] .skin-icon > .material-symbols-outlined {
+  filter: drop-shadow(0 0 0.6px rgba(255, 255, 255, 0.9)) drop-shadow(0 1px 1px rgba(40, 90, 140, 0.25));
+  opacity: 0.92;
+}
+/* The block: body, frost, cracks and bubbles, with depth from the shadows. */
+html[data-skin="ice"] .skin-icon::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: -1;
+  border-radius: 11px 8px 12px 9px / 9px 12px 8px 11px;
+  background:
+    url("/skin/ice-frost.svg") center / 100% 100% no-repeat,
+    url("/skin/ice-cracks.svg") center / 100% 100% no-repeat,
+    radial-gradient(ellipse 70% 55% at 62% 62%, rgba(120, 175, 225, 0.28), transparent 70%),
+    linear-gradient(158deg, rgba(244, 250, 255, 0.82) 0%, rgba(205, 228, 246, 0.7) 38%, rgba(165, 205, 236, 0.72) 72%, rgba(128, 178, 222, 0.8) 100%);
+  -webkit-backdrop-filter: blur(2px) saturate(1.2);
+  backdrop-filter: blur(2px) saturate(1.2);
+  box-shadow:
+    inset 1.5px 1.5px 0 rgba(255, 255, 255, 0.95),
+    inset -2px -3px 4px rgba(70, 125, 180, 0.38),
+    inset 0 0 6px rgba(255, 255, 255, 0.45),
+    0 0 0 0.5px rgba(110, 160, 205, 0.75),
+    0 3px 6px -1px rgba(40, 95, 150, 0.28),
+    0 1px 1px rgba(40, 95, 150, 0.2);
+  transition: box-shadow 0.3s, filter 0.3s;
+}
+/* In front of the icon: a faint haze, a sharp streak of light, and now and then a glint. */
+html[data-skin="ice"] .skin-icon::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 1;
+  border-radius: 11px 8px 12px 9px / 9px 12px 8px 11px;
+  pointer-events: none;
+  background:
+    linear-gradient(115deg, transparent 38%, rgba(255, 255, 255, 0.75) 50%, transparent 62%) -160% 0 / 250% 100% no-repeat,
+    linear-gradient(132deg, transparent 18%, rgba(255, 255, 255, 0.55) 19%, rgba(255, 255, 255, 0.12) 27%, transparent 28%),
+    radial-gradient(ellipse 45% 30% at 26% 20%, rgba(255, 255, 255, 0.6), transparent 70%),
+    linear-gradient(180deg, rgba(235, 246, 255, 0.16), rgba(200, 225, 245, 0.1));
+}
+html[data-skin="ice"] .skin-icon:hover::before {
+  filter: brightness(1.05) saturate(1.1);
+  box-shadow:
+    inset 1.5px 1.5px 0 #fff,
+    inset -2px -3px 4px rgba(70, 125, 180, 0.38),
+    inset 0 0 6px rgba(255, 255, 255, 0.5),
+    0 0 0 0.5px rgba(100, 155, 205, 0.9),
+    0 3px 8px -1px rgba(40, 95, 150, 0.3),
+    0 0 12px rgba(150, 200, 240, 0.5);
+}
+html[data-skin="ice"] .skin-icon:hover { color: #183a5c; }
+/* Counts: a bead of ice. */
+html[data-skin="ice"] .skin-count {
+  z-index: 2;
+  background:
+    radial-gradient(circle at 35% 28%, #fff 0 18%, transparent 40%),
+    linear-gradient(160deg, #eef7ff, #9fc6e8 70%, #7fb0dc);
+  color: #12314f;
+  box-shadow: inset 0 -1px 2px rgba(50, 105, 160, 0.4), 0 0 0 1px rgba(255, 255, 255, 0.9), 0 1px 3px rgba(30, 80, 130, 0.35);
+}
+/* Icicles under the header bar. */
+html[data-skin="ice"] .site-bar::after {
+  content: "";
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: calc(100% - 1px);
+  height: 20px;
+  pointer-events: none;
+  background: url("/skin/icicles.svg") 0 0 / 180px 20px repeat-x;
+  filter: drop-shadow(0 1.5px 1.5px rgba(40, 90, 140, 0.22));
+}
+@media (max-width: 639px) {
+  html[data-skin="ice"] .site-bar::after {
+    height: 16px;
+    background-size: 144px 16px;
+  }
+}
+/* Add to Bag: still dark and clear, with frost along its edges and a cold rim. */
+html[data-skin="ice"] .skin-cta {
+  background-image: url("/skin/ice-frost-wide.svg"), linear-gradient(180deg, rgba(200, 228, 250, 0.16), transparent 50%);
+  background-size: 100% 100%;
+  background-repeat: no-repeat;
+  box-shadow:
+    inset 0 1px 0 rgba(235, 246, 255, 0.55),
+    inset 0 0 0 1px rgba(190, 220, 245, 0.35),
+    0 0 0 1px rgba(150, 192, 228, 0.7),
+    0 0 14px rgba(150, 192, 228, 0.32);
+}
+/* The 12.12 ice tag: a tiny four-point glint on its corner. */
+html[data-skin="ice"] .mini-plaque-dark[data-bg="ice"]::after {
+  content: "";
+  position: absolute;
+  top: -3px;
+  right: 2px;
+  width: 7px;
+  height: 7px;
+  z-index: 3;
+  pointer-events: none;
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10'%3E%3Cpath fill='%23ffffff' d='M5 0l1 4 4 1-4 1-1 4-1-4-4-1 4-1z'/%3E%3C/svg%3E") center / contain no-repeat;
+  filter: drop-shadow(0 0 1.5px rgba(120, 175, 225, 0.9));
+}
+@media (prefers-reduced-motion: no-preference) {
+  html[data-skin="ice"] .skin-icon::after {
+    animation: iceGlint 8s ease-in-out infinite;
+  }
+  html[data-skin="ice"] .skin-icon:nth-of-type(2)::after { animation-delay: 1.3s; }
+  html[data-skin="ice"] .skin-icon:nth-of-type(3)::after { animation-delay: 2.6s; }
+  html[data-skin="ice"] .skin-icon:nth-of-type(4)::after { animation-delay: 3.9s; }
+  html[data-skin="ice"] .mini-plaque-dark[data-bg="ice"]::after {
+    animation: iceTwinkle 3.2s ease-in-out infinite;
+  }
+}
+@keyframes iceGlint {
+  0%, 72% { background-position: -160% 0, 0 0, 0 0, 0 0; }
+  86%, 100% { background-position: 260% 0, 0 0, 0 0, 0 0; }
+}
+@keyframes iceTwinkle {
+  0%, 100% { opacity: 0.35; transform: scale(0.7) rotate(0deg); }
+  50% { opacity: 1; transform: scale(1) rotate(45deg); }
+}
+/* ── Frozen ice skin: the rest of the page (owner, 2026-11-21) ──────────── */
+/* Hero: frosted-window corners (big at the top, small at the bottom, so the
+   headline and button stay clear) and soft snow (components/sale/HeroWinter.tsx). */
+.skin-frost-window,
+.skin-snow,
+.skin-snowcap { display: none; }
+html[data-skin="ice"] .skin-frost-window {
+  display: block;
+  position: absolute;
+  /* The hero runs under the fixed header (7rem); the frost starts below it. */
+  inset: 7rem 0 0;
+  pointer-events: none;
+  --frost-mask:
+    radial-gradient(ellipse 30% 34% at 0 0, #000 0 18%, rgba(0, 0, 0, 0.45) 55%, transparent 100%),
+    radial-gradient(ellipse 30% 34% at 100% 0, #000 0 18%, rgba(0, 0, 0, 0.45) 55%, transparent 100%),
+    radial-gradient(ellipse 13% 12% at 0 100%, rgba(0, 0, 0, 0.5), transparent 100%),
+    radial-gradient(ellipse 18% 16% at 100% 100%, rgba(0, 0, 0, 0.75) 0 15%, transparent 100%);
+  background:
+    url("/skin/frost-grain.svg") 0 0 / 220px 220px,
+    radial-gradient(ellipse 45% 50% at 0 0, rgba(232, 243, 255, 0.5), transparent 70%),
+    radial-gradient(ellipse 45% 50% at 100% 0, rgba(232, 243, 255, 0.5), transparent 70%),
+    radial-gradient(ellipse 25% 25% at 100% 100%, rgba(232, 243, 255, 0.35), transparent 70%);
+  -webkit-mask-image: var(--frost-mask);
+  mask-image: var(--frost-mask);
+}
+html[data-skin="ice"] .skin-snow {
+  display: block;
+  position: absolute;
+  inset: 0;
+  overflow: hidden;
+  pointer-events: none;
+  container-type: size;
+}
+.skin-snow > span {
+  position: absolute;
+  top: -12px;
+  width: var(--s);
+  height: var(--s);
+  animation: snowFall var(--dur) linear var(--delay) infinite;
+  will-change: transform;
+}
+.skin-snow > span > i {
+  display: block;
+  width: 100%;
+  height: 100%;
+  border-radius: 50%;
+  background: radial-gradient(circle at 40% 35%, #fff 0 35%, rgba(255, 255, 255, 0.85) 55%, rgba(225, 240, 255, 0) 100%);
+  filter: blur(var(--blur));
+  opacity: 0.9;
+  animation: snowSway calc(var(--dur) / 3) ease-in-out var(--delay) infinite alternate;
+}
+@media (max-width: 639px) {
+  .skin-snow > span:nth-child(n + 10) { display: none; }
+}
+@keyframes snowFall {
+  from { transform: translate3d(0, 0, 0); }
+  to { transform: translate3d(0, calc(100cqh + 24px), 0); }
+}
+@keyframes snowSway {
+  from { transform: translateX(calc(var(--sway) * -0.5)); }
+  to { transform: translateX(calc(var(--sway) * 0.5)); }
+}
+@media (prefers-reduced-motion: reduce) {
+  html[data-skin="ice"] .skin-snow { display: none; }
+}
+
+/* Section headings: the number turns icy and a tiny snowflake sits on the hairline. */
+html[data-skin="ice"] .skin-eyebrow > span:first-child { color: #6f94b8; }
+html[data-skin="ice"] .skin-eyebrow-line {
+  background: linear-gradient(90deg, rgba(140, 180, 215, 0.2), rgba(140, 180, 215, 0.75), rgba(140, 180, 215, 0.2));
+}
+html[data-skin="ice"] .skin-eyebrow-line::after {
+  content: "";
+  position: absolute;
+  left: 50%;
+  top: 50%;
+  width: 11px;
+  height: 11px;
+  transform: translate(-50%, -50%);
+  background: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='-6 -6 12 12'%3E%3Cg stroke='%237aa3c8' stroke-width='.8' stroke-linecap='round'%3E%3Cpath d='M0-5V5M-4.3-2.5L4.3 2.5M-4.3 2.5L4.3-2.5'/%3E%3Cpath d='M-1.2-3.8L0-2.6 1.2-3.8M-1.2 3.8L0 2.6 1.2 3.8M-3.9-.7L-2.3-1.4-2.6-3M3.9.7L2.3 1.4 2.6 3M-3.9.7L-2.3 1.4-2.6 3M3.9-.7L2.3-1.4 2.6-3' fill='none'/%3E%3C/g%3E%3C/svg%3E") center / contain no-repeat;
+  background-color: var(--color-surface);
+  border-radius: 50%;
+  box-shadow: 0 0 0 2px var(--color-surface);
+}
+
+/* Category tiles: the name on a small frosted-glass plate. */
+html[data-skin="ice"] .skin-plate {
+  align-self: flex-start;
+  max-width: 100%;
+  margin: -6px;
+  padding: 8px 12px 9px;
+  border-radius: 8px;
+  background: linear-gradient(160deg, rgba(235, 245, 255, 0.22), rgba(170, 205, 235, 0.12));
+  -webkit-backdrop-filter: blur(8px) saturate(1.2);
+  backdrop-filter: blur(8px) saturate(1.2);
+  box-shadow: inset 0 1px 0 rgba(255, 255, 255, 0.45), inset 0 0 0 1px rgba(220, 236, 250, 0.35), 0 4px 14px rgba(10, 30, 50, 0.18);
+}
+@media (min-width: 768px) {
+  html[data-skin="ice"] .skin-plate { margin: -10px; padding: 12px 16px 13px; }
+}
+
+/* Shoe cards: on hover (mouse only), a cold glow and frost in the photo's corners. */
+html[data-skin="ice"] .skin-card::after {
+  content: "";
+  position: absolute;
+  inset: 0;
+  z-index: 4;
+  pointer-events: none;
+  border-radius: inherit;
+  opacity: 0;
+  transition: opacity 0.6s var(--ease-lux);
+  background: url("/skin/frost-grain.svg") 0 0 / 220px 220px, radial-gradient(ellipse 50% 40% at 0 0, rgba(235, 245, 255, 0.5), transparent 70%), radial-gradient(ellipse 50% 40% at 100% 100%, rgba(235, 245, 255, 0.45), transparent 70%);
+  -webkit-mask-image: radial-gradient(ellipse 48% 38% at 0 0, #000 0 20%, transparent 100%), radial-gradient(ellipse 48% 38% at 100% 100%, #000 0 20%, transparent 100%);
+  mask-image: radial-gradient(ellipse 48% 38% at 0 0, #000 0 20%, transparent 100%), radial-gradient(ellipse 48% 38% at 100% 100%, #000 0 20%, transparent 100%);
+}
+@media (hover: hover) and (pointer: fine) {
+  html[data-skin="ice"] .skin-card { transition: box-shadow 0.6s var(--ease-lux); }
+  html[data-skin="ice"] .group:hover .skin-card {
+    box-shadow: 0 0 0 1px rgba(170, 205, 235, 0.7), 0 10px 30px -8px rgba(90, 145, 200, 0.45);
+  }
+  html[data-skin="ice"] .group:hover .skin-card::after { opacity: 1; }
+}
+
+/* The heart on cards: a small bead of ice. */
+html[data-skin="ice"] .skin-bead {
+  background:
+    radial-gradient(circle at 32% 26%, rgba(255, 255, 255, 0.95) 0 14%, transparent 38%),
+    url("/skin/ice-frost.svg") center / 100% 100% no-repeat,
+    linear-gradient(160deg, rgba(246, 251, 255, 0.92), rgba(196, 223, 245, 0.9) 60%, rgba(150, 192, 228, 0.92));
+  box-shadow: inset 1px 1px 0 #fff, inset -1.5px -2px 3px rgba(70, 125, 180, 0.35), 0 0 0 0.5px rgba(110, 160, 205, 0.75), 0 3px 8px -2px rgba(40, 95, 150, 0.35);
+}
+html[data-skin="ice"] .skin-bead:not([aria-pressed="true"]) { color: #2a4d70; }
+
+/* "View all" links: an icy underline that is always faintly there. */
+html[data-skin="ice"] .skin-link {
+  --draw-color: #7fa9cf;
+  background-image: linear-gradient(90deg, #a9c9e6, #6f9cc6), linear-gradient(90deg, rgba(150, 190, 225, 0.35), rgba(150, 190, 225, 0.35));
+  background-size: 0% 1px, 100% 1px;
+  background-position: 0 100%, 0 100%;
+  background-repeat: no-repeat;
+}
+html[data-skin="ice"] .skin-link:hover,
+html[data-skin="ice"] .skin-link:focus-visible { background-size: 100% 1px, 100% 1px; }
+
+/* Footer: snow resting on its top edge, with short icicles below. */
+html[data-skin="ice"] .skin-snowcap {
+  display: block;
+  position: absolute;
+  left: 0;
+  right: 0;
+  top: -9px;
+  height: 26px;
+  z-index: 1;
+  pointer-events: none;
+  background: url("/skin/snowcap.svg") 0 0 / 240px 26px repeat-x;
+  filter: drop-shadow(0 -1px 2px rgba(90, 140, 190, 0.15));
+}
+
+@media (forced-colors: active) {
+  html[data-skin="ice"] .skin-icon::before,
+  html[data-skin="ice"] .skin-icon::after,
+  html[data-skin="ice"] .site-bar::after,
+  html[data-skin="ice"] .skin-card::after,
+  html[data-skin="ice"] .skin-frost-window,
+  html[data-skin="ice"] .skin-snowcap { display: none; }
+}

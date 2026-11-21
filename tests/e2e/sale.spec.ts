@@ -40,8 +40,9 @@ test("a sale: created in the admin, shown on the site, charged at checkout, stop
   await admin.getByLabel(`Percent off ${shoe.name}`).fill("30");
   await expect(admin.getByText("Up to 30% off")).toBeVisible(); // the preview works it out
   await admin.getByLabel("Falling motif").selectOption("winter");
-  await admin.getByLabel("Background").selectOption("ice");
+  await admin.locator('select[name="background"]').selectOption("ice");
   await admin.locator('select[name="frame"]').selectOption("frost");
+  await admin.getByLabel("Dress the whole shop in this theme").check();
   await admin.getByRole("button", { name: "Create sale" }).click();
   await expect(admin.getByText("Saved 11.11 Sale.")).toBeVisible();
   await expect(admin.locator("tbody tr", { hasText: "11.11 Sale" }).getByText("Live")).toBeVisible();
@@ -56,6 +57,7 @@ test("a sale: created in the admin, shown on the site, charged at checkout, stop
   await expect(page.locator('.sale-petals [data-motif="winter"]').first()).toBeAttached(); // snowflakes fall in the banner
   await expect(page.locator('.sale-plaque[data-bg="ice"]')).toBeVisible(); // the Solid Ice background
   await expect(page.locator('.sale-hang[data-frame="frost"]')).toBeVisible(); // with the Frost silver frame
+  await expect(page.locator("html")).toHaveAttribute("data-skin", "ice"); // the whole shop wears the frozen look
   await page.goto(`/products/${shoe.slug}`);
   await expect(page.getByText(/11\.11 Sale ends/)).toBeVisible();
   await expect(page.locator('.mini-plaque-dark[data-bg="ice"][data-frame="frost"]').first()).toBeVisible(); // the 12.12-style tag follows both
@@ -63,7 +65,10 @@ test("a sale: created in the admin, shown on the site, charged at checkout, stop
 
   // 3. Checkout charges the sale price, and the order remembers the sale.
   await putInBag(userId, shoe.slug, shoe.sizes[0]);
+  await page.goto("/cart");
+  await expect(page.locator("html")).toHaveAttribute("data-skin", "ice"); // the bag page keeps it
   await page.goto("/checkout");
+  await expect(page.locator("html")).not.toHaveAttribute("data-skin", /./); // checkout stays plain
   await page.locator('button[type="submit"]:visible', { hasText: "Place Order" }).first().click();
   await expect(page.getByRole("heading", { name: /Thank You/ })).toBeVisible();
   const order = await (await db()).collection("orders").findOne({ userId, status: { $ne: "delivered" } });
@@ -80,6 +85,7 @@ test("a sale: created in the admin, shown on the site, charged at checkout, stop
   await page.goto("/");
   await page.waitForTimeout(500);
   await expect(page.getByRole("region", { name: /11\.11 Sale/ })).toHaveCount(0);
+  await expect(page.locator("html")).not.toHaveAttribute("data-skin", /./); // the frozen look goes with it
 
   // 5. A stopped sale can still be edited: saving it with new dates brings it back.
   await admin.goto("/admin/sales");

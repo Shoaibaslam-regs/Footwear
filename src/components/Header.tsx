@@ -19,7 +19,7 @@ export default async function Header() {
         {/* While a sale is live, its message leads (components/sale/SaleBanner.tsx). */}
         <Announcements announcements={announcements} upTo={upTo} />
       </div>
-      <div className="site-bar w-full bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
+      <div className="site-bar relative w-full bg-surface/85 backdrop-blur-xl shadow-[0_1px_8px_rgba(0,0,0,0.04)]">
         <div className="h-20 max-w-[1536px] mx-auto px-margin-mobile lg:px-margin flex items-center justify-between">
           <Suspense fallback={<NavLinksFallback />}>
             <NavLinks />

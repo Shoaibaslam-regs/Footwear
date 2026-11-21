@@ -28,7 +28,7 @@ export default function CatalogProductCard({
 
   return (
     <article className="group relative flex flex-col">
-      <div className="relative w-full aspect-[3/4] bg-surface-container overflow-hidden rounded-lg">
+      <div className="skin-card relative w-full aspect-[3/4] bg-surface-container overflow-hidden rounded-lg">
         <Image
           className="w-full h-full object-cover transition-transform duration-700 ease-out group-hover:scale-[1.03]"
           alt={p.alt}

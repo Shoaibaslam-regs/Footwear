@@ -12,9 +12,9 @@ const SearchPanel = dynamic(() => import("./SearchPanel"), { ssr: false });
 import type { SearchEntry } from "@/lib/search-data";
 
 const iconBtn =
-  "p-space-xs text-on-surface-variant hover:text-on-surface transition-colors flex items-center";
+  "skin-icon p-space-xs text-on-surface-variant hover:text-on-surface transition-colors flex items-center";
 const counter =
-  "absolute top-0 right-0 w-3.5 h-3.5 rounded-full font-label-uppercase text-[9px] flex items-center justify-center font-medium leading-none";
+  "skin-count absolute top-0 right-0 w-3.5 h-3.5 rounded-full font-label-uppercase text-[9px] flex items-center justify-center font-medium leading-none";
 
 export default function HeaderActions({
   searchIndex,

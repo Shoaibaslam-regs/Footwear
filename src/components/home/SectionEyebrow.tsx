@@ -7,9 +7,9 @@ import { eyebrow } from "@/lib/home-type";
  */
 export default function SectionEyebrow({ n, children, center = false }: { n: string; children: React.ReactNode; center?: boolean }) {
   return (
-    <span className={`${eyebrow} flex items-center gap-3 ${center ? "justify-center" : ""}`}>
+    <span className={`${eyebrow} skin-eyebrow flex items-center gap-3 ${center ? "justify-center" : ""}`}>
       <span className="tabular-nums text-secondary/60">{n}</span>
-      <span aria-hidden="true" className="h-px w-8 sm:w-10 bg-secondary/35" />
+      <span aria-hidden="true" className="skin-eyebrow-line relative h-px w-8 sm:w-10 bg-secondary/35" />
       <span>{children}</span>
     </span>
   );

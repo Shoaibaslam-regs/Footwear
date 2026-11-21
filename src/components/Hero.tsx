@@ -4,6 +4,7 @@ import { getSiteSettings } from "@/lib/server/settings";
 import HeroSlideshow from "./HeroSlideshow";
 import SaleBanner from "./sale/SaleBanner";
 import { saleUpTo } from "@/lib/server/sale-events";
+import HeroWinter from "./sale/HeroWinter";
 
 export default async function Hero() {
   const [{ heroSlides }, upTo] = await Promise.all([getSiteSettings(), saleUpTo()]);
@@ -16,6 +17,8 @@ export default async function Hero() {
       {/* Atmospheric Gradients & Scrim */}
       <div className="absolute inset-0 bg-linear-to-t/srgb from-primary via-primary/40 to-transparent pointer-events-none" />
       <div className="absolute inset-0 bg-linear-to-r/srgb from-primary/80 via-primary/30 to-transparent pointer-events-none" />
+      {/* Frozen ice skin only: snow and frosted-window corners (hidden otherwise). */}
+      <HeroWinter />
 
       {/* Lower left, small and calm: eyebrow, headline, one line, one button. */}
       <div className="relative z-10 w-full max-w-[1536px] mx-auto px-margin-mobile lg:px-margin pt-32 sm:pt-44 pb-space-xl sm:pb-24 flex flex-col items-start gap-space-md sm:gap-space-lg">
@@ -50,7 +53,7 @@ export default async function Hero() {
         <div className="hero-rise" style={{ "--d": "760ms" } as React.CSSProperties}>
           {/* Ivory outline that fills from the left on hover. */}
           <Link
-            className="btn-fill h-11 sm:h-12 px-6 sm:px-9 ring-1 ring-inset ring-surface-container-lowest/80 text-surface-container-lowest font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.26em] inline-flex items-center gap-3 group [--fill:var(--color-surface-container-lowest)] [--fill-text:var(--color-primary)]"
+            className="skin-cta btn-fill h-11 sm:h-12 px-6 sm:px-9 ring-1 ring-inset ring-surface-container-lowest/80 text-surface-container-lowest font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.26em] inline-flex items-center gap-3 group [--fill:var(--color-surface-container-lowest)] [--fill-text:var(--color-primary)]"
             href="/collections"
           >
             Shop the Collection

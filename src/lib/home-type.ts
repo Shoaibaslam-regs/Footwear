@@ -20,4 +20,4 @@ export const quietPrice = "font-body-md text-[13px] sm:text-[15px] font-normal t
 export const sectionY = "py-14 sm:py-20 lg:py-24";
 export const sectionHead = "mb-8 sm:mb-12 lg:mb-14";
 export const viewAll =
-  "link-draw shrink-0 pb-1 font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-primary whitespace-nowrap";
+  "link-draw skin-link shrink-0 pb-1 font-label-uppercase text-[10px] sm:text-[11px] uppercase tracking-[0.24em] text-primary whitespace-nowrap";

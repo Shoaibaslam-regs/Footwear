@@ -28,6 +28,7 @@ export type SaleEventDoc = {
   motif?: SaleMotif;
   background?: PlaqueBg;
   frame?: PlaqueFrame;
+  siteTheme?: boolean;
   stoppedAt: Date | null;
   createdAt: Date;
   updatedAt: Date;
@@ -53,6 +54,7 @@ export const toSaleEvent = (d: SaleEventDoc): SaleEvent => ({
   motif: d.motif ?? "general",
   background: d.background ?? "black",
   frame: d.frame ?? "gold",
+  siteTheme: d.siteTheme ?? false,
   stoppedAt: d.stoppedAt ? d.stoppedAt.toISOString() : null,
 });
 

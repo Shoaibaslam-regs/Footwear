@@ -19,7 +19,7 @@ export default function MobileMenu() {
         aria-expanded={open}
         aria-haspopup="dialog"
         aria-label="Open Menu"
-        className="p-space-xs text-on-surface"
+        className="skin-icon p-space-xs text-on-surface"
         onClick={() => setOpen(true)}
         type="button"
       >

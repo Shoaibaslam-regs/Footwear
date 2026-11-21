@@ -101,6 +101,15 @@ export default function SaleForm({ sale, listings, others }: { sale?: SaleEvent;
             </select>
             <span className="muted text-xs">The banner&apos;s frame, ropes and ornaments, and the edge of the 12.12 tags on shoe cards.</span>
           </label>
+          <label className="flex items-start gap-2 sm:col-span-2">
+            <input className="mt-1" defaultChecked={sale?.siteTheme ?? false} name="siteTheme" type="checkbox" />
+            <span>
+              Dress the whole shop in this theme
+              <span className="block muted text-xs">
+                Works with the Solid Ice background: while the sale is live, the header icons look frozen in ice, small icicles hang under the header and Add to Bag gets a frosty edge. Checkout and the bag stay plain. Other backgrounds ignore it for now.
+              </span>
+            </span>
+          </label>
           <label className="field sm:col-span-2">
             Falling motif
             <select defaultValue={sale?.motif ?? "general"} name="motif">

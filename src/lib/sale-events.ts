@@ -1,5 +1,5 @@
 import { MAX_DISCOUNT, type ProductCategory } from "./products";
-import type { PlaqueBg, PlaqueFrame } from "./plaque";
+import { isSiteTheme, type PlaqueBg, type PlaqueFrame, type SiteTheme } from "./plaque";
 
 /**
  * Sale events ("11.11 Sale"): a discount over listings for a time window,
@@ -51,6 +51,8 @@ export type SaleEvent = {
   background?: PlaqueBg;
   /** The plaque's frame finish (lib/plaque.ts); default gold. */
   frame?: PlaqueFrame;
+  /** Dress the whole shop in the background's theme while live (lib/plaque.ts SITE_THEMES; only Solid Ice for now). */
+  siteTheme?: boolean;
   /** Set when the admin stopped it early. */
   stoppedAt: string | null;
 };
@@ -168,3 +170,15 @@ export const saleMotifLabel: Record<SaleMotif, string> = {
   independence: "Independence Day (gold and green stars)",
   none: "None (nothing falls)",
 };
+
+/**
+ * The shop-wide theme to wear now: from a live sale that ticked "Dress the whole
+ * shop" with a background that has a theme (SITE_THEMES). With several, the one
+ * that started last wins. Null when none.
+ */
+export function liveSiteTheme(events: SaleEvent[], now: number): SiteTheme | null {
+  const live = events
+    .filter((e) => e.siteTheme && isSiteTheme(e.background) && isLive(e, now))
+    .sort((a, b) => Date.parse(b.startsAt) - Date.parse(a.startsAt));
+  return live.length ? (live[0].background as SiteTheme) : null;
+}

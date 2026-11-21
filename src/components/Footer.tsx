@@ -20,7 +20,9 @@ const promises = [
 export default function Footer() {
   const line = "border-[#c9a35b]/15";
   return (
-    <footer className="shop-chrome w-full bg-primary-container text-[#cfc2b4] mt-space-xl">
+    <footer className="shop-chrome relative w-full bg-primary-container text-[#cfc2b4] mt-space-xl">
+      {/* Frozen ice skin only: snow resting on the footer's edge, with short icicles. */}
+      <div aria-hidden="true" className="skin-snowcap" />
       <div aria-hidden="true" className="h-px bg-gradient-to-r from-transparent via-[#c9a35b]/55 to-transparent" />
       <div className="max-w-[1536px] mx-auto px-margin-mobile lg:px-margin pt-12 sm:pt-16 pb-6">
         {/* Brand and the one action that matters: talk to us. */}

@@ -1,6 +1,6 @@
 import { describe, expect, it } from "vitest";
 import { applyCoupon } from "@/lib/coupons";
-import { bestSaleFor, countdown, livePrice, nextSaleChange, saleState, upToPercent, type SaleEvent } from "@/lib/sale-events";
+import { bestSaleFor, countdown, livePrice, liveSiteTheme, nextSaleChange, saleState, upToPercent, type SaleEvent } from "@/lib/sale-events";
 
 const T0 = Date.parse("2026-11-11T00:00:00+05:00");
 const T1 = Date.parse("2026-11-12T23:59:59+05:00");
@@ -85,5 +85,18 @@ describe("sale price rule", () => {
     expect(nextSaleChange([sale()], during)).toBe(T1);
     expect(nextSaleChange([sale()], T1 + 1)).toBeNull();
     expect(countdown(90_061_000)).toBe("1d 01:01:01");
+  });
+});
+
+describe("shop-wide theme (liveSiteTheme)", () => {
+  it("dresses the shop only for a live, ticked sale with a themed background", () => {
+    const ice = sale({ background: "ice", siteTheme: true });
+    expect(liveSiteTheme([ice], during)).toBe("ice");
+    expect(liveSiteTheme([ice], T0 - 1)).toBeNull(); // not started
+    expect(liveSiteTheme([ice], T1 + 1000)).toBeNull(); // ended
+    expect(liveSiteTheme([{ ...ice, stoppedAt: new Date(T0 + 60_000).toISOString() }], during)).toBeNull(); // stopped
+    expect(liveSiteTheme([sale({ background: "ice", siteTheme: false })], during)).toBeNull(); // not ticked
+    expect(liveSiteTheme([sale({ background: "emerald", siteTheme: true })], during)).toBeNull(); // no theme for it yet
+    expect(liveSiteTheme([sale({ siteTheme: true })], during)).toBeNull(); // older sales: no background
   });
 });

@@ -56,7 +56,7 @@ export default function BestSellerCard({
     // Quiet card: no box or shadow; the photo, the name, a light price.
     <div className={`group flex justify-between gap-space-sm md:gap-0 md:flex-col ${wide ? "flex-row" : "flex-col"}`}>
       <div
-        className={`relative overflow-hidden rounded-lg bg-surface-container shrink-0 md:w-full md:aspect-[4/5] md:mb-space-md ${
+        className={`skin-card relative overflow-hidden rounded-lg bg-surface-container shrink-0 md:w-full md:aspect-[4/5] md:mb-space-md ${
           wide ? "w-2/5 aspect-[4/5] self-start" : "w-full aspect-square"
         }`}
       >

@@ -40,7 +40,7 @@ export default function Categories() {
             <div className="absolute inset-0 bg-linear-to-t/srgb from-primary/80 via-primary/20 to-transparent" />
             {/* Hover (mouse devices): the photo deepens */}
             <div aria-hidden="true" className="absolute inset-0 bg-primary/25 opacity-0 group-hover:opacity-100 transition-opacity duration-700 ease-[var(--ease-lux)]" />
-            <div className="relative z-10 flex flex-col text-surface-container-lowest">
+            <div className="skin-plate relative z-10 flex flex-col text-surface-container-lowest">
               <span className="font-label-uppercase text-[10px] md:text-label-uppercase uppercase tracking-widest text-secondary-fixed mb-1 line-clamp-1">
                 {c.eyebrow}
               </span>

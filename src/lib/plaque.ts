@@ -50,3 +50,13 @@ export const plaqueFrameLabel: Record<PlaqueFrame, string> = {
   bronze: "Bronze (for autumn)",
   platinum: "Platinum (for marble and ivory)",
 };
+
+/**
+ * Backgrounds that can also dress the whole shop when a sale ticks "Dress the
+ * whole shop in this theme" (owner, 2026-11-21): header icons frozen in ice,
+ * icicles under the header bar, a frosty Add to Bag. Only Solid Ice for now;
+ * globals.css `html[data-skin="ice"]`.
+ */
+export const SITE_THEMES = ["ice"] as const;
+export type SiteTheme = (typeof SITE_THEMES)[number];
+export const isSiteTheme = (v: unknown): v is SiteTheme => typeof v === "string" && (SITE_THEMES as readonly string[]).includes(v);

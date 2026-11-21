@@ -40,6 +40,7 @@ const schema = z
     motif: z.enum(SALE_MOTIFS, "Choose what falls on the banner."),
     background: z.enum(PLAQUE_BACKGROUNDS, "Choose a background."),
     frame: z.enum(PLAQUE_FRAMES, "Choose a frame."),
+    siteTheme: z.boolean(),
   })
   .superRefine((d, ctx) => {
     if (pkt(d.endsAt) <= pkt(d.startsAt)) ctx.addIssue({ code: "custom", path: ["endsAt"], message: "The end must be after the start." });
@@ -74,6 +75,7 @@ export async function saveSale(_: SaleFormState, fd: FormData): Promise<SaleForm
     motif: String(fd.get("motif") || "general"),
     background: String(fd.get("background") || "black"),
     frame: String(fd.get("frame") || "gold"),
+    siteTheme: fd.get("siteTheme") === "on",
   });
   if (!parsed.success) return { errors: z.flattenError(parsed.error).fieldErrors, message: "Please fix the highlighted fields." };
   const d = parsed.data;
@@ -95,6 +97,7 @@ export async function saveSale(_: SaleFormState, fd: FormData): Promise<SaleForm
     motif: d.motif,
     background: d.background,
     frame: d.frame,
+    siteTheme: d.siteTheme,
     updatedAt: now,
   };
   const col = await saleEvents();

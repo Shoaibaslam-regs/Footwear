@@ -276,7 +276,7 @@ export default function PurchasePanel({ product }: { product: ProductDetail }) {
       <div className="flex flex-col gap-2" ref={actions}>
         <div className="flex items-stretch gap-2">
           <button
-            className="flex-1 h-12 sm:h-[52px] bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed font-label-uppercase text-[11px] uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
+            className="skin-cta flex-1 h-12 sm:h-[52px] bg-primary text-on-primary hover:bg-secondary-fixed hover:text-on-secondary-fixed font-label-uppercase text-[11px] uppercase tracking-[0.2em] transition-colors flex items-center justify-center gap-2"
             onClick={() => (inBag ? openBag() : addSelectionToBag())}
             type="button"
           >
@@ -372,7 +372,7 @@ function BuyBar({ children, label, inBag, onAdd }: { children: React.ReactNode; 
       <div className="h-[68px] px-margin-mobile flex items-center justify-between gap-space-md">
         <span className="min-w-0 font-body-md text-[15px] text-primary tabular-nums">{children}</span>
         <button
-          className="h-11 px-5 shrink-0 bg-primary text-on-primary font-label-uppercase text-[11px] uppercase tracking-[0.18em] flex items-center gap-2"
+          className="skin-cta h-11 px-5 shrink-0 bg-primary text-on-primary font-label-uppercase text-[11px] uppercase tracking-[0.18em] flex items-center gap-2"
           onClick={onAdd}
           type="button"
         >
